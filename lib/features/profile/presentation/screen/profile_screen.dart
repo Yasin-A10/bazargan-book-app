@@ -125,7 +125,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push(RoutePaths.myLibraryBookmarks);
+                      },
                     ),
                     Divider(color: AppColors.neutralE3E3E3, thickness: 1),
                     ListItemWidget(
