@@ -2,6 +2,7 @@ import 'package:bazargan/config/router/main_screen.dart';
 import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/screen/my_library_bookmarks_screen.dart';
+import 'package:bazargan/features/profile_comments/presentation/screen/profile_comments_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,6 +32,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.myLibraryBookmarks,
       builder: (context, state) => const MyLibraryBookmarksScreen(),
+    ),
+
+    GoRoute(
+      path: RoutePaths.profileComments,
+      builder: (context, state) => const ProfileCommentsScreen(),
     ),
   ],
 

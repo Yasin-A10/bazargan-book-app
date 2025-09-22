@@ -8,4 +8,7 @@ class Images {
 
   static const String tooman = 'assets/icons/tooman.svg';
   static const String category1 = 'assets/icons/category1.svg';
+
+  static const String edit = 'assets/icons/edit.svg';
+  static const String trash = 'assets/icons/trash.svg';
 }

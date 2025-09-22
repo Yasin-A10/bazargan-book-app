@@ -33,7 +33,7 @@ class Button extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.borderColor,
-    this.borderWidth = 0,
+    this.borderWidth = 2,
     this.icon,
     this.iconOnRight = false,
   });
