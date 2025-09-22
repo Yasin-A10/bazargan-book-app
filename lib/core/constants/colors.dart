@@ -80,6 +80,6 @@ class AppColors {
 
   // ========= Error, Warning, Success =========
   static const Color error = Color(0xFFC62020);
-  static const Color warning = Color(0xFF00966D);
-  static const Color success = Color(0xFFA9791C);
+  static const Color success = Color(0xFF00966D);
+  static const Color warning = Color(0xFFA9791C);
 }

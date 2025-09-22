@@ -1,7 +1,7 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
-import 'package:bazargan/core/widgets/book_card_column.dart';
-import 'package:bazargan/core/widgets/book_card_row.dart';
+import 'package:bazargan/core/widgets/card/book_card_column.dart';
+import 'package:bazargan/core/widgets/card/book_card_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';

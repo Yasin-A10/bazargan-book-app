@@ -1,5 +1,5 @@
 import 'package:bazargan/core/constants/colors.dart';
-import 'package:bazargan/core/widgets/button.dart';
+import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
