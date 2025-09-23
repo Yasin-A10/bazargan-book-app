@@ -151,7 +151,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push(RoutePaths.profileFavorites);
+                      },
                     ),
                   ],
                 ),

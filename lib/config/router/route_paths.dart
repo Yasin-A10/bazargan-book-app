@@ -8,4 +8,5 @@ class RoutePaths {
 
   static const String profileComments = '/profile/comments';
   static const String profileTransaction = '/profile/transaction';
+  static const String profileFavorites = '/profile/favorites';
 }

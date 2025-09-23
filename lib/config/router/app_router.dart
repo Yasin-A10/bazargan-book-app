@@ -3,6 +3,7 @@ import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/screen/my_library_bookmarks_screen.dart';
 import 'package:bazargan/features/profile_comments/presentation/screen/profile_comments_screen.dart';
+import 'package:bazargan/features/profile_favorites/presentation/screen/profile_favorites_screen.dart';
 import 'package:bazargan/features/profile_transaction/presentation/screen/profile_transaction_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -19,22 +20,23 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: navigatorKey,
   initialLocation: RoutePaths.home,
   routes: [
-    //! Main
+    //! Home
     GoRoute(
       path: RoutePaths.home,
       builder: (context, state) => const MainScreen(),
     ),
-
     GoRoute(
       path: RoutePaths.bookList,
       builder: (context, state) => const BookListScreen(),
     ),
 
+    //! My Library
     GoRoute(
       path: RoutePaths.myLibraryBookmarks,
       builder: (context, state) => const MyLibraryBookmarksScreen(),
     ),
 
+    //! Profile
     GoRoute(
       path: RoutePaths.profileComments,
       builder: (context, state) => const ProfileCommentsScreen(),
@@ -42,6 +44,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.profileTransaction,
       builder: (context, state) => const ProfileTransactionScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.profileFavorites,
+      builder: (context, state) => const ProfileFavoritesScreen(),
     ),
   ],
 
