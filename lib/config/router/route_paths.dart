@@ -7,4 +7,5 @@ class RoutePaths {
   static const String myLibraryBookmarks = '/my-library/bookmarks';
 
   static const String profileComments = '/profile/comments';
+  static const String profileTransaction = '/profile/transaction';
 }
