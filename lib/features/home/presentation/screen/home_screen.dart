@@ -5,7 +5,7 @@ import 'package:bazargan/core/widgets/category_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
-import 'package:bazargan/features/home/presentation/widgets/list_widget.dart';
+import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
