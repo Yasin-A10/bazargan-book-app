@@ -97,7 +97,10 @@ class BookCardColumn extends StatelessWidget {
           children: [
             Text(
               formatNumberToPersian(int.parse(price)),
-              style: AppTextStyles.body.copyWith(color: AppColors.secondary),
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.secondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(width: 4),
             SvgPicture.asset(Images.tooman, width: 16, height: 16),

@@ -50,16 +50,16 @@ class ListWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         SizedBox(
           height: listHeight,
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             scrollDirection: Axis.horizontal,
             itemCount: 5,
             itemBuilder: (context, index) {
               return Container(
-                height: 180,
+                height: 200,
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
@@ -75,7 +75,7 @@ class ListWidget extends StatelessWidget {
                     Images.listImg,
                     fit: BoxFit.cover,
                     width: 120,
-                    height: 180,
+                    height: 200,
                   ),
                 ),
               );

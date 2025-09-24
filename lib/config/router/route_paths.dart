@@ -13,4 +13,5 @@ class RoutePaths {
   static const String search = '/search';
 
   static const String book = '/book';
+  static const String cart = '/cart';
 }

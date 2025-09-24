@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-class BookCardRow extends StatelessWidget {
+class CartCard extends StatelessWidget {
   final String title;
   final String author;
   final String publisher;
@@ -14,9 +14,8 @@ class BookCardRow extends StatelessWidget {
   final String image;
   final String? discount;
   final String? rate;
-  final bool? isSave;
 
-  const BookCardRow({
+  const CartCard({
     super.key,
     required this.title,
     required this.author,
@@ -25,7 +24,6 @@ class BookCardRow extends StatelessWidget {
     required this.image,
     this.discount,
     this.rate,
-    this.isSave,
   });
 
   @override
@@ -72,11 +70,7 @@ class BookCardRow extends StatelessWidget {
                       style: AppTextStyles.headlineLarge.copyWith(fontSize: 12),
                     ),
                   ),
-                  Icon(
-                    isSave == true ? Iconsax.save_2 : Iconsax.save_2_copy,
-                    color: AppColors.secondary,
-                    size: 16,
-                  ),
+                  Icon(Iconsax.trash_copy, color: AppColors.primary, size: 16),
                 ],
               ),
 

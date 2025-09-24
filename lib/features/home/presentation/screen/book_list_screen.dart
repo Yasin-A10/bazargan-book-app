@@ -21,7 +21,7 @@ class _BookListScreenState extends State<BookListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'جدیدترین کتاب ها',
+          'لیست کتاب‌ها',
           style: AppTextStyles.headlineLarge.copyWith(fontSize: 14),
         ),
         leading: IconButton(

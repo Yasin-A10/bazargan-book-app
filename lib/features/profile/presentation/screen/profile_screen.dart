@@ -94,17 +94,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   spacing: 8,
                   children: [
                     ListItemWidget(
-                      title: 'امتیاز من',
-                      rightIcon: Icon(Iconsax.star_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      onPressed: () {},
-                    ),
-                    Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                    ListItemWidget(
                       title: 'نظرات من',
                       rightIcon: Icon(Iconsax.messages_3_copy, size: 20),
                       leftIcon: Iconsax.arrow_left_2_copy,

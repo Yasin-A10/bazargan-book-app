@@ -314,10 +314,10 @@ class _BookScreenState extends State<BookScreen> {
             ),
             SizedBox(height: 24),
 
-            ListWidget(title: 'سایر کتاب‌های این نویسنده', listHeight: 180),
+            ListWidget(title: 'سایر کتاب‌های این نویسنده', listHeight: 200),
             SizedBox(height: 32),
 
-            ListWidget(title: 'سایر کتاب‌های این ناشر', listHeight: 180),
+            ListWidget(title: 'سایر کتاب‌های این ناشر', listHeight: 200),
             SizedBox(height: 32),
           ],
         ),
