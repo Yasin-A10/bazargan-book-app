@@ -38,7 +38,9 @@ class HomeScreen extends StatelessWidget {
                     textColor: AppColors.secondary,
                     backgroundColor: AppColors.secondaryTint8,
                     width: double.infinity,
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(RoutePaths.login);
+                    },
                     icon: Icon(
                       Iconsax.element_3,
                       size: 20,
@@ -46,21 +48,26 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 0),
+
                 ListWidget(title: 'جدیدترین‌ها', listHeight: 200),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Divider(color: AppColors.neutralE3E3E3),
                 ),
+
                 CategoryList(title: 'دسته‌بندی', listHeight: 140),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Divider(color: AppColors.neutralE3E3E3),
                 ),
+
                 ListWidget(title: 'محبوب‌ترین‌‌ها', listHeight: 200),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Divider(color: AppColors.neutralE3E3E3),
                 ),
+
                 ListWidget(title: 'جدیدترین‌ها', listHeight: 200),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -71,6 +78,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Divider(color: AppColors.neutralE3E3E3),
                 ),
+
                 ListWidget(title: 'پرفروش‌ترین‌های متنی', listHeight: 200),
               ],
             ),
