@@ -28,9 +28,9 @@ class _BookScreenState extends State<BookScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.offset > 50 && !_isScrolled) {
+      if (_scrollController.offset > 40 && !_isScrolled) {
         setState(() => _isScrolled = true);
-      } else if (_scrollController.offset <= 50 && _isScrolled) {
+      } else if (_scrollController.offset <= 40 && _isScrolled) {
         setState(() => _isScrolled = false);
       }
     });
@@ -182,8 +182,10 @@ class _BookScreenState extends State<BookScreen> {
                 ),
               ],
             ),
+
             Text("مذاکره بدون ترس", style: AppTextStyles.headlineLarge),
-            SizedBox(height: 12),
+            SizedBox(height: 20),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -217,6 +219,8 @@ class _BookScreenState extends State<BookScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 20),
+
             Row(
               spacing: 4,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -241,7 +245,12 @@ class _BookScreenState extends State<BookScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Button(label: 'خرید مستقیم', onPressed: () {}),
+                  Button(
+                    label: 'خرید مستقیم',
+                    onPressed: () {
+                      _openPayMent(context);
+                    },
+                  ),
                   Expanded(
                     child: Button(
                       label: 'افزودن به سبد',
@@ -689,6 +698,154 @@ class _BookScreenState extends State<BookScreen> {
       },
     );
   }
+}
+
+void _openPayMent(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return Stack(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  transform: GradientRotation(0.4),
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.4),
+                    AppColors.neutralMidnight.withValues(alpha: 0.2),
+                    AppColors.secondary.withValues(alpha: 0.4),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Material(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 8,
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Divider(
+                      color: AppColors.neutral757575,
+                      thickness: 3,
+                      endIndent: 140,
+                      indent: 140,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'خرید مستقیم',
+                      style: AppTextStyles.headlineLarge.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              Images.listImg,
+                              width: 75,
+                              height: 110,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 110,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'چگونه یک درونگرای تاثیر گذار باشیم',
+                                  style: AppTextStyles.headlineLarge,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '۲۷۳٬۰۰۰',
+                                      style: AppTextStyles.headlineLarge
+                                          .copyWith(
+                                            color: AppColors.secondary,
+                                            fontSize: 16,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    SvgPicture.asset(
+                                      Images.tooman,
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(child: InputTextFormField(label: 'کد تخفیف')),
+                        const SizedBox(width: 16),
+                        Button(
+                          label: 'اعمال',
+                          onPressed: () {},
+                          backgroundColor: AppColors.secondary,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Button(
+                      label: 'پرداخت',
+                      onPressed: () {},
+                      width: double.infinity,
+                      backgroundColor: AppColors.primary,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class BookInfoList extends StatelessWidget {

@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          CartButton(count: 2),
+          CartButton(count: 3),
         ],
       ),
     );
