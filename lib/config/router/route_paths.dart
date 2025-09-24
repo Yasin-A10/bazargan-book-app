@@ -9,4 +9,8 @@ class RoutePaths {
   static const String profileComments = '/profile/comments';
   static const String profileTransaction = '/profile/transaction';
   static const String profileFavorites = '/profile/favorites';
+
+  static const String search = '/search';
+
+  static const String book = '/book';
 }

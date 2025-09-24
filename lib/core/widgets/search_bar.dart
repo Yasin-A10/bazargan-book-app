@@ -3,13 +3,15 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/constants/colors.dart';
 
 class CustomSearchBar extends StatefulWidget {
-  final Function(String) onSearch;
+  final Function(String)? onSearch;
   final String hintText;
+  final FocusNode? focusNode;
 
   const CustomSearchBar({
     super.key,
-    required this.onSearch,
+    this.onSearch,
     this.hintText = 'جستجو کنید...',
+    this.focusNode,
   });
 
   @override
@@ -39,6 +41,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           Expanded(
             child: TextField(
               controller: _controller,
+              focusNode: widget.focusNode,
+              autofocus: false,
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
@@ -58,7 +62,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               },
               onSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  widget.onSearch(value);
+                  widget.onSearch?.call(value);
                 }
               },
             ),
@@ -78,11 +82,50 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   _isSearching = false;
                 });
               } else if (_controller.text.isNotEmpty) {
-                widget.onSearch(_controller.text);
+                widget.onSearch?.call(_controller.text);
               }
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class FakeSearchBar extends StatelessWidget {
+  final VoidCallback? onTap;
+  const FakeSearchBar({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.neutralE3E3E3, width: 1),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'جستجو در نام کتاب، نویسنده، ناشر و ...',
+              style: TextStyle(
+                color: AppColors.neutral757575,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Icon(
+              Iconsax.search_normal_1_copy,
+              color: AppColors.neutral757575,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }

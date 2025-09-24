@@ -7,8 +7,10 @@ class Images {
   static const String listImg = 'assets/images/list-img.jpg';
 
   static const String tooman = 'assets/icons/tooman.svg';
+
   static const String category1 = 'assets/icons/category1.svg';
   static const String category1White = 'assets/icons/category1-white.svg';
+  static const String category1Black = 'assets/icons/category1-black.svg';
 
   static const String tickButton = 'assets/icons/tick-button.svg';
 
