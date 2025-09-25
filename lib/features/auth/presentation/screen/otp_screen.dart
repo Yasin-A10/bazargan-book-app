@@ -130,7 +130,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           width: double.infinity,
                           backgroundColor: AppColors.secondary,
                           onPressed: () {
-                            context.go('/');
+                            context.go('/get-category');
                           },
                         ),
                       ],

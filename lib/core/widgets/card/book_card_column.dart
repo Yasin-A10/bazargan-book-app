@@ -54,6 +54,7 @@ class BookCardColumn extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 4,

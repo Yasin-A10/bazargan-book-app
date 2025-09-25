@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                   child: Divider(color: AppColors.neutralE3E3E3),
                 ),
 
-                CategoryList(title: 'دسته‌بندی', listHeight: 140),
+                CategoryList(title: 'دسته‌بندی', listHeight: 80),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Divider(color: AppColors.neutralE3E3E3),

@@ -67,6 +67,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
 
           return Expanded(
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () => widget.onTap(index),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

@@ -1,6 +1,7 @@
 class RoutePaths {
   static const String login = '/login';
   static const String otp = '/otp';
+  static const String category = '/get-category';
 
   static const String home = '/';
   static const String bookList = '/book-list';

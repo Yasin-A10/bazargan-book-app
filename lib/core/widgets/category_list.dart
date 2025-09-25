@@ -86,7 +86,7 @@ class CategoryList extends StatelessWidget {
                     icon: Icon(
                       Iconsax.activity_copy,
                       color: AppColors.tertiary,
-                      size: 80,
+                      size: 30,
                     ),
                   ),
                 ],
@@ -120,13 +120,13 @@ class CategoryItem extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 56,
-            width: 56,
+            height: 30,
+            width: 30,
             child: FittedBox(fit: BoxFit.contain, child: icon),
           ),
           const SizedBox(height: 8),

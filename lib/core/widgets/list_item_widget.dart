@@ -7,6 +7,7 @@ class ListItemWidget extends StatelessWidget {
   final IconData? leftIcon;
   final TextStyle? titleStyle;
   final VoidCallback? onPressed;
+
   const ListItemWidget({
     super.key,
     required this.title,
@@ -18,20 +19,22 @@ class ListItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onPressed,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (rightIcon != null) rightIcon!,
-          const SizedBox(width: 8),
-          Text(title, style: titleStyle),
-
-          const Spacer(),
-
-          if (leftIcon != null)
-            Icon(leftIcon, color: AppColors.neutral757575, size: 20),
-        ],
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (rightIcon != null) rightIcon!,
+            const SizedBox(width: 8),
+            Text(title, style: titleStyle),
+            const Spacer(),
+            if (leftIcon != null)
+              Icon(leftIcon, color: AppColors.neutral757575, size: 20),
+          ],
+        ),
       ),
     );
   }

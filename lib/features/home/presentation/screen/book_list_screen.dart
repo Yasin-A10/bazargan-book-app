@@ -84,8 +84,8 @@ class _BookListScreenState extends State<BookListScreen> {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.55,
-                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.5,
+                  mainAxisSpacing: 8,
                   crossAxisSpacing: 16,
                 ),
                 itemBuilder: (context, index) {
