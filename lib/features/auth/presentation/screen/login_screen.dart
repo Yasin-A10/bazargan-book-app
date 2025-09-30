@@ -30,10 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('access token: ${SessionManager.instance.access}');
-    print('refresh token: ${SessionManager.instance.refresh}');
-    print('is logged in: ${SessionManager.instance.isLoggedIn()}');
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

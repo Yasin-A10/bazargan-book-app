@@ -36,7 +36,6 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('has faaaaaav: ${widget.hasFavCategories}');
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

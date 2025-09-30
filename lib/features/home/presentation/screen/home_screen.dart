@@ -1,7 +1,6 @@
 import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
-import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
@@ -19,10 +18,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('access token: ${SessionManager.instance.access}');
-    print('refresh token: ${SessionManager.instance.refresh}');
-    print('is logged in: ${SessionManager.instance.isLoggedIn()}');
-
     final String bestSellerBooksTitle = 'پرفروشترین ها';
     final String popularBooksTitle = 'محبوب ترین ها';
     final String forYouTitle = 'بهترین ها برای تو';
