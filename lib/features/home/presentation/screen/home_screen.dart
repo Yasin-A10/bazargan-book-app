@@ -62,9 +62,7 @@ class HomeScreen extends StatelessWidget {
                           textColor: AppColors.secondary,
                           backgroundColor: AppColors.secondaryTint8,
                           width: double.infinity,
-                          onPressed: () {
-                            context.push(RoutePaths.login);
-                          },
+                          onPressed: () {},
                           icon: Icon(
                             Iconsax.element_3,
                             size: 20,

@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               ProfileCard(
-                title: '۱۲۰۰۰۰ تومان',
+                title: '${formatNumberToPersian(120000)} تومان',
                 subtitle: 'موجودی کیف پول شما',
                 mainIcon: Iconsax.wallet_copy,
                 subIcon: Iconsax.add_square,

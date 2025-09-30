@@ -11,6 +11,7 @@ class CategoryList extends StatelessWidget {
   final String? link;
   final double listHeight;
   final List<CategoryModel> categories;
+
   const CategoryList({
     super.key,
     required this.title,
@@ -22,6 +23,12 @@ class CategoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = [
+      {"bg": AppColors.primaryTint8, "content": AppColors.primary},
+      {"bg": AppColors.tertiaryTint8, "content": AppColors.tertiary},
+      {"bg": AppColors.secondaryTint8, "content": AppColors.secondary},
+    ];
+
     return Column(
       children: [
         Padding(
@@ -56,12 +63,18 @@ class CategoryList extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
             itemBuilder: (context, index) {
+              final colorSet = colors[index % colors.length];
+
               return CategoryItem(
-                backgroundColor: AppColors.primaryTint8,
-                contentColor: AppColors.primary,
+                backgroundColor: colorSet["bg"]!,
+                contentColor: colorSet["content"]!,
                 label: categories[index].title,
                 icon: SvgPicture.network(
                   categories[index].icon,
+                  colorFilter: ColorFilter.mode(
+                    colorSet["content"]!,
+                    BlendMode.srcIn,
+                  ),
                   height: 30,
                   width: 30,
                 ),

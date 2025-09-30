@@ -15,17 +15,32 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
+  // final _pages = [
+  //   HomeScreen(),
+  //   MyLibraryScreen(),
+  //   SearchScreen(),
+  //   ProfileScreen(),
+  // ];
+
   final _pages = [
-    HomeScreen(),
-    MyLibraryScreen(),
-    SearchScreen(),
-    ProfileScreen(),
+    const HomeScreen(key: ValueKey('home')),
+    const MyLibraryScreen(key: ValueKey('library')),
+    const SearchScreen(key: ValueKey('search')),
+    const ProfileScreen(key: ValueKey('profile')),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        child: _pages[_selectedIndex],
+      ),
+
+      // IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
