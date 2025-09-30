@@ -24,7 +24,7 @@ class SmsSenderApiProvider {
     try {
       final response = await _dio.post(
         '$baseUrl/auth/sms-sender/',
-        data: {'phone_number': phoneNumber, "type": "pass", "panel": false},
+        data: {'phone_number': phoneNumber, "type": "log"},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

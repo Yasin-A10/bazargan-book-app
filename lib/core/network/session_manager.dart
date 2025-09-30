@@ -9,7 +9,7 @@ class SessionManager {
 
   static const _keyAccessToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';
-  static const _keyUserId = 'user_id';
+  static const _keyRole = 'role';
 
   // static const String accessToken =
   //     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4MzYzNDA2LCJpYXQiOjE3NTcxNTM4MDYsImp0aSI6IjRlNDY4ZTVkZmVkMTRjNWQ4NjBhOWJjYzVkYmM5ZDg5IiwidXNlcl9pZCI6IjdhMGU0ODhjLTU0NWQtNGEzNy04NTdiLTI5ZTBlN2M4NjY5YSJ9.gCCD9EDLlcqIzRKD4tuQlKYma9QUfoIEpMZ6Du6jgAI";
@@ -26,13 +26,13 @@ class SessionManager {
   Future<void> saveSession({
     required String accessToken,
     required String refreshToken,
-    required String userId,
+    required String role,
   }) async {
     if (_preferences == null) await init();
 
     await _preferences!.setString(_keyAccessToken, accessToken);
     await _preferences!.setString(_keyRefreshToken, refreshToken);
-    await _preferences!.setString(_keyUserId, userId);
+    await _preferences!.setString(_keyRole, role);
   }
 
   //! for get access token
@@ -41,8 +41,8 @@ class SessionManager {
   //! for get refresh token
   String? get refreshToken => _preferences?.getString(_keyRefreshToken);
 
-  //! for get user id
-  String? get userId => _preferences?.getString(_keyUserId);
+  //! for get role
+  String? get role => _preferences?.getString(_keyRole);
 
   //! for check if user is logged in
   bool isLoggedIn() {
@@ -57,6 +57,6 @@ class SessionManager {
   Future<void> clearSession() async {
     await _preferences?.remove(_keyAccessToken);
     await _preferences?.remove(_keyRefreshToken);
-    await _preferences?.remove(_keyUserId);
+    await _preferences?.remove(_keyRole);
   }
 }

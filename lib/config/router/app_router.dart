@@ -33,7 +33,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RoutePaths.otp,
-      builder: (context, state) => const OtpScreen(),
+      builder: (context, state) =>
+          OtpScreen(phoneNumber: state.extra.toString()),
     ),
     GoRoute(
       path: RoutePaths.category,

@@ -130,9 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             SnackBar(content: Text('کد تایید ارسال شد')),
                           );
                         } else if (state is SmsStateError) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(state.error)));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('حطا در ارسال کد تایید')),
+                          );
                         }
                       },
                       builder: (context, state) {

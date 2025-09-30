@@ -1,21 +1,34 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
+import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/auth/presentation/widgets/custom_otp.dart';
 import 'package:bazargan/features/auth/presentation/widgets/resend_code_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final String phoneNumber;
+  const OtpScreen({super.key, required this.phoneNumber});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+  final TextEditingController otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    otpController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +105,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       spacing: 8,
                       children: [
                         Text(
-                          'کد ۵ رقمی ارسال شده به شماره ۰۹۱۲۳۴۵۶۷۸۹ را وارد نمایید',
+                          'کد ۵ رقمی ارسال شده به شماره ${widget.phoneNumber} را وارد نمایید',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -120,20 +133,84 @@ class _OtpScreenState extends State<OtpScreen> {
                       ],
                     ),
 
-                    Column(
-                      spacing: 8,
-                      children: [
-                        CustomOtpField(length: 5, onCompleted: (value) {}),
-                        ResendCodeButton(duration: 120, onResend: () {}),
-                        Button(
-                          label: 'ورود',
-                          width: double.infinity,
-                          backgroundColor: AppColors.secondary,
-                          onPressed: () {
-                            context.go('/get-category');
-                          },
-                        ),
-                      ],
+                    BlocConsumer<LoginBloc, LoginState>(
+                      listener: (context, state) {
+                        if (state is LoginStateSuccess) {
+                          context.go('/get-category');
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('ورود موفقیت آمیز')),
+                          );
+                        }
+                        if (state is LoginStateError) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(state.error)));
+                        }
+                      },
+                      builder: (context, state) {
+                        return Column(
+                          spacing: 8,
+                          children: [
+                            CustomOtpField(
+                              length: 5,
+                              controller: otpController,
+                              onCompleted: (value) {
+                                if (state is LoginStateLoading) {
+                                  return;
+                                }
+                                BlocProvider.of<LoginBloc>(context).add(
+                                  LoginEventRequest(
+                                    phoneNumber: widget.phoneNumber,
+                                    code: value,
+                                  ),
+                                );
+                              },
+                            ),
+
+                            if (state is LoginStateLoading)
+                              Padding(
+                                padding: EdgeInsets.only(top: 16),
+                                child: LoadingAnimationWidget.twoRotatingArc(
+                                  color: AppColors.primary,
+                                  size: 32,
+                                ),
+                              ),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
+                              child: ResendCodeButton(
+                                duration: 120,
+                                onResend: () {
+                                  BlocProvider.of<SmsBloc>(context).add(
+                                    SmsEventRequest(
+                                      phoneNumber: widget.phoneNumber,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+
+                            Button(
+                              label: 'ورود',
+                              width: double.infinity,
+                              backgroundColor: AppColors.secondary,
+                              onPressed: state is LoginStateLoading
+                                  ? null
+                                  : () {
+                                      context.read<LoginBloc>().add(
+                                        LoginEventRequest(
+                                          phoneNumber: widget.phoneNumber,
+                                          code: otpController.text,
+                                        ),
+                                      );
+                                    },
+                            ),
+                          ],
+                        );
+                      },
                     ),
 
                     InkWell(
