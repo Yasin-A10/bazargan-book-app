@@ -1,5 +1,6 @@
 import 'package:bazargan/config/router/app_router.dart';
 import 'package:bazargan/config/theme/app_theme.dart';
+import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/locator.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,10 @@ void main() async {
 
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => locator<HomeBloc>())],
+      providers: [
+        BlocProvider(create: (_) => locator<SmsBloc>()),
+        BlocProvider(create: (_) => locator<HomeBloc>()),
+      ],
       child: const MyApp(),
     ),
   );

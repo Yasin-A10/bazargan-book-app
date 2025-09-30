@@ -1,14 +1,31 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
+import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
+import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  final TextEditingController phoneNumberController = TextEditingController();
+
+  @override
+  void dispose() {
+    phoneNumberController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,16 +107,53 @@ class LoginScreen extends StatelessWidget {
                         color: AppColors.neutral757575,
                       ),
                     ),
-                    InputTextFormField(
-                      label: 'شماره تلفن همراه',
-                      keyboardType: TextInputType.phone,
+                    Form(
+                      key: loginFormKey,
+                      child: InputTextFormField(
+                        controller: phoneNumberController,
+                        label: 'شماره تلفن همراه',
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          return AppValidator.phoneNumber(
+                            value,
+                            fieldName: 'شماره همراه',
+                          );
+                        },
+                      ),
                     ),
-                    Button(
-                      label: 'تایید',
-                      width: double.infinity,
-                      backgroundColor: AppColors.secondary,
-                      onPressed: () {
-                        context.go('/otp');
+                    BlocConsumer<SmsBloc, SmsState>(
+                      listener: (context, state) {
+                        if (state is SmsStateSuccess) {
+                          context.go('/otp', extra: phoneNumberController.text);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('کد تایید ارسال شد')),
+                          );
+                        } else if (state is SmsStateError) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(state.error)));
+                        }
+                      },
+                      builder: (context, state) {
+                        return Button(
+                          label: 'تایید',
+                          width: double.infinity,
+                          backgroundColor: AppColors.secondary,
+                          onPressed: state is SmsStateLoading
+                              ? null
+                              : () {
+                                  if (!loginFormKey.currentState!.validate()) {
+                                    return;
+                                  }
+
+                                  BlocProvider.of<SmsBloc>(context).add(
+                                    SmsEventRequest(
+                                      phoneNumber: phoneNumberController.text,
+                                    ),
+                                  );
+                                },
+                        );
                       },
                     ),
                     InkWell(
