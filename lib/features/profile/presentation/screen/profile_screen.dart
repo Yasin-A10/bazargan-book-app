@@ -6,8 +6,10 @@ import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
+import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/profile/presentation/widgets/profile_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -539,14 +541,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Button(
-                      label: 'خروج از حساب',
-                      onPressed: () {
-                        context.pop();
+                    child: BlocConsumer<LogoutBloc, LogoutState>(
+                      listener: (context, state) {
+                        if (state is LogoutStateSuccess) {
+                          GoRouter.of(context).go('/login');
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'شما با موفقیت از حساب کاربری خارج شدید.',
+                              ),
+                            ),
+                          );
+                        }
+                        if (state is LogoutStateError) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(state.error)));
+                        }
                       },
-                      width: double.infinity,
-                      backgroundColor: AppColors.primary,
-                      textColor: AppColors.white,
+
+                      builder: (context, state) {
+                        return Button(
+                          label: 'خروج از حساب',
+                          onPressed: state is LogoutStateLoading
+                              ? null
+                              : () {
+                                  BlocProvider.of<LogoutBloc>(
+                                    context,
+                                  ).add(LogoutEventRequest());
+                                },
+                          width: double.infinity,
+                          backgroundColor: AppColors.primary,
+                          textColor: AppColors.white,
+                        );
+                      },
                     ),
                   ),
                 ],

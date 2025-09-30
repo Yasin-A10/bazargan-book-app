@@ -25,7 +25,7 @@ class AuthApiClient {
         requestBody: true,
         requestHeader: true,
         responseBody: true,
-        responseHeader: false,
+        responseHeader: true,
         error: true,
         compact: true,
         maxWidth: 90,
@@ -35,27 +35,27 @@ class AuthApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = SessionManager.instance.accessToken;
+          final token = SessionManager.instance.access;
           if (token != null) {
-            options.headers['Authorization'] = 'JWT $token';
+            options.headers['Authorization'] = 'NMT $token';
           }
           return handler.next(options);
         },
         onError: (DioException error, handler) async {
           if (error.response?.statusCode == 401) {
-            final refreshToken = SessionManager.instance.refreshToken;
-            if (refreshToken != null) {
+            final refresh = SessionManager.instance.refresh;
+            if (refresh != null) {
               try {
-                final newTokens = await _refreshToken(refreshToken);
+                final newTokens = await _refreshToken(refresh);
                 await SessionManager.instance.saveSession(
-                  accessToken: newTokens['access_token'],
-                  refreshToken: newTokens['refresh_token'],
-                  userId: newTokens['user_id'],
+                  access: newTokens['access'],
+                  refresh: newTokens['refresh'],
+                  role: newTokens['role'],
                 );
 
                 final newRequest = error.requestOptions;
                 newRequest.headers['Authorization'] =
-                    'JWT ${newTokens['access_token']}';
+                    'NMT ${newTokens['access']}';
                 final cloneReq = await dio.fetch(newRequest);
                 return handler.resolve(cloneReq);
               } catch (e) {
@@ -92,11 +92,11 @@ class AuthApiClient {
   }
 
   //! for refresh token
-  static Future<Map<String, dynamic>> _refreshToken(String refreshToken) async {
+  static Future<Map<String, dynamic>> _refreshToken(String refresh) async {
     final dio = Dio();
     final response = await dio.post(
-      'https://panel.start-team.ir/auth/refresh/',
-      data: {'refresh_token': refreshToken},
+      'https://api.bazargan.app/auth/refresh-token/',
+      data: {'refresh': refresh},
       options: Options(headers: {'Accept': 'application/json'}),
     );
 

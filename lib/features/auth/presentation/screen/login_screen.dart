@@ -1,5 +1,6 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
+import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
@@ -29,6 +30,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('access token: ${SessionManager.instance.access}');
+    print('refresh token: ${SessionManager.instance.refresh}');
+    print('is logged in: ${SessionManager.instance.isLoggedIn()}');
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -124,7 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     BlocConsumer<SmsBloc, SmsState>(
                       listener: (context, state) {
                         if (state is SmsStateSuccess) {
-                          context.go('/otp', extra: phoneNumberController.text);
+                          context.go(
+                            '/otp',
+                            extra: {
+                              "phoneNumber": phoneNumberController.text,
+                              "hasFavCategories":
+                                  state.success['has_fav_categories'],
+                            },
+                          );
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('کد تایید ارسال شد')),

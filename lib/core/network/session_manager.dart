@@ -7,8 +7,8 @@ class SessionManager {
 
   SharedPreferences? _preferences;
 
-  static const _keyAccessToken = 'access_token';
-  static const _keyRefreshToken = 'refresh_token';
+  static const _keyAccess = 'access';
+  static const _keyRefresh = 'refresh';
   static const _keyRole = 'role';
 
   // static const String accessToken =
@@ -24,30 +24,30 @@ class SessionManager {
 
   //! for save session
   Future<void> saveSession({
-    required String accessToken,
-    required String refreshToken,
+    required String access,
+    required String refresh,
     required String role,
   }) async {
     if (_preferences == null) await init();
 
-    await _preferences!.setString(_keyAccessToken, accessToken);
-    await _preferences!.setString(_keyRefreshToken, refreshToken);
+    await _preferences!.setString(_keyAccess, access);
+    await _preferences!.setString(_keyRefresh, refresh);
     await _preferences!.setString(_keyRole, role);
   }
 
   //! for get access token
-  String? get accessToken => _preferences?.getString(_keyAccessToken);
+  String? get access => _preferences?.getString(_keyAccess);
 
   //! for get refresh token
-  String? get refreshToken => _preferences?.getString(_keyRefreshToken);
+  String? get refresh => _preferences?.getString(_keyRefresh);
 
   //! for get role
   String? get role => _preferences?.getString(_keyRole);
 
   //! for check if user is logged in
   bool isLoggedIn() {
-    return _preferences?.getString(_keyAccessToken) != null &&
-        _preferences?.getString(_keyAccessToken) != null;
+    return _preferences?.getString(_keyAccess) != null &&
+        _preferences?.getString(_keyRefresh) != null;
   }
 
   //! for logout
@@ -55,8 +55,8 @@ class SessionManager {
   //   await _preferences?.clear();
   // }
   Future<void> clearSession() async {
-    await _preferences?.remove(_keyAccessToken);
-    await _preferences?.remove(_keyRefreshToken);
+    await _preferences?.remove(_keyAccess);
+    await _preferences?.remove(_keyRefresh);
     await _preferences?.remove(_keyRole);
   }
 }

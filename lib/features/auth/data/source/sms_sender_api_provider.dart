@@ -12,7 +12,7 @@ class SmsSenderApiProvider {
         requestBody: true,
         requestHeader: true,
         responseBody: true,
-        responseHeader: false,
+        responseHeader: true,
         error: true,
         compact: true,
         maxWidth: 90,

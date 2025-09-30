@@ -1,8 +1,11 @@
 import 'package:bazargan/features/auth/data/repository/login_repository_impl.dart';
+import 'package:bazargan/features/auth/data/repository/logout_repository_impl.dart';
 import 'package:bazargan/features/auth/data/repository/sms_sender_repository_impl.dart';
 import 'package:bazargan/features/auth/data/source/login_api_provider.dart';
+import 'package:bazargan/features/auth/data/source/logout_api_provider.dart';
 import 'package:bazargan/features/auth/data/source/sms_sender_api_provider.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
 import 'package:bazargan/features/home/data/source/home_api_provider.dart';
@@ -18,6 +21,7 @@ setup() {
   //! API Providers
   locator.registerSingleton<SmsSenderApiProvider>(SmsSenderApiProvider());
   locator.registerSingleton<LoginApiProvider>(LoginApiProvider());
+  locator.registerSingleton<LogoutApiProvider>(LogoutApiProvider());
   locator.registerSingleton<HomeApiProvider>(HomeApiProvider());
 
   //! Repository
@@ -27,6 +31,9 @@ setup() {
   locator.registerSingleton<LoginRepositoryImpl>(
     LoginRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<LogoutRepositoryImpl>(
+    LogoutRepositoryImpl(apiProvider: locator()),
+  );
   locator.registerSingleton<HomeRepositoryImpl>(
     HomeRepositoryImpl(apiProvider: locator()),
   );
@@ -34,5 +41,6 @@ setup() {
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
   locator.registerSingleton<LoginBloc>(LoginBloc(repository: locator()));
+  locator.registerSingleton<LogoutBloc>(LogoutBloc(repository: locator()));
   locator.registerSingleton<HomeBloc>(HomeBloc(repository: locator()));
 }

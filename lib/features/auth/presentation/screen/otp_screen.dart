@@ -14,7 +14,12 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
-  const OtpScreen({super.key, required this.phoneNumber});
+  final bool hasFavCategories;
+  const OtpScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.hasFavCategories,
+  });
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -31,6 +36,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('has faaaaaav: ${widget.hasFavCategories}');
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -136,7 +142,11 @@ class _OtpScreenState extends State<OtpScreen> {
                     BlocConsumer<LoginBloc, LoginState>(
                       listener: (context, state) {
                         if (state is LoginStateSuccess) {
-                          context.go('/get-category');
+                          if (widget.hasFavCategories == false) {
+                            context.go('/get-category');
+                          } else {
+                            context.go('/');
+                          }
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('ورود موفقیت آمیز')),

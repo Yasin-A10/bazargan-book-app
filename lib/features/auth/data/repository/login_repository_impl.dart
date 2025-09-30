@@ -19,8 +19,8 @@ class LoginRepositoryImpl {
       );
 
       await SessionManager.instance.saveSession(
-        accessToken: response.access,
-        refreshToken: response.refresh,
+        access: response.access,
+        refresh: response.refresh,
         role: response.role,
       );
 

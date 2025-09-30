@@ -1,5 +1,6 @@
 import 'package:bazargan/config/router/main_screen.dart';
 import 'package:bazargan/config/router/route_paths.dart';
+import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/screen/login_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/otp_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/category_screen.dart';
@@ -16,11 +17,11 @@ import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// final List<String> publicRoutes = [
-//   RoutePaths.login,
-//   RoutePaths.otp,
-//   RoutePaths.getName,
-// ];
+final List<String> publicRoutes = [
+  RoutePaths.login,
+  RoutePaths.otp,
+  RoutePaths.category,
+];
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: navigatorKey,
@@ -33,9 +34,15 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RoutePaths.otp,
-      builder: (context, state) =>
-          OtpScreen(phoneNumber: state.extra.toString()),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return OtpScreen(
+          phoneNumber: extra['phoneNumber'] as String,
+          hasFavCategories: extra['hasFavCategories'] as bool,
+        );
+      },
     ),
+
     GoRoute(
       path: RoutePaths.category,
       builder: (context, state) => const CategoryScreen(),
@@ -90,17 +97,17 @@ final GoRouter appRouter = GoRouter(
   ],
 
   //! Redirect
-  // redirect: (context, state) {
-  //   final isLoggedIn = SessionManager.instance.isLoggedIn();
-  //   final currentPath =
-  //       state.matchedLocation; //! fucking important -> MatchedLocation
+  redirect: (context, state) {
+    final isLoggedIn = SessionManager.instance.isLoggedIn();
+    final currentPath =
+        state.matchedLocation; //! fucking important -> MatchedLocation
 
-  //   final isPublicRoute = publicRoutes.contains(currentPath);
+    final isPublicRoute = publicRoutes.contains(currentPath);
 
-  //   if (!isLoggedIn && !isPublicRoute) return '/login';
-  //   if (isLoggedIn && currentPath == '/login') return '/';
-  //   return null;
-  // },
+    if (!isLoggedIn && !isPublicRoute) return '/login';
+    if (isLoggedIn && currentPath == '/login') return '/';
+    return null;
+  },
 
   //! Not found
   // errorBuilder: (context, state) => const NotFoundScreen(),
