@@ -7,7 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class BookListScreen extends StatefulWidget {
-  const BookListScreen({super.key});
+  final String title;
+  const BookListScreen({super.key, required this.title});
 
   @override
   State<BookListScreen> createState() => _BookListScreenState();
@@ -21,7 +22,7 @@ class _BookListScreenState extends State<BookListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'لیست کتاب‌ها',
+          widget.title,
           style: AppTextStyles.headlineLarge.copyWith(fontSize: 14),
         ),
         leading: IconButton(

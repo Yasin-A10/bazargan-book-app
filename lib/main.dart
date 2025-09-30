@@ -1,18 +1,26 @@
 import 'package:bazargan/config/router/app_router.dart';
 import 'package:bazargan/config/theme/app_theme.dart';
+import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/locator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //* for dependency injection
-  // await setup();
+  await setup();
 
   //* for shared_preferences
   // await SessionManager.instance.init();
 
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => locator<HomeBloc>())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

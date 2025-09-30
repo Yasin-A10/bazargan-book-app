@@ -47,7 +47,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RoutePaths.bookList,
-      builder: (context, state) => const BookListScreen(),
+      builder: (context, state) =>
+          BookListScreen(title: state.extra.toString()),
     ),
 
     //! Search

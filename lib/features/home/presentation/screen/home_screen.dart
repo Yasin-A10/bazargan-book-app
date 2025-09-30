@@ -4,7 +4,9 @@ import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
+import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/widgets/list_widget.dart';
@@ -16,6 +18,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String bestSellerBooksTitle = 'پرفروشترین ها';
+    final String popularBooksTitle = 'محبوب ترین ها';
+    final String forYouTitle = 'بهترین ها برای تو';
+
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
+    homeBloc.add(LoadHomeEvent());
+
     return Scaffold(
       appBar: AppBar(
         title: InkWell(
@@ -25,63 +34,87 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 16,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Button(
-                    label: 'دسته‌بندی‌ها',
-                    textColor: AppColors.secondary,
-                    backgroundColor: AppColors.secondaryTint8,
-                    width: double.infinity,
-                    onPressed: () {
-                      context.push(RoutePaths.login);
-                    },
-                    icon: Icon(
-                      Iconsax.element_3,
-                      size: 20,
-                      color: AppColors.secondary,
-                    ),
+          BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              if (state is HomeLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is HomeError) {
+                return Center(child: Text(state.message));
+              }
+
+              if (state is HomeSuccess) {
+                final categories = state.homePageModel.categories;
+                final bestSellerBooks = state.homePageModel.bestSellerBooks;
+                final popularBooks = state.homePageModel.popularBooks;
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 16,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Button(
+                          label: 'دسته‌بندی‌ها',
+                          textColor: AppColors.secondary,
+                          backgroundColor: AppColors.secondaryTint8,
+                          width: double.infinity,
+                          onPressed: () {
+                            context.push(RoutePaths.login);
+                          },
+                          icon: Icon(
+                            Iconsax.element_3,
+                            size: 20,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 0),
+
+                      ListWidget(
+                        title: bestSellerBooksTitle,
+                        listHeight: 200,
+                        books: bestSellerBooks,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(color: AppColors.neutralE3E3E3),
+                      ),
+
+                      CategoryList(
+                        title: 'دسته‌بندی',
+                        listHeight: 80,
+                        categories: categories,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(color: AppColors.neutralE3E3E3),
+                      ),
+
+                      ListWidget(
+                        title: popularBooksTitle,
+                        listHeight: 200,
+                        books: popularBooks,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(color: AppColors.neutralE3E3E3),
+                      ),
+
+                      ListWidget(
+                        title: forYouTitle,
+                        listHeight: 200,
+                        books: popularBooks,
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(height: 0),
-
-                ListWidget(title: 'جدیدترین‌ها', listHeight: 200),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(color: AppColors.neutralE3E3E3),
-                ),
-
-                CategoryList(title: 'دسته‌بندی', listHeight: 80),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(color: AppColors.neutralE3E3E3),
-                ),
-
-                ListWidget(title: 'محبوب‌ترین‌‌ها', listHeight: 200),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(color: AppColors.neutralE3E3E3),
-                ),
-
-                ListWidget(title: 'جدیدترین‌ها', listHeight: 200),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(color: AppColors.neutralE3E3E3),
-                ),
-                ListWidget(title: 'پرفروشترین‌ها', listHeight: 200),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Divider(color: AppColors.neutralE3E3E3),
-                ),
-
-                ListWidget(title: 'پرفروش‌ترین‌های متنی', listHeight: 200),
-              ],
-            ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           CartButton(count: 3),
         ],

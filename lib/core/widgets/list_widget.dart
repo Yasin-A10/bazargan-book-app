@@ -1,23 +1,26 @@
 import 'package:bazargan/core/constants/colors.dart';
-import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/features/home/data/model/home_page_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ListWidget extends StatelessWidget {
   final String title;
   final String seeAll;
   final String? link;
   final double listHeight;
-  // final List<String> items;
+  final List<Book> books;
+
   const ListWidget({
     super.key,
     required this.title,
     this.seeAll = 'همه',
     this.link,
     required this.listHeight,
-    // required this.items,
+    required this.books,
   });
 
   @override
@@ -33,7 +36,7 @@ class ListWidget extends StatelessWidget {
               Text(title, style: AppTextStyles.headlineLarge),
               InkWell(
                 onTap: () {
-                  context.push('/book-list');
+                  context.push('/book-list', extra: title);
                 },
                 child: Row(
                   spacing: 4,
@@ -56,33 +59,45 @@ class ListWidget extends StatelessWidget {
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             scrollDirection: Axis.horizontal,
-            itemCount: 5,
+            itemCount: books.length,
             itemBuilder: (context, index) {
-              return Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 10.8,
-                      offset: const Offset(0, 0),
+              final book = books[index];
+              final double bookHeight = book.type == 'صوتی' ? 120 : 200;
+
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: bookHeight,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10.8,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      placeholder: (context, url) => Center(
+                        child: LoadingAnimationWidget.flickr(
+                          leftDotColor: AppColors.primary,
+                          rightDotColor: AppColors.secondary,
+                          size: 30,
+                        ),
+                      ),
+                      imageUrl: book.picture,
+                      fit: BoxFit.cover,
+                      width: 120,
+                      height: bookHeight,
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    Images.listImg,
-                    fit: BoxFit.cover,
-                    width: 120,
-                    height: 200,
                   ),
                 ),
               );
             },
-            separatorBuilder: (context, index) {
-              return const SizedBox(width: 16);
-            },
+            separatorBuilder: (context, index) => const SizedBox(width: 16),
           ),
         ),
       ],
