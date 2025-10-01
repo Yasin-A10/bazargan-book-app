@@ -3,10 +3,12 @@ import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
+import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile/presentation/widgets/profile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +24,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final GlobalKey<FormState> _editNameFormKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _walletController = TextEditingController();
 
   final List<int> suggestedAmounts = [50000, 100000, 200000, 500000];
@@ -29,11 +33,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<UserBloc>(context).add(LoadUserEvent());
   }
 
   @override
   void dispose() {
     _walletController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -44,165 +50,188 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: SingleChildScrollView(
-          child: Column(
-            spacing: 16,
-            children: [
-              ProfileCard(
-                title: 'ارش رضاوند',
-                subtitle: '۰۹۱۲۷۵۴۳۵۵۶۵',
-                mainIcon: Iconsax.user_copy,
-                subIcon: Iconsax.edit,
-                background: AppColors.primary,
-                onTap: () {
-                  _openEditName(context);
-                },
-              ),
-              ProfileCard(
-                title: '${formatNumberToPersian(120000)} تومان',
-                subtitle: 'موجودی کیف پول شما',
-                mainIcon: Iconsax.wallet_copy,
-                subIcon: Iconsax.add_square,
-                background: AppColors.tertiary,
-                onTap: () {
-                  _openChargeWallet(context);
-                },
-              ),
-              ProfileCard(
-                title: '۷۶ روز باقی مانده',
-                subtitle: 'از بسته ۳ ماهه اشتراک ویژه',
-                mainIcon: Iconsax.polygon_matic_copy,
-                subIcon: Iconsax.add_square,
-                background: AppColors.secondary,
-                onTap: () {},
-              ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  spacing: 8,
+          child: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is UserError) {
+                return Center(child: Text(state.error));
+              }
+
+              if (state is UserSuccess) {
+                final user = state.user;
+                return Column(
+                  spacing: 16,
                   children: [
-                    ListItemWidget(
-                      title: 'نظرات من',
-                      rightIcon: Icon(Iconsax.messages_3_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
+                    ProfileCard(
+                      title: user.displayName ?? 'نام کاربری',
+                      subtitle: formatNumberToPersianWithoutSeparator(
+                        user.username,
                       ),
-                      onPressed: () {
-                        context.push(RoutePaths.profileComments);
+                      mainIcon: Iconsax.user_copy,
+                      subIcon: Iconsax.edit,
+                      background: AppColors.primary,
+                      onTap: () {
+                        _openEditName(context);
                       },
                     ),
-                    Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                    ListItemWidget(
-                      title: 'نشان شده ها',
-                      rightIcon: Icon(Iconsax.bookmark_2_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      onPressed: () {
-                        context.push(RoutePaths.myLibraryBookmarks);
+                    ProfileCard(
+                      title:
+                          '${formatNumberToPersian(user.walletBalance)} تومان',
+                      subtitle: 'موجودی کیف پول شما',
+                      mainIcon: Iconsax.wallet_copy,
+                      subIcon: Iconsax.add_square,
+                      background: AppColors.tertiary,
+                      onTap: () {
+                        _openChargeWallet(context);
                       },
                     ),
-                    Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                    ListItemWidget(
-                      title: 'تاریخچه تراکنش‌ها',
-                      rightIcon: Icon(Iconsax.clock_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      onPressed: () {
-                        context.push(RoutePaths.profileTransaction);
-                      },
+                    ProfileCard(
+                      title: '۷۶ روز باقی مانده',
+                      subtitle: 'از بسته ۳ ماهه اشتراک ویژه',
+                      mainIcon: Iconsax.polygon_matic_copy,
+                      subIcon: Iconsax.add_square,
+                      background: AppColors.secondary,
+                      onTap: () {},
                     ),
-                    Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                    ListItemWidget(
-                      title: 'دسته بندی‌های مورد علاقه',
-                      rightIcon: Icon(Iconsax.heart_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
                       ),
-                      onPressed: () {
-                        context.push(RoutePaths.profileFavorites);
-                      },
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          ListItemWidget(
+                            title: 'نظرات من',
+                            rightIcon: Icon(Iconsax.messages_3_copy, size: 20),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            leftNumber: user.commentCount,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            onPressed: () {
+                              context.push(RoutePaths.profileComments);
+                            },
+                          ),
+                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+                          ListItemWidget(
+                            title: 'نشان شده ها',
+                            rightIcon: Icon(Iconsax.bookmark_2_copy, size: 20),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            leftNumber: user.markedBooksCount,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            onPressed: () {
+                              context.push(RoutePaths.myLibraryBookmarks);
+                            },
+                          ),
+                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+                          ListItemWidget(
+                            title: 'تاریخچه تراکنش‌ها',
+                            rightIcon: Icon(Iconsax.clock_copy, size: 20),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            leftNumber: user.transactionsCount,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            onPressed: () {
+                              context.push(RoutePaths.profileTransaction);
+                            },
+                          ),
+                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+                          ListItemWidget(
+                            title: 'دسته بندی‌های مورد علاقه',
+                            rightIcon: Icon(Iconsax.heart_copy, size: 20),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            leftNumber: user.favouriteCategoriesCount,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            onPressed: () {
+                              context.push(RoutePaths.profileFavorites);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          ListItemWidget(
+                            title: 'پشتیبانی',
+                            rightIcon: Icon(Iconsax.call_copy, size: 20),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                            onPressed: () {
+                              _openSupport(context);
+                            },
+                          ),
+                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+                          ListItemWidget(
+                            title: 'خروج از حساب',
+                            rightIcon: Icon(
+                              Iconsax.logout_copy,
+                              size: 20,
+                              color: AppColors.error,
+                            ),
+                            leftIcon: Iconsax.arrow_left_2_copy,
+                            titleStyle: AppTextStyles.body.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.error,
+                            ),
+                            onPressed: () {
+                              _openLogout(context);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  spacing: 8,
-                  children: [
-                    ListItemWidget(
-                      title: 'پشتیبانی',
-                      rightIcon: Icon(Iconsax.call_copy, size: 20),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      onPressed: () {
-                        _openSupport(context);
-                      },
-                    ),
-                    Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                    ListItemWidget(
-                      title: 'خروج از حساب',
-                      rightIcon: Icon(
-                        Iconsax.logout_copy,
-                        size: 20,
-                        color: AppColors.error,
-                      ),
-                      leftIcon: Iconsax.arrow_left_2_copy,
-                      titleStyle: AppTextStyles.body.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.error,
-                      ),
-                      onPressed: () {
-                        _openLogout(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                );
+              }
+              return const SizedBox();
+            },
           ),
         ),
       ),
@@ -243,15 +272,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColors.primary,
                 ),
               ),
-              InputTextFormField(label: 'نام نمایشی'),
-              Button(
-                label: 'ذخیره',
-                onPressed: () {
-                  context.pop();
+              Form(
+                key: _editNameFormKey,
+                child: InputTextFormField(
+                  label: 'نام نمایشی',
+                  controller: _nameController,
+                  validator: (value) {
+                    return AppValidator.userName(value);
+                  },
+                ),
+              ),
+              BlocConsumer<UserBloc, UserState>(
+                listener: (context, state) {
+                  if (state is UpdateNameSuccess) {
+                    context.read<UserBloc>().add(LoadUserEvent());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('نام نمایشی با موفقیت تغییر یافت'),
+                      ),
+                    );
+                    context.pop();
+                  }
                 },
-                width: double.infinity,
-                backgroundColor: AppColors.secondary,
-                textColor: AppColors.white,
+                builder: (context, state) {
+                  return Button(
+                    label: 'ذخیره',
+                    onPressed: state is UpdateNameLoading
+                        ? null
+                        : () {
+                            if (_editNameFormKey.currentState!.validate()) {
+                              context.read<UserBloc>().add(
+                                UpdateNameEvent(name: _nameController.text),
+                              );
+                            }
+                          },
+                    width: double.infinity,
+                    backgroundColor: AppColors.secondary,
+                    textColor: AppColors.white,
+                  );
+                },
               ),
             ],
           ),

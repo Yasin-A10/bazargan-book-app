@@ -11,6 +11,11 @@ import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
 import 'package:bazargan/features/home/data/source/home_api_provider.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/features/profile/data/repository/user_repository_impl.dart';
+import 'package:bazargan/features/profile/data/repository/update_name_repository_impl.dart';
+import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
+import 'package:bazargan/features/profile/data/source/update_name_api_provider.dart';
+import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/search/data/repository/search_repository_impl.dart';
 import 'package:bazargan/features/search/data/source/search_api_provider.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -28,6 +33,8 @@ setup() {
   locator.registerSingleton<LogoutApiProvider>(LogoutApiProvider());
   locator.registerSingleton<HomeApiProvider>(HomeApiProvider());
   locator.registerSingleton<SearchApiProvider>(SearchApiProvider());
+  locator.registerSingleton<UserApiProvider>(UserApiProvider());
+  locator.registerSingleton<UpdateNameApiProvider>(UpdateNameApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -45,6 +52,12 @@ setup() {
   locator.registerSingleton<SearchRepositoryImpl>(
     SearchRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<UserRepositoryImpl>(
+    UserRepositoryImpl(apiProvider: locator()),
+  );
+  locator.registerSingleton<UpdateNameRepositoryImpl>(
+    UpdateNameRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -52,4 +65,7 @@ setup() {
   locator.registerSingleton<LogoutBloc>(LogoutBloc(repository: locator()));
   locator.registerSingleton<HomeBloc>(HomeBloc(repository: locator()));
   locator.registerSingleton<SearchBloc>(SearchBloc(repository: locator()));
+  locator.registerSingleton<UserBloc>(
+    UserBloc(userRepository: locator(), updateNameRepository: locator()),
+  );
 }
