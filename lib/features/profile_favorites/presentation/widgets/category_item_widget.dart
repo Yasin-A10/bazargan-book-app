@@ -41,8 +41,22 @@ class _CategoryItemWidgetState extends State<CategoryItemWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isSelected
-                ? SvgPicture.asset(widget.isSelectedIcon, height: 24)
-                : SvgPicture.asset(widget.icon, height: 24),
+                ? SvgPicture.network(
+                    widget.isSelectedIcon,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.white,
+                      BlendMode.srcIn,
+                    ),
+                  )
+                : SvgPicture.network(
+                    widget.icon,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
             const SizedBox(width: 8),
             Text(
               widget.title,

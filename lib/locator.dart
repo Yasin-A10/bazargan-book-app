@@ -16,6 +16,11 @@ import 'package:bazargan/features/profile/data/repository/update_name_repository
 import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
 import 'package:bazargan/features/profile/data/source/update_name_api_provider.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
+import 'package:bazargan/features/profile_favorites/data/repository/add_favorite_repository_impl.dart';
+import 'package:bazargan/features/profile_favorites/data/repository/favorite_category_repository_impl.dart';
+import 'package:bazargan/features/profile_favorites/data/source/add_favorite_api_provider.dart';
+import 'package:bazargan/features/profile_favorites/data/source/favorite_category_api_provider.dart';
+import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:bazargan/features/search/data/repository/search_repository_impl.dart';
 import 'package:bazargan/features/search/data/source/search_api_provider.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -35,6 +40,10 @@ setup() {
   locator.registerSingleton<SearchApiProvider>(SearchApiProvider());
   locator.registerSingleton<UserApiProvider>(UserApiProvider());
   locator.registerSingleton<UpdateNameApiProvider>(UpdateNameApiProvider());
+  locator.registerSingleton<FavoriteCategoryApiProvider>(
+    FavoriteCategoryApiProvider(),
+  );
+  locator.registerSingleton<AddFavoriteApiProvider>(AddFavoriteApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -58,6 +67,12 @@ setup() {
   locator.registerSingleton<UpdateNameRepositoryImpl>(
     UpdateNameRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<FavoriteCategoryRepositoryImpl>(
+    FavoriteCategoryRepositoryImpl(apiProvider: locator()),
+  );
+  locator.registerSingleton<AddFavoriteRepositoryImpl>(
+    AddFavoriteRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -67,5 +82,11 @@ setup() {
   locator.registerSingleton<SearchBloc>(SearchBloc(repository: locator()));
   locator.registerSingleton<UserBloc>(
     UserBloc(userRepository: locator(), updateNameRepository: locator()),
+  );
+  locator.registerSingleton<FavoriteBloc>(
+    FavoriteBloc(
+      favoriteCategoryRepository: locator(),
+      addFavoriteRepository: locator(),
+    ),
   );
 }
