@@ -5,6 +5,7 @@ import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
 import 'package:bazargan/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,7 @@ void main() async {
         BlocProvider(create: (_) => locator<LoginBloc>()),
         BlocProvider(create: (_) => locator<LogoutBloc>()),
         BlocProvider(create: (_) => locator<HomeBloc>()),
+        BlocProvider(create: (_) => locator<SearchBloc>()),
       ],
       child: const MyApp(),
     ),

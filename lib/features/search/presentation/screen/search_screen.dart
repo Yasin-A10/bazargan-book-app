@@ -8,25 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-// final List<Map<String, String>> categories = [
-//   {'title': 'رمان', 'icon': Images.category1Black},
-//   {'title': 'تاریخ', 'icon': Images.category1Black},
-//   {'title': 'علم', 'icon': Images.category1Black},
-//   {'title': 'فیلسوفی', 'icon': Images.category1Black},
-//   {'title': 'مدیریت', 'icon': Images.category1Black},
-//   {'title': 'سفر در زمان', 'icon': Images.category1Black},
-//   {'title': 'دینی', 'icon': Images.category1Black},
-//   {'title': 'کسب و کار', 'icon': Images.category1Black},
-//   {'title': 'سیاسی', 'icon': Images.category1Black},
-//   {'title': 'علوم اجتماعی', 'icon': Images.category1Black},
-//   {'title': 'علوم پزشکی', 'icon': Images.category1Black},
-//   {'title': 'علوم زیستی', 'icon': Images.category1Black},
-//   {'title': 'نجوم', 'icon': Images.category1Black},
-//   {'title': 'نقد و ارزیابی', 'icon': Images.category1Black},
-//   {'title': 'فیزیک', 'icon': Images.category1Black},
-//   {'title': 'ریاضیات', 'icon': Images.category1Black},
-// ];
-
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
