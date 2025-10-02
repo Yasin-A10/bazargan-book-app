@@ -29,12 +29,7 @@ class HomeScreen extends StatelessWidget {
     homeBloc.add(LoadHomeEvent());
 
     return Scaffold(
-      appBar: AppBar(
-        title: InkWell(
-          onTap: () => context.push(RoutePaths.book),
-          child: SvgPicture.asset(Images.bazarganRed, height: 40),
-        ),
-      ),
+      appBar: AppBar(title: SvgPicture.asset(Images.bazarganRed, height: 40)),
       body: Stack(
         children: [
           BlocBuilder<HomeBloc, HomeState>(
@@ -59,7 +54,6 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 16,
                     children: [
-                      HomeSliderWidget(slider: slider),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Button(
@@ -75,6 +69,10 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: 0),
+
+                      HomeSliderWidget(slider: slider),
+
                       SizedBox(height: 0),
 
                       ListWidget(

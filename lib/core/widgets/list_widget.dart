@@ -77,21 +77,26 @@ class ListWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      fadeInDuration: const Duration(milliseconds: 300),
-                      placeholder: (context, url) => Center(
-                        child: LoadingAnimationWidget.flickr(
-                          leftDotColor: AppColors.primary,
-                          rightDotColor: AppColors.secondary,
-                          size: 30,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push('/book', extra: book.id);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        fadeInDuration: const Duration(milliseconds: 300),
+                        placeholder: (context, url) => Center(
+                          child: LoadingAnimationWidget.flickr(
+                            leftDotColor: AppColors.primary,
+                            rightDotColor: AppColors.secondary,
+                            size: 30,
+                          ),
                         ),
+                        imageUrl: book.picture,
+                        fit: BoxFit.cover,
+                        width: 120,
+                        height: bookHeight,
                       ),
-                      imageUrl: book.picture,
-                      fit: BoxFit.cover,
-                      width: 120,
-                      height: bookHeight,
                     ),
                   ),
                 ),

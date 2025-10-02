@@ -88,7 +88,7 @@ final GoRouter appRouter = GoRouter(
     //! Book
     GoRoute(
       path: RoutePaths.book,
-      builder: (context, state) => const BookScreen(),
+      builder: (context, state) => BookScreen(bookId: state.extra as int),
     ),
     GoRoute(
       path: RoutePaths.cart,
