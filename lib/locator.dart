@@ -21,6 +21,9 @@ import 'package:bazargan/features/profile_favorites/data/repository/favorite_cat
 import 'package:bazargan/features/profile_favorites/data/source/add_favorite_api_provider.dart';
 import 'package:bazargan/features/profile_favorites/data/source/favorite_category_api_provider.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:bazargan/features/profile_transaction/data/repository/user_transaction_repository_impl.dart';
+import 'package:bazargan/features/profile_transaction/data/source/user_transaction_api_providr.dart';
+import 'package:bazargan/features/profile_transaction/presentation/bloc/transaction_bloc.dart';
 import 'package:bazargan/features/search/data/repository/search_repository_impl.dart';
 import 'package:bazargan/features/search/data/source/search_api_provider.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -44,6 +47,9 @@ setup() {
     FavoriteCategoryApiProvider(),
   );
   locator.registerSingleton<AddFavoriteApiProvider>(AddFavoriteApiProvider());
+  locator.registerSingleton<UserTransactionApiProvider>(
+    UserTransactionApiProvider(),
+  );
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -73,6 +79,9 @@ setup() {
   locator.registerSingleton<AddFavoriteRepositoryImpl>(
     AddFavoriteRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<UserTransactionRepositoryImpl>(
+    UserTransactionRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -88,5 +97,8 @@ setup() {
       favoriteCategoryRepository: locator(),
       addFavoriteRepository: locator(),
     ),
+  );
+  locator.registerSingleton<TransactionBloc>(
+    TransactionBloc(repository: locator()),
   );
 }

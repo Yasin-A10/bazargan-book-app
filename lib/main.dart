@@ -7,6 +7,7 @@ import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:bazargan/features/profile_transaction/presentation/bloc/transaction_bloc.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
 import 'package:bazargan/locator.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ void main() async {
         BlocProvider(create: (_) => locator<SearchBloc>()),
         BlocProvider(create: (_) => locator<UserBloc>()),
         BlocProvider(create: (_) => locator<FavoriteBloc>()),
+        BlocProvider(create: (_) => locator<TransactionBloc>()),
       ],
       child: const MyApp(),
     ),

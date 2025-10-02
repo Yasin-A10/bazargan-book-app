@@ -13,14 +13,14 @@ import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-// import 'package:bazargan/core/network/session_manager.dart';
+import 'package:bazargan/core/network/session_manager.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // print('access token: ${SessionManager.instance.access}');
+    print('access token: ${SessionManager.instance.access}');
     final String bestSellerBooksTitle = 'پرفروشترین ها';
     final String popularBooksTitle = 'محبوب ترین ها';
     final String forYouTitle = 'بهترین ها برای تو';

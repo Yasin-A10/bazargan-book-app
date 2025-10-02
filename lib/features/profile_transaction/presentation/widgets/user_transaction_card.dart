@@ -1,17 +1,19 @@
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/core/utils/convert_to_jalali.dart';
+import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:flutter/material.dart';
 import 'package:bazargan/core/constants/colors.dart';
 
 class UserTransactionCard extends StatelessWidget {
   final String head;
-  final String title;
+  final List<String> title;
   final String date;
   final String time;
-  final String price;
-  final String? discount;
+  final int price;
+  final int? discount;
   final String way;
   final String code;
-  final bool status;
+  final String status;
   const UserTransactionCard({
     super.key,
     required this.head,
@@ -44,19 +46,30 @@ class UserTransactionCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 4,
+        spacing: 8,
         children: [
           Text(head, style: AppTextStyles.headlineLarge.copyWith(fontSize: 12)),
-          TransactionRow(title: 'عنوان:', value: title),
-          TransactionRow(title: 'تاریخ و ساعت:', value: '$date . $time'),
-          TransactionRow(title: 'تخفیف:', value: discount ?? '0'),
-          TransactionRow(title: 'قیمت:', value: price),
-          TransactionRow(title: 'روش پرداخت:', value: way),
-          TransactionRow(title: 'کد پیگیری:', value: code),
+          TransactionRow(title: 'عنوان:', value: title.join(', ')),
           TransactionRow(
-            title: 'وضعیت',
-            value: status ? 'موفق' : 'ناموفق',
-            valueColor: status ? AppColors.success : AppColors.error,
+            title: 'تاریخ و ساعت:',
+            value: formatNumberToPersianWithoutSeparator(
+              '${convertToJalaliTime(time)} . ${convertToJalaliDate(date)}',
+            ),
+          ),
+          TransactionRow(
+            title: 'تخفیف:',
+            value: formatNumberToPersian(discount ?? 0),
+          ),
+          TransactionRow(title: 'قیمت:', value: formatNumberToPersian(price)),
+          TransactionRow(title: 'روش پرداخت:', value: way),
+          TransactionRow(
+            title: 'کد پیگیری:',
+            value: formatNumberToPersianWithoutSeparator(code),
+          ),
+          TransactionRow(
+            title: 'وضعیت:',
+            value: status == 'p' ? 'موفق' : 'ناموفق',
+            valueColor: status == 'p' ? AppColors.success : AppColors.error,
           ),
         ],
       ),
