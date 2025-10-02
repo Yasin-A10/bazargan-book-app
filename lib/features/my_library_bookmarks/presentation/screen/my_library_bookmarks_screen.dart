@@ -1,6 +1,8 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/card/book_card_row.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -9,6 +11,8 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<MarkedBooksBloc>(context).add(LoadMarkedBooksEvent());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('نشان شده ها'),
@@ -21,23 +25,40 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: ListView.separated(
-        itemCount: 9,
-        scrollDirection: Axis.vertical,
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          return BookCardRow(
-            title: 'چگونه یک درونگرای تاثیر گذار باشیم',
-            author: 'حسین کاظمی یزدی',
-            publisher: 'انتشارات جیحون',
-            price: '10000',
-            rate: '4.5',
-            image: 'assets/images/list-img.jpg',
-            isSave: true,
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(height: 16);
+      body: BlocBuilder<MarkedBooksBloc, MarkedBooksState>(
+        builder: (context, state) {
+          if (state is MarkedBooksLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is MarkedBooksError) {
+            return Center(child: Text(state.error));
+          }
+
+          if (state is MarkedBooksSuccess) {
+            final books = state.markedBooksModel.results;
+            return ListView.separated(
+              itemCount: books.length,
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(16),
+              itemBuilder: (context, index) {
+                final book = books[index];
+                return BookCardRow(
+                  title: book.name,
+                  author: book.author.first.name,
+                  publisher: book.publisher.name,
+                  price: book.price,
+                  rate: book.avgRate,
+                  image: book.thumbnail,
+                  isSave: book.isMarked,
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 24);
+              },
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
     );

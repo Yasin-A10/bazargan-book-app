@@ -11,6 +11,9 @@ import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
 import 'package:bazargan/features/home/data/source/home_api_provider.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/features/my_library_bookmarks/data/repository/marked_books_repository_impl.dart';
+import 'package:bazargan/features/my_library_bookmarks/data/source/marked_books_api_provider.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/data/repository/user_repository_impl.dart';
 import 'package:bazargan/features/profile/data/repository/update_name_repository_impl.dart';
 import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
@@ -50,6 +53,7 @@ setup() {
   locator.registerSingleton<UserTransactionApiProvider>(
     UserTransactionApiProvider(),
   );
+  locator.registerSingleton<MarkedBooksApiProvider>(MarkedBooksApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -82,6 +86,9 @@ setup() {
   locator.registerSingleton<UserTransactionRepositoryImpl>(
     UserTransactionRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<MarkedBooksRepositoryImpl>(
+    MarkedBooksRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -100,5 +107,8 @@ setup() {
   );
   locator.registerSingleton<TransactionBloc>(
     TransactionBloc(repository: locator()),
+  );
+  locator.registerSingleton<MarkedBooksBloc>(
+    MarkedBooksBloc(repository: locator()),
   );
 }

@@ -61,24 +61,25 @@ class _BookListScreenState extends State<BookListScreen> {
           );
         },
         child: isColumn
-            ? ListView.separated(
-                itemCount: 9,
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(16),
-                itemBuilder: (context, index) {
-                  return const BookCardRow(
-                    title: 'چگونه یک درونگرای تاثیر گذار باشیم',
-                    author: 'حسین کاظمی یزدی',
-                    publisher: 'انتشارات جیحون',
-                    price: '10000',
-                    rate: '4.5',
-                    image: 'assets/images/list-img.jpg',
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 16);
-                },
-              )
+            ? const SizedBox.shrink()
+            // ListView.separated(
+            //     itemCount: 9,
+            //     scrollDirection: Axis.vertical,
+            //     padding: const EdgeInsets.all(16),
+            //     itemBuilder: (context, index) {
+            //       return const BookCardRow(
+            //         title: 'چگونه یک درونگرای تاثیر گذار باشیم',
+            //         author: 'حسین کاظمی یزدی',
+            //         publisher: 'انتشارات جیحون',
+            //         price: '10000',
+            //         rate: '4.5',
+            //         image: 'assets/images/list-img.jpg',
+            //       );
+            //     },
+            //     separatorBuilder: (context, index) {
+            //       return const SizedBox(height: 16);
+            //     },
+            //   )
             : GridView.builder(
                 itemCount: 9,
                 scrollDirection: Axis.vertical,

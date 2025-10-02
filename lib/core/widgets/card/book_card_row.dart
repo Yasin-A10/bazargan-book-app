@@ -2,18 +2,20 @@ import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class BookCardRow extends StatelessWidget {
   final String title;
   final String author;
   final String publisher;
-  final String price;
+  final int price;
   final String image;
   final String? discount;
-  final String? rate;
+  final double? rate;
   final bool? isSave;
 
   const BookCardRow({
@@ -45,11 +47,19 @@ class BookCardRow extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              image,
+            child: CachedNetworkImage(
               width: 75,
               height: 110,
               fit: BoxFit.cover,
+              imageUrl: image,
+              fadeInDuration: const Duration(milliseconds: 300),
+              placeholder: (context, url) => Center(
+                child: LoadingAnimationWidget.flickr(
+                  leftDotColor: AppColors.primary,
+                  rightDotColor: AppColors.tertiary,
+                  size: 20,
+                ),
+              ),
             ),
           ),
         ),
@@ -99,7 +109,7 @@ class BookCardRow extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    formatNumberToPersian(int.parse(price)),
+                    formatNumberToPersian(price),
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.w500,

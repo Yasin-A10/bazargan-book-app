@@ -5,6 +5,7 @@ import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:bazargan/features/profile_transaction/presentation/bloc/transaction_bloc.dart';
@@ -34,6 +35,7 @@ void main() async {
         BlocProvider(create: (_) => locator<UserBloc>()),
         BlocProvider(create: (_) => locator<FavoriteBloc>()),
         BlocProvider(create: (_) => locator<TransactionBloc>()),
+        BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
       ],
       child: const MyApp(),
     ),
