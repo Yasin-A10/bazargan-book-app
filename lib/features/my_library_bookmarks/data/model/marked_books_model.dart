@@ -29,10 +29,10 @@ class Book {
   final Publisher publisher;
   final int editionYear;
   final int pageCount;
-  final int isbn;
+  final int? isbn;
   final int price;
   final int priceWithDiscount;
-  final String slug;
+  final String? slug;
   final bool isPurchased;
   final int discountPercent;
   final String thumbnail;
@@ -43,8 +43,8 @@ class Book {
   final List<dynamic> translator;
   final List<Category> categories;
   final dynamic awards;
-  final int rateCount;
-  final double avgRate;
+  final int? rateCount; // nullable
+  final double? avgRate; // nullable
   final bool isInCart;
   final int? commentsCount;
   final dynamic faqs;
@@ -62,10 +62,10 @@ class Book {
     required this.publisher,
     required this.editionYear,
     required this.pageCount,
-    required this.isbn,
+    this.isbn,
     required this.price,
     required this.priceWithDiscount,
-    required this.slug,
+    this.slug,
     required this.isPurchased,
     required this.discountPercent,
     required this.thumbnail,
@@ -76,8 +76,8 @@ class Book {
     required this.translator,
     required this.categories,
     this.awards,
-    required this.rateCount,
-    required this.avgRate,
+    this.rateCount,
+    this.avgRate,
     required this.isInCart,
     this.commentsCount,
     this.faqs,
@@ -114,7 +114,9 @@ class Book {
           .toList(),
       awards: json['awards'],
       rateCount: json['rate_count'],
-      avgRate: (json['avg_rate'] as num).toDouble(),
+      avgRate: json['avg_rate'] != null
+          ? (json['avg_rate'] as num).toDouble()
+          : null,
       isInCart: json['is_in_cart'],
       commentsCount: json['comments_count'],
       faqs: json['FAQs'],

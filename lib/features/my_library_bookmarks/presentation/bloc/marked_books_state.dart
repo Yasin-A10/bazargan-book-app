@@ -18,3 +18,18 @@ class MarkedBooksError extends MarkedBooksState {
 
   MarkedBooksError({required this.error});
 }
+
+//add bookmark
+class AddBookmarkLoading extends MarkedBooksState {}
+
+class AddBookmarkSuccess extends MarkedBooksState {
+  final Map<String, dynamic> bookmark;
+
+  AddBookmarkSuccess({required this.bookmark});
+}
+
+class AddBookmarkError extends MarkedBooksState {
+  final String error;
+
+  AddBookmarkError({required this.error});
+}

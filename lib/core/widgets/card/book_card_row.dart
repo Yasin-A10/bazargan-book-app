@@ -2,13 +2,16 @@ import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class BookCardRow extends StatelessWidget {
+  final int bookId;
   final String title;
   final String author;
   final String publisher;
@@ -20,6 +23,7 @@ class BookCardRow extends StatelessWidget {
 
   const BookCardRow({
     super.key,
+    required this.bookId,
     required this.title,
     required this.author,
     required this.publisher,
@@ -82,10 +86,35 @@ class BookCardRow extends StatelessWidget {
                       style: AppTextStyles.headlineLarge.copyWith(fontSize: 12),
                     ),
                   ),
-                  Icon(
-                    isSave == true ? Iconsax.save_2 : Iconsax.save_2_copy,
-                    color: AppColors.secondary,
-                    size: 16,
+
+                  BlocBuilder<MarkedBooksBloc, MarkedBooksState>(
+                    builder: (context, state) {
+                      return IconButton(
+                        onPressed: state is AddBookmarkLoading
+                            ? null
+                            : () {
+                                context.read<MarkedBooksBloc>().add(
+                                  AddBookmarkEvent(bookId: bookId),
+                                );
+                              },
+                        icon: state is AddBookmarkLoading
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                  color: AppColors.secondary,
+                                ),
+                              )
+                            : Icon(
+                                isSave == true
+                                    ? Iconsax.save_2
+                                    : Iconsax.save_2_copy,
+                                color: AppColors.secondary,
+                                size: 16,
+                              ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -1,6 +1,7 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/card/book_card_row.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
+import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,10 +23,18 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
             color: AppColors.neutral757575,
             size: 16,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            context.pop();
+            BlocProvider.of<UserBloc>(context).add(LoadUserEvent());
+          },
         ),
       ),
-      body: BlocBuilder<MarkedBooksBloc, MarkedBooksState>(
+      body: BlocConsumer<MarkedBooksBloc, MarkedBooksState>(
+        listener: (context, state) {
+          if (state is AddBookmarkSuccess) {
+            context.read<MarkedBooksBloc>().add(LoadMarkedBooksEvent());
+          }
+        },
         builder: (context, state) {
           if (state is MarkedBooksLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -44,6 +53,7 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final book = books[index];
                 return BookCardRow(
+                  bookId: book.id,
                   title: book.name,
                   author: book.author.first.name,
                   publisher: book.publisher.name,
