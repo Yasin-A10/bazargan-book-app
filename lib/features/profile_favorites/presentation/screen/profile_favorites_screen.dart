@@ -192,11 +192,11 @@ class _ProfileFavoritesScreenState extends State<ProfileFavoritesScreen> {
 
                                   return Wrap(
                                     spacing: 8,
-                                    runSpacing: 0,
                                     children: favoriteCategories.results!.map((
                                       category,
                                     ) {
                                       return Chip(
+                                        padding: EdgeInsets.zero,
                                         label: Text(
                                           category.title!,
                                           style: AppTextStyles.body.copyWith(
@@ -204,17 +204,13 @@ class _ProfileFavoritesScreenState extends State<ProfileFavoritesScreen> {
                                           ),
                                         ),
                                         backgroundColor: AppColors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 0,
-                                          vertical: 0,
-                                        ),
                                         shape: RoundedRectangleBorder(
                                           side: const BorderSide(
                                             color: AppColors.tertiary,
                                             width: 1,
                                           ),
                                           borderRadius: BorderRadius.circular(
-                                            20,
+                                            8,
                                           ),
                                         ),
                                       );

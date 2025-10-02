@@ -5,6 +5,7 @@ import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
+import 'package:bazargan/features/home/presentation/widgets/home_slider_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -50,6 +51,7 @@ class HomeScreen extends StatelessWidget {
                 final categories = state.homePageModel.categories;
                 final bestSellerBooks = state.homePageModel.bestSellerBooks;
                 final popularBooks = state.homePageModel.popularBooks;
+                final slider = state.homePageModel.slider;
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -57,6 +59,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 16,
                     children: [
+                      HomeSliderWidget(slider: slider),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Button(
