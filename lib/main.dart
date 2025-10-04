@@ -1,5 +1,6 @@
 import 'package:bazargan/config/router/app_router.dart';
 import 'package:bazargan/config/theme/app_theme.dart';
+import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
 import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
@@ -33,6 +34,7 @@ void main() async {
         BlocProvider(create: (_) => locator<LogoutBloc>()),
         BlocProvider(create: (_) => locator<HomeBloc>()),
         BlocProvider(create: (_) => locator<SearchBloc>()),
+        BlocProvider(create: (_) => locator<AllBooksBloc>()),
         BlocProvider(create: (_) => locator<UserBloc>()),
         BlocProvider(create: (_) => locator<FavoriteBloc>()),
         BlocProvider(create: (_) => locator<TransactionBloc>()),

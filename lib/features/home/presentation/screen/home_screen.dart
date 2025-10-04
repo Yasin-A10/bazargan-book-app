@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
-import 'package:bazargan/core/widgets/list_widget.dart';
+import 'package:bazargan/core/widgets/home_list_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/network/session_manager.dart';
@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
 
                       SizedBox(height: 0),
 
-                      ListWidget(
+                      HomeListWidget(
                         title: bestSellerBooksTitle,
                         listHeight: 200,
                         books: bestSellerBooks,
@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                         child: Divider(color: AppColors.neutralE3E3E3),
                       ),
 
-                      ListWidget(
+                      HomeListWidget(
                         title: popularBooksTitle,
                         listHeight: 200,
                         books: popularBooks,
@@ -105,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                         child: Divider(color: AppColors.neutralE3E3E3),
                       ),
 
-                      ListWidget(
+                      HomeListWidget(
                         title: forYouTitle,
                         listHeight: 200,
                         books: popularBooks,

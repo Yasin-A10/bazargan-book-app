@@ -1,5 +1,9 @@
 import 'dart:ui';
 
+import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
+import 'package:bazargan/core/api/all_books.dart/data/repository/all_books_repository_impl.dart';
+import 'package:bazargan/core/api/all_books.dart/data/source/all_books_api_provider.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
@@ -8,7 +12,7 @@ import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
-// import 'package:bazargan/core/widgets/list_widget.dart';
+import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:bazargan/features/book/data/model/book_model.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_bloc.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
@@ -33,9 +37,16 @@ class _BookScreenState extends State<BookScreen> {
   bool _isScrolled = false;
   bool _isMarked = false;
 
+  AllBooksQuery authorBooksQuery = AllBooksQuery();
+  AllBooksQuery publisherBooksQuery = AllBooksQuery();
+
+  AllBooksBloc? authorBloc;
+  AllBooksBloc? publisherBloc;
+
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(() {
       if (_scrollController.offset > 40 && !_isScrolled) {
         setState(() => _isScrolled = true);
@@ -43,6 +54,8 @@ class _BookScreenState extends State<BookScreen> {
         setState(() => _isScrolled = false);
       }
     });
+
+    // فقط لود خود کتاب
     BlocProvider.of<BookBloc>(
       context,
     ).add(LoadBookEvent(bookId: widget.bookId));
@@ -52,11 +65,48 @@ class _BookScreenState extends State<BookScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+    publisherBloc?.close();
+    authorBloc?.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookBloc, BookState>(
+    return BlocConsumer<BookBloc, BookState>(
+      listener: (context, state) {
+        if (state is BookSuccess) {
+          final book = state.book;
+
+          if (book.author.isNotEmpty && book.author.first.id != null) {
+            authorBloc =
+                AllBooksBloc(
+                  repository: AllBooksRepositoryImpl(
+                    apiProvider: AllBooksApiProvider(),
+                  ),
+                )..add(
+                  LoadAllBooksEvent(
+                    query: AllBooksQuery(
+                      author: book.author.first.id.toString(),
+                    ),
+                  ),
+                );
+          }
+
+          if (book.publisher?.id != null) {
+            publisherBloc =
+                AllBooksBloc(
+                  repository: AllBooksRepositoryImpl(
+                    apiProvider: AllBooksApiProvider(),
+                  ),
+                )..add(
+                  LoadAllBooksEvent(
+                    query: AllBooksQuery(
+                      publisher: book.publisher!.id.toString(),
+                    ),
+                  ),
+                );
+          }
+        }
+      },
       builder: (context, state) {
         if (state is BookLoading) {
           return const Scaffold(
@@ -77,6 +127,18 @@ class _BookScreenState extends State<BookScreen> {
 
           if (!_isMarked && book.isMarked == true) {
             _isMarked = true;
+          }
+
+          if (book.author.first.id != null) {
+            authorBooksQuery = AllBooksQuery(
+              author: book.author.first.id.toString(),
+            );
+          }
+
+          if (book.publisher?.id != null) {
+            publisherBooksQuery = AllBooksQuery(
+              publisher: book.publisher?.id.toString(),
+            );
           }
 
           return Scaffold(
@@ -481,11 +543,58 @@ class _BookScreenState extends State<BookScreen> {
                   ),
                   SizedBox(height: 24),
 
-                  // ListWidget(title: 'سایر کتاب‌های این نویسنده', listHeight: 200),
-                  // SizedBox(height: 32),
+                  //! BlocBuilder for author books
+                  if (authorBloc != null)
+                    BlocProvider.value(
+                      value: authorBloc!,
+                      child: BlocBuilder<AllBooksBloc, AllBooksState>(
+                        builder: (context, state) {
+                          if (state is AllBooksLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is AllBooksError) {
+                            return Center(child: Text(state.error));
+                          }
+                          if (state is AllBooksSuccess) {
+                            final authorBooks = state.bookListModel.results;
+                            return ListWidget(
+                              title: 'سایر کتاب‌های این نویسنده',
+                              listHeight: 200,
+                              books: authorBooks,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
 
-                  // ListWidget(title: 'سایر کتاب‌های این ناشر', listHeight: 200),
-                  // SizedBox(height: 32),
+                  //! BlocBuilder for publisher books
+                  if (publisherBloc != null)
+                    BlocProvider.value(
+                      value: publisherBloc!,
+                      child: BlocBuilder<AllBooksBloc, AllBooksState>(
+                        builder: (context, state) {
+                          if (state is AllBooksLoading) {
+                            return const SizedBox.shrink();
+                          }
+                          if (state is AllBooksError) {
+                            return Center(child: Text(state.error));
+                          }
+                          if (state is AllBooksSuccess) {
+                            final publisherBooks = state.bookListModel.results;
+                            return ListWidget(
+                              title: 'سایر کتاب‌های این ناشر',
+                              listHeight: 200,
+                              books: publisherBooks,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                  SizedBox(height: 24),
                 ],
               ),
             ),

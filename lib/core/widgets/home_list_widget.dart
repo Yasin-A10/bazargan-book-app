@@ -1,20 +1,20 @@
-import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/features/home/data/model/home_page_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class ListWidget extends StatelessWidget {
+class HomeListWidget extends StatelessWidget {
   final String title;
   final String seeAll;
   final String? link;
   final double listHeight;
-  final List<BooksModel> books;
+  final List<Book> books;
 
-  const ListWidget({
+  const HomeListWidget({
     super.key,
     required this.title,
     this.seeAll = 'همه',
