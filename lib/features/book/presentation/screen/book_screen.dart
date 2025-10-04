@@ -8,9 +8,10 @@ import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
-import 'package:bazargan/core/widgets/list_widget.dart';
+// import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:bazargan/features/book/data/model/book_model.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_bloc.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +31,7 @@ class BookScreen extends StatefulWidget {
 class _BookScreenState extends State<BookScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
+  bool _isMarked = false;
 
   @override
   void initState() {
@@ -44,6 +46,12 @@ class _BookScreenState extends State<BookScreen> {
     BlocProvider.of<BookBloc>(
       context,
     ).add(LoadBookEvent(bookId: widget.bookId));
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,6 +74,11 @@ class _BookScreenState extends State<BookScreen> {
 
         if (state is BookSuccess) {
           final book = state.book;
+
+          if (!_isMarked && book.isMarked == true) {
+            _isMarked = true;
+          }
+
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
@@ -229,15 +242,80 @@ class _BookScreenState extends State<BookScreen> {
                                       ),
                                     ],
                                   ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      book.isMarked == false
-                                          ? Iconsax.save_2_copy
-                                          : Iconsax.save_2,
-                                      color: AppColors.secondary,
-                                      size: 24,
-                                    ),
+                                  BlocConsumer<
+                                    MarkedBooksBloc,
+                                    MarkedBooksState
+                                  >(
+                                    listener: (context, state) {
+                                      if (state is AddBookmarkSuccess) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            backgroundColor: AppColors.tertiary,
+                                            content: Text(
+                                              _isMarked
+                                                  ? state.bookmark['message']
+                                                  : state.bookmark['message'],
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      if (state is MarkedBooksError) {
+                                        setState(() => _isMarked = !_isMarked);
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            backgroundColor: AppColors.primary,
+                                            content: Text(
+                                              state.error,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      final isLoading =
+                                          state is MarkedBooksLoading;
+
+                                      return IconButton(
+                                        onPressed: isLoading
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  _isMarked = !_isMarked;
+                                                });
+                                                context
+                                                    .read<MarkedBooksBloc>()
+                                                    .add(
+                                                      AddBookmarkEvent(
+                                                        bookId: book.id!,
+                                                      ),
+                                                    );
+                                              },
+                                        icon: isLoading
+                                            ? SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color:
+                                                          AppColors.secondary,
+                                                    ),
+                                              )
+                                            : Icon(
+                                                _isMarked
+                                                    ? Iconsax.save_2
+                                                    : Iconsax.save_2_copy,
+                                                color: AppColors.secondary,
+                                                size: 24,
+                                              ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
