@@ -563,6 +563,8 @@ class _BookScreenState extends State<BookScreen> {
                               final comment = bookComments.results[index];
 
                               return BookCommentCard(
+                                bookId: widget.bookId,
+                                commentId: comment.id,
                                 title: comment.user.displayName,
                                 rating: comment.rate,
                                 date: comment.createdAt,
@@ -600,54 +602,50 @@ class _BookScreenState extends State<BookScreen> {
 
                   //! BlocBuilder for author books
                   if (authorBloc != null)
-                    BlocProvider.value(
-                      value: authorBloc!,
-                      child: BlocBuilder<AllBooksBloc, AllBooksState>(
-                        builder: (context, state) {
-                          if (state is AllBooksLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is AllBooksError) {
-                            return Center(child: Text(state.error));
-                          }
-                          if (state is AllBooksSuccess) {
-                            final authorBooks = state.bookListModel.results;
-                            return ListWidget(
-                              title: 'سایر کتاب‌های این نویسنده',
-                              listHeight: 200,
-                              books: authorBooks,
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
+                    BlocBuilder<AllBooksBloc, AllBooksState>(
+                      bloc: authorBloc,
+                      builder: (context, state) {
+                        if (state is AllBooksLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is AllBooksError) {
+                          return Center(child: Text(state.error));
+                        }
+                        if (state is AllBooksSuccess) {
+                          final authorBooks = state.bookListModel.results;
+                          return ListWidget(
+                            title: 'سایر کتاب‌های این نویسنده',
+                            listHeight: 200,
+                            books: authorBooks,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
 
                   //! BlocBuilder for publisher books
                   if (publisherBloc != null)
-                    BlocProvider.value(
-                      value: publisherBloc!,
-                      child: BlocBuilder<AllBooksBloc, AllBooksState>(
-                        builder: (context, state) {
-                          if (state is AllBooksLoading) {
-                            return const SizedBox.shrink();
-                          }
-                          if (state is AllBooksError) {
-                            return Center(child: Text(state.error));
-                          }
-                          if (state is AllBooksSuccess) {
-                            final publisherBooks = state.bookListModel.results;
-                            return ListWidget(
-                              title: 'سایر کتاب‌های این ناشر',
-                              listHeight: 200,
-                              books: publisherBooks,
-                            );
-                          }
+                    BlocBuilder<AllBooksBloc, AllBooksState>(
+                      bloc: publisherBloc,
+                      builder: (context, state) {
+                        if (state is AllBooksLoading) {
                           return const SizedBox.shrink();
-                        },
-                      ),
+                        }
+                        if (state is AllBooksError) {
+                          return Center(child: Text(state.error));
+                        }
+                        if (state is AllBooksSuccess) {
+                          final publisherBooks = state.bookListModel.results;
+                          return ListWidget(
+                            title: 'سایر کتاب‌های این ناشر',
+                            listHeight: 200,
+                            books: publisherBooks,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
                   SizedBox(height: 24),
                 ],
