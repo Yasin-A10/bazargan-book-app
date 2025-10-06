@@ -18,9 +18,9 @@ class HomeSliderWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           final slide = slider.slides[index];
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Container(
-              height: 220,
+              height: 236,
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
