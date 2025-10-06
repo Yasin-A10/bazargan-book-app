@@ -14,7 +14,9 @@ import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
 import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:bazargan/features/book/data/model/book_model.dart';
-import 'package:bazargan/features/book/presentation/bloc/book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/widgets/book_comment_card.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +37,7 @@ class BookScreen extends StatefulWidget {
 class _BookScreenState extends State<BookScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
-  bool _isMarked = false;
+  bool? _isMarked = false;
 
   AllBooksQuery authorBooksQuery = AllBooksQuery();
   AllBooksQuery publisherBooksQuery = AllBooksQuery();
@@ -55,10 +57,12 @@ class _BookScreenState extends State<BookScreen> {
       }
     });
 
-    // فقط لود خود کتاب
     BlocProvider.of<BookBloc>(
       context,
     ).add(LoadBookEvent(bookId: widget.bookId));
+    BlocProvider.of<BookCommentBloc>(
+      context,
+    ).add(LoadBookCommentEvent(bookId: widget.bookId));
   }
 
   @override
@@ -125,7 +129,7 @@ class _BookScreenState extends State<BookScreen> {
         if (state is BookSuccess) {
           final book = state.book;
 
-          if (!_isMarked && book.isMarked == true) {
+          if (book.isMarked == true) {
             _isMarked = true;
           }
 
@@ -164,7 +168,7 @@ class _BookScreenState extends State<BookScreen> {
                   color: AppColors.neutral353535,
                   size: 16,
                 ),
-                onPressed: () => context.pop(),
+                onPressed: () => context.go('/'),
               ),
               actions: [
                 IconButton(
@@ -316,7 +320,7 @@ class _BookScreenState extends State<BookScreen> {
                                           SnackBar(
                                             backgroundColor: AppColors.tertiary,
                                             content: Text(
-                                              _isMarked
+                                              _isMarked!
                                                   ? state.bookmark['message']
                                                   : state.bookmark['message'],
                                               textAlign: TextAlign.center,
@@ -325,7 +329,7 @@ class _BookScreenState extends State<BookScreen> {
                                         );
                                       }
                                       if (state is MarkedBooksError) {
-                                        setState(() => _isMarked = !_isMarked);
+                                        setState(() => _isMarked = !_isMarked!);
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -348,7 +352,7 @@ class _BookScreenState extends State<BookScreen> {
                                             ? null
                                             : () {
                                                 setState(() {
-                                                  _isMarked = !_isMarked;
+                                                  _isMarked = !_isMarked!;
                                                 });
                                                 context
                                                     .read<MarkedBooksBloc>()
@@ -370,7 +374,7 @@ class _BookScreenState extends State<BookScreen> {
                                                     ),
                                               )
                                             : Icon(
-                                                _isMarked
+                                                _isMarked!
                                                     ? Iconsax.save_2
                                                     : Iconsax.save_2_copy,
                                                 color: AppColors.secondary,
@@ -527,7 +531,58 @@ class _BookScreenState extends State<BookScreen> {
                   ),
                   SizedBox(height: 16),
 
-                  //TODO: Add Comments list
+                  //! Comments list
+                  BlocBuilder<BookCommentBloc, BookCommentState>(
+                    builder: (context, state) {
+                      if (state is BookCommentLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (state is BookCommentError) {
+                        return Center(child: Text(state.error));
+                      }
+
+                      if (state is BookCommentSuccess) {
+                        final bookComments = state.bookComment;
+
+                        if (bookComments.count == 0) {
+                          return SizedBox.shrink();
+                        }
+
+                        return SizedBox(
+                          height: 200,
+                          width: double.infinity,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            itemCount: bookComments.results.length,
+                            itemBuilder: (context, index) {
+                              final comment = bookComments.results[index];
+
+                              return BookCommentCard(
+                                title: comment.user.displayName,
+                                rating: comment.rate,
+                                date: comment.createdAt,
+                                comment: comment.text,
+                                isLiked: comment.feedback.hasLiked,
+                                isDisLiked: comment.feedback.hasDisliked,
+                                likeCount: comment.feedback.likeCount,
+                                dislikeCount: comment.feedback.dislikeCount,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 16),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                  SizedBox(height: 16),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Button(

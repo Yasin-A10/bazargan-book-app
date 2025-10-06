@@ -16,4 +16,8 @@ class Images {
 
   static const String edit = 'assets/icons/edit.svg';
   static const String trash = 'assets/icons/trash.svg';
+  static const String like = 'assets/icons/like.svg';
+  static const String dislike = 'assets/icons/dislike.svg';
+  static const String likeBold = 'assets/icons/like-bold.svg';
+  static const String dislikeBold = 'assets/icons/dislike-bold.svg';
 }

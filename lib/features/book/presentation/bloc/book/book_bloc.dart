@@ -11,7 +11,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
   final BookRepositoryImpl bookRepository;
 
   BookBloc({required this.bookRepository}) : super(BookInitial()) {
-    // User
+    // get book
     on<LoadBookEvent>((event, emit) async {
       emit(BookLoading());
 

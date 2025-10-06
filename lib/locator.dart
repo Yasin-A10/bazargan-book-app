@@ -11,9 +11,12 @@ import 'package:bazargan/features/auth/data/source/sms_sender_api_provider.dart'
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
+import 'package:bazargan/features/book/data/repository/book_commnet_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_repository_impl.dart';
 import 'package:bazargan/features/book/data/source/book_api_provider.dart';
-import 'package:bazargan/features/book/presentation/bloc/book_bloc.dart';
+import 'package:bazargan/features/book/data/source/book_comment_api_provider.dart';
+import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
 import 'package:bazargan/features/home/data/source/home_api_provider.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
@@ -65,6 +68,7 @@ setup() {
   locator.registerSingleton<MarkedBooksApiProvider>(MarkedBooksApiProvider());
   locator.registerSingleton<AddBookmarkApiProvider>(AddBookmarkApiProvider());
   locator.registerSingleton<BookApiProvider>(BookApiProvider());
+  locator.registerSingleton<BookCommentApiProvider>(BookCommentApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -109,6 +113,9 @@ setup() {
   locator.registerSingleton<BookRepositoryImpl>(
     BookRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<BookCommentsRepositoryImpl>(
+    BookCommentsRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -136,4 +143,7 @@ setup() {
     ),
   );
   locator.registerSingleton<BookBloc>(BookBloc(bookRepository: locator()));
+  locator.registerSingleton<BookCommentBloc>(
+    BookCommentBloc(bookCommentsRepository: locator()),
+  );
 }
