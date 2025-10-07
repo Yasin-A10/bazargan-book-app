@@ -11,9 +11,11 @@ import 'package:bazargan/features/auth/data/source/sms_sender_api_provider.dart'
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
+import 'package:bazargan/features/book/data/repository/add_comment_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_commnet_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/feedback_repository_impl.dart';
+import 'package:bazargan/features/book/data/source/add_comment_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_comment_api_provider.dart';
 import 'package:bazargan/features/book/data/source/feedback_api_provider.dart';
@@ -73,6 +75,7 @@ setup() {
   locator.registerSingleton<BookApiProvider>(BookApiProvider());
   locator.registerSingleton<BookCommentApiProvider>(BookCommentApiProvider());
   locator.registerSingleton<FeedbackApiProvider>(FeedbackApiProvider());
+  locator.registerSingleton<AddCommentApiProvider>(AddCommentApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -123,6 +126,9 @@ setup() {
   locator.registerSingleton<FeedbackRepositoryImpl>(
     FeedbackRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<AddCommentRepositoryImpl>(
+    AddCommentRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -151,7 +157,10 @@ setup() {
   );
   locator.registerSingleton<BookBloc>(BookBloc(bookRepository: locator()));
   locator.registerSingleton<BookCommentBloc>(
-    BookCommentBloc(bookCommentsRepository: locator()),
+    BookCommentBloc(
+      bookCommentsRepository: locator(),
+      addCommentRepository: locator(),
+    ),
   );
   locator.registerSingleton<FeedbackBloc>(
     FeedbackBloc(feedbackRepository: locator()),

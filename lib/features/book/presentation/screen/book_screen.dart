@@ -8,11 +8,13 @@ import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
 import 'package:bazargan/core/widgets/list_widget.dart';
+import 'package:bazargan/features/book/data/model/add_comment_model.dart';
 import 'package:bazargan/features/book/data/model/book_model.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
@@ -35,15 +37,65 @@ class BookScreen extends StatefulWidget {
 }
 
 class _BookScreenState extends State<BookScreen> {
+  final GlobalKey<FormState> _addCommentFormKey = GlobalKey<FormState>();
+
+  //comment infos
+  final TextEditingController _commentController = TextEditingController();
+  int _rating = 0;
+  int _picture = 0;
+  String _name = '';
+
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
   bool? _isMarked = false;
 
+  // initial queries
   AllBooksQuery authorBooksQuery = AllBooksQuery();
   AllBooksQuery publisherBooksQuery = AllBooksQuery();
 
+  // blocs
   AllBooksBloc? authorBloc;
   AllBooksBloc? publisherBloc;
+
+  _addComment(BuildContext context) {
+    if (!_addCommentFormKey.currentState!.validate()) {
+      return;
+    }
+
+    if (_rating == 0) {
+      GoRouter.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: AppColors.primary,
+          content: Text('لطفا یک نمره بدهید'),
+        ),
+      );
+      return;
+    }
+
+    BlocProvider.of<BookCommentBloc>(context).add(
+      AddCommentEvent(
+        bookId: widget.bookId,
+        addCommentModel: AddCommentModel(
+          rate: _rating,
+          text: _commentController.text,
+          book: BookCommentBookModel(name: _name, picture: _picture),
+        ),
+      ),
+    );
+
+    GoRouter.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: AppColors.tertiary,
+        content: Text('نظر شما با موفقیت اضافه شد'),
+      ),
+    );
+
+    BlocProvider.of<BookCommentBloc>(
+      context,
+    ).add(LoadBookCommentEvent(bookId: widget.bookId));
+  }
 
   @override
   void initState() {
@@ -71,6 +123,8 @@ class _BookScreenState extends State<BookScreen> {
     super.dispose();
     publisherBloc?.close();
     authorBloc?.close();
+    _commentController.dispose();
+    _rating = 0;
   }
 
   @override
@@ -143,6 +197,14 @@ class _BookScreenState extends State<BookScreen> {
             publisherBooksQuery = AllBooksQuery(
               publisher: book.publisher?.id.toString(),
             );
+          }
+
+          if (book.id != null) {
+            _picture = book.id!;
+          }
+
+          if (book.name != null) {
+            _name = book.name!;
           }
 
           return Scaffold(
@@ -877,26 +939,61 @@ class _BookScreenState extends State<BookScreen> {
                     StarRating(
                       maxRating: 5,
                       onRatingChanged: (rating) {
-                        //? Handle rating change
+                        setState(() {
+                          _rating = rating;
+                        });
                       },
                     ),
                   ],
                 ),
-                InputTextFormField(
-                  label: 'متن نظر',
-                  keyboardType: TextInputType.text,
-                  maxLines: 6,
-                  controller: TextEditingController(),
+                Form(
+                  key: _addCommentFormKey,
+                  child: InputTextFormField(
+                    label: 'متن نظر',
+                    keyboardType: TextInputType.text,
+                    maxLines: 6,
+                    controller: _commentController,
+                    validator: (value) {
+                      return AppValidator.userName(value, fieldName: 'متن نظر');
+                    },
+                  ),
                 ),
-                Button(
-                  label: 'افزودن نظر',
-                  onPressed: () {
-                    context.pop();
+                BlocConsumer<BookCommentBloc, BookCommentState>(
+                  listener: (context, state) {
+                    if (state is AddCommentSuccess) {
+                      // Navigator.of(context).pop();
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     backgroundColor: AppColors.tertiary,
+                      //     content: Text('نظر شما با موفقیت اضافه شد'),
+                      //   ),
+                      // );
+                    }
+
+                    if (state is AddCommentError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: AppColors.primary,
+                          content: Text(state.error),
+                        ),
+                      );
+                    }
                   },
-                  width: double.infinity,
-                  backgroundColor: AppColors.secondary,
-                  textColor: AppColors.white,
+                  builder: (context, state) {
+                    return Button(
+                      label: 'افزودن نظر',
+                      onPressed: state is AddCommentLoading
+                          ? null
+                          : () {
+                              _addComment(context);
+                            },
+                      width: double.infinity,
+                      backgroundColor: AppColors.secondary,
+                      textColor: AppColors.white,
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 16),
               ],
             ),

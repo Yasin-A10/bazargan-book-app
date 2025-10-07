@@ -18,3 +18,19 @@ class BookCommentError extends BookCommentState {
 
   BookCommentError({required this.error});
 }
+
+// add comment
+
+class AddCommentLoading extends BookCommentState {}
+
+class AddCommentSuccess extends BookCommentState {
+  final AddCommentModel addCommentModel;
+
+  AddCommentSuccess({required this.addCommentModel});
+}
+
+class AddCommentError extends BookCommentState {
+  final String error;
+
+  AddCommentError({required this.error});
+}

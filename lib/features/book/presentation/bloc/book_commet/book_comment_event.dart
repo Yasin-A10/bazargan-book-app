@@ -7,3 +7,12 @@ class LoadBookCommentEvent extends BookCommentEvent {
 
   LoadBookCommentEvent({required this.bookId});
 }
+
+// add comment
+
+class AddCommentEvent extends BookCommentEvent {
+  final int bookId;
+  final AddCommentModel addCommentModel;
+
+  AddCommentEvent({required this.bookId, required this.addCommentModel});
+}

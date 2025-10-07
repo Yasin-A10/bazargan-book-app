@@ -13,10 +13,35 @@ class BookCommentsModel {
     required this.results,
   });
 
+  // factory BookCommentsModel.fromJson(Map<String, dynamic> json) {
+  //   return BookCommentsModel(
+  //     count: json['count'] ?? 0,
+  //     hasCommented: json['has_commented'] ?? false,
+  //     next: json['next'],
+  //     previous: json['previous'],
+  //     results:
+  //         (json['results'] as List<dynamic>?)
+  //             ?.map((item) => BookComment.fromJson(item))
+  //             .toList() ??
+  //         [],
+  //   );
+  // }
+
   factory BookCommentsModel.fromJson(Map<String, dynamic> json) {
+    final dynamic hasCommentedValue = json['has_commented'];
+
+    bool parsedHasCommented;
+    if (hasCommentedValue is bool) {
+      parsedHasCommented = hasCommentedValue;
+    } else if (hasCommentedValue is num) {
+      parsedHasCommented = hasCommentedValue > 0;
+    } else {
+      parsedHasCommented = false;
+    }
+
     return BookCommentsModel(
       count: json['count'] ?? 0,
-      hasCommented: json['has_commented'] ?? false,
+      hasCommented: parsedHasCommented,
       next: json['next'],
       previous: json['previous'],
       results:
