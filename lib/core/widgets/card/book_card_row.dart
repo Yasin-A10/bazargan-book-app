@@ -7,8 +7,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:bazargan/config/router/route_paths.dart';
 
 class BookCardRow extends StatelessWidget {
   final int bookId;
@@ -38,30 +40,33 @@ class BookCardRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 0),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-              width: 75,
-              height: 110,
-              fit: BoxFit.cover,
-              imageUrl: image,
-              fadeInDuration: const Duration(milliseconds: 300),
-              placeholder: (context, url) => Center(
-                child: LoadingAnimationWidget.flickr(
-                  leftDotColor: AppColors.primary,
-                  rightDotColor: AppColors.tertiary,
-                  size: 20,
+        GestureDetector(
+          onTap: () => context.push(RoutePaths.book, extra: bookId),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                width: 75,
+                height: 110,
+                fit: BoxFit.cover,
+                imageUrl: image,
+                fadeInDuration: const Duration(milliseconds: 300),
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.flickr(
+                    leftDotColor: AppColors.primary,
+                    rightDotColor: AppColors.tertiary,
+                    size: 20,
+                  ),
                 ),
               ),
             ),

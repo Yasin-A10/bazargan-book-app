@@ -53,10 +53,18 @@ final GoRouter appRouter = GoRouter(
       path: RoutePaths.home,
       builder: (context, state) => const MainScreen(),
     ),
+
+    //! Book list
     GoRoute(
       path: RoutePaths.bookList,
-      builder: (context, state) =>
-          BookListScreen(title: state.extra.toString()),
+      name: 'books',
+      builder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? 'لیست کتاب‌ها';
+        final type = state.uri.queryParameters['type'] ?? '';
+        final value = state.uri.queryParameters['value'] ?? '';
+
+        return BookListScreen(title: title, type: type, param: value);
+      },
     ),
 
     //! Search

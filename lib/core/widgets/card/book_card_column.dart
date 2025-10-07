@@ -1,22 +1,29 @@
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class BookCardColumn extends StatelessWidget {
-  final String image;
+  final int bookId;
   final String title;
   final String author;
   final String publisher;
-  final String price;
+  final int price;
+  final String image;
   final String? discount;
-  final String? rate;
+  final double? rate;
   final bool? isSave;
+
   const BookCardColumn({
     super.key,
+    required this.bookId,
     required this.image,
     required this.title,
     required this.author,
@@ -33,24 +40,35 @@ class BookCardColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: 8,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 0),
+        GestureDetector(
+          onTap: () => context.push(RoutePaths.book, extra: bookId),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.22),
+                  blurRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                width: 130,
+                height: 200,
+                fit: BoxFit.cover,
+                imageUrl: image,
+                fadeInDuration: const Duration(milliseconds: 300),
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.flickr(
+                    leftDotColor: AppColors.primary,
+                    rightDotColor: AppColors.tertiary,
+                    size: 30,
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              image,
-              width: 130,
-              height: 200,
-              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -97,7 +115,7 @@ class BookCardColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              formatNumberToPersian(int.parse(price)),
+              formatNumberToPersian(price),
               style: AppTextStyles.body.copyWith(
                 color: AppColors.secondary,
                 fontWeight: FontWeight.w500,

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+// import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
 import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
 import 'package:bazargan/core/api/all_books.dart/data/repository/all_books_repository_impl.dart';
@@ -466,40 +467,71 @@ class _BookScreenState extends State<BookScreen> {
                       children: [
                         BookInfoList(
                           title: "نویسنده:",
-                          infos: book.author.map((e) => e.name).toList(),
+                          infos: book.author
+                              .map((e) => InfoItem(id: e.id!, name: e.name!))
+                              .toList(),
                           hasArrow: true,
+                          filterType: 'author',
                         ),
 
                         if (book.translator.isNotEmpty)
                           BookInfoList(
                             title: "مترجم:",
-                            infos: book.translator.map((e) => e.name).toList(),
+                            infos: book.translator
+                                .map((e) => InfoItem(id: e.id!, name: e.name!))
+                                .toList(),
                             hasArrow: true,
+                            filterType: 'translator',
                           ),
 
                         BookInfoList(
                           title: "انتشارات:",
-                          infos: [book.publisher?.name],
+                          infos: [
+                            InfoItem(
+                              id: book.publisher!.id!,
+                              name: book.publisher!.name!,
+                            ),
+                          ],
                           hasArrow: true,
+                          filterType: 'publisher',
                         ),
                         BookInfoList(
                           title: "دسته بندی:",
-                          infos: book.categories.map((e) => e.title).toList(),
+                          infos: book.categories
+                              .map((e) => InfoItem(id: e.id!, name: e.title!))
+                              .toList(),
                           hasArrow: true,
+                          filterType: 'category',
                         ),
                         BookInfoList(
                           title: "تعداد صفحات:",
-                          infos: [formatNumberToPersian(book.pageCount ?? 0)],
+                          infos: [
+                            InfoItem(
+                              id: null,
+                              name: formatNumberToPersian(book.pageCount ?? 0),
+                            ),
+                          ],
+                          filterType: '',
                         ),
                         BookInfoList(
                           title: "تاریخ انتشار:",
                           infos: [
-                            formatNumberToPersianWithoutSeparator(
-                              book.editionYear.toString(),
+                            InfoItem(
+                              id: null,
+                              name: formatNumberToPersianWithoutSeparator(
+                                book.editionYear.toString(),
+                              ),
                             ),
                           ],
+                          filterType: '',
                         ),
-                        BookInfoList(title: "نوع کتاب:", infos: [book.type]),
+                        BookInfoList(
+                          title: "نوع کتاب:",
+                          infos: [
+                            InfoItem(id: null, name: book.type.toString()),
+                          ],
+                          filterType: '',
+                        ),
                       ],
                     ),
                   ),
@@ -681,6 +713,15 @@ class _BookScreenState extends State<BookScreen> {
                             title: 'سایر کتاب‌های این نویسنده',
                             listHeight: 200,
                             books: authorBooks,
+                            onTap: () => context.pushNamed(
+                              'books',
+                              queryParameters: {
+                                'title': 'سایر کتاب های این نویسنده',
+                                'type': 'author',
+                                'value': authorBooks.first.author.first.id
+                                    .toString(),
+                              },
+                            ),
                           );
                         }
                         return const SizedBox.shrink();
@@ -704,6 +745,15 @@ class _BookScreenState extends State<BookScreen> {
                             title: 'سایر کتاب‌های این ناشر',
                             listHeight: 200,
                             books: publisherBooks,
+                            onTap: () => context.pushNamed(
+                              'books',
+                              queryParameters: {
+                                'title': 'سایر کتاب های این ناشر',
+                                'type': 'publisher',
+                                'value': publisherBooks.first.publisher.id
+                                    .toString(),
+                              },
+                            ),
                           );
                         }
                         return const SizedBox.shrink();
@@ -870,14 +920,17 @@ class _BookScreenState extends State<BookScreen> {
                   itemCount: indexes.length,
                   itemBuilder: (context, index) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 8),
-                        ListItemWidget(
-                          title: indexes[index].title!,
-                          titleStyle: AppTextStyles.body.copyWith(
+                        Text(
+                          indexes[index].title!,
+                          style: AppTextStyles.body.copyWith(
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
+                          textAlign: TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
                         Divider(color: AppColors.neutralE3E3E3, thickness: 1),
@@ -1038,46 +1091,85 @@ class _BookScreenState extends State<BookScreen> {
                 ),
                 BookInfoList(
                   title: "نویسنده:",
-                  infos: [book.author.map((x) => x.name).join(", ")],
+                  infos: book.author
+                      .map((x) => InfoItem(id: x.id, name: x.name.toString()))
+                      .toList(),
                   hasArrow: true,
+                  filterType: 'author',
                 ),
                 if (book.translator.isNotEmpty)
                   BookInfoList(
                     title: "مترجم:",
-                    infos: [book.translator.map((x) => x.name).join(", ")],
+                    infos: book.translator
+                        .map((x) => InfoItem(id: x.id, name: x.name.toString()))
+                        .toList(),
                     hasArrow: true,
+                    filterType: 'translator',
                   ),
                 BookInfoList(
                   title: "انتشارات:",
-                  infos: [book.publisher?.name ?? ""],
+                  infos: book.publisher != null
+                      ? [
+                          InfoItem(
+                            id: book.publisher?.id,
+                            name: book.publisher!.name.toString(),
+                          ),
+                        ]
+                      : [],
                   hasArrow: true,
+                  filterType: 'publisher',
                 ),
                 BookInfoList(
                   title: "دسته بندی:",
-                  infos: [book.categories.map((x) => x.title).join(", ")],
+                  infos: book.categories
+                      .map((x) => InfoItem(id: x.id, name: x.title.toString()))
+                      .toList(),
                   hasArrow: true,
+                  filterType: 'category',
                 ),
                 BookInfoList(
                   title: "تعداد صفحات:",
-                  infos: [formatNumberToPersian(book.pageCount!)],
+                  infos: [
+                    InfoItem(
+                      id: null,
+                      name: formatNumberToPersian(book.pageCount!),
+                    ),
+                  ],
+                  filterType: '',
                 ),
                 BookInfoList(
                   title: "قیمت نسخه چاپی:",
-                  infos: [formatNumberToPersian(book.price!)],
+                  infos: [
+                    InfoItem(
+                      id: null,
+                      name: formatNumberToPersian(book.price!),
+                    ),
+                  ],
+                  filterType: '',
                 ),
                 BookInfoList(
                   title: "تاریخ انتشار:",
                   infos: [
-                    formatNumberToPersianWithoutSeparator(
-                      book.editionYear.toString(),
+                    InfoItem(
+                      id: null,
+                      name: formatNumberToPersianWithoutSeparator(
+                        book.editionYear.toString(),
+                      ),
                     ),
                   ],
+                  filterType: '',
                 ),
                 BookInfoList(
                   title: "شابک:",
                   infos: [
-                    formatNumberToPersianWithoutSeparator(book.ISBN.toString()),
+                    InfoItem(
+                      id: null,
+                      name: formatNumberToPersianWithoutSeparator(
+                        book.ISBN.toString(),
+                      ),
+                    ),
                   ],
+                  filterType: '',
                 ),
                 const SizedBox(height: 8),
               ],
@@ -1246,15 +1338,25 @@ void _openPayMent(BuildContext context, BookModel book) {
 }
 
 //! for book info list
+class InfoItem {
+  final int? id;
+  final String name;
+
+  InfoItem({required this.id, required this.name});
+}
+
 class BookInfoList extends StatelessWidget {
   final String title;
-  final List<dynamic> infos;
+  // final List<dynamic> infos;
+  final List<InfoItem> infos;
   final bool hasArrow;
+  final String filterType;
 
   const BookInfoList({
     super.key,
     required this.title,
     required this.infos,
+    required this.filterType,
     this.hasArrow = false,
   });
 
@@ -1272,14 +1374,25 @@ class BookInfoList extends StatelessWidget {
         const SizedBox(width: 8),
 
         ...infos.map((info) {
-          final displayText = info.toString().length > 14
-              ? '${info.toString().substring(0, 14)}.'
-              : info.toString();
+          final displayText = info.name.length > 14
+              ? '${info.name.substring(0, 14)}.'
+              : info.name;
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: InkWell(
-              onTap: hasArrow ? () {} : null,
+              onTap: hasArrow
+                  ? () {
+                      context.pushNamed(
+                        'books',
+                        queryParameters: {
+                          'title': info.name,
+                          'type': filterType,
+                          'value': info.id.toString(),
+                        },
+                      );
+                    }
+                  : null,
               child: Row(
                 children: [
                   Text(

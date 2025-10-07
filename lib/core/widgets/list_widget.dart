@@ -10,7 +10,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 class ListWidget extends StatelessWidget {
   final String title;
   final String seeAll;
-  final String? link;
+  final Function()? onTap;
   final double listHeight;
   final List<BooksModel> books;
 
@@ -18,7 +18,7 @@ class ListWidget extends StatelessWidget {
     super.key,
     required this.title,
     this.seeAll = 'همه',
-    this.link,
+    this.onTap,
     required this.listHeight,
     required this.books,
   });
@@ -35,9 +35,7 @@ class ListWidget extends StatelessWidget {
             children: [
               Text(title, style: AppTextStyles.headlineLarge),
               InkWell(
-                onTap: () {
-                  context.push('/book-list', extra: title);
-                },
+                onTap: onTap,
                 child: Row(
                   spacing: 4,
                   children: [
