@@ -1,22 +1,31 @@
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/core/utils/convert_to_jalali.dart';
+import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/show_star_rating.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class UserCommentCard extends StatelessWidget {
+  final int bookId;
+  final int commentId;
   final String title;
-  final int rating;
+  final double? rating;
   final String date;
   final String comment;
   final String image;
   const UserCommentCard({
     super.key,
+    required this.bookId,
+    required this.commentId,
     required this.title,
     required this.rating,
     required this.date,
@@ -42,28 +51,43 @@ class UserCommentCard extends StatelessWidget {
       ),
       child: Column(
         spacing: 12,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.30),
-                      blurRadius: 10.8,
-                      offset: const Offset(0, 0),
+              GestureDetector(
+                onTap: () {
+                  context.push(RoutePaths.book, extra: bookId);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.30),
+                        blurRadius: 10.8,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: image,
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      placeholder: (context, url) => Center(
+                        child: LoadingAnimationWidget.flickr(
+                          leftDotColor: AppColors.primary,
+                          rightDotColor: AppColors.secondary,
+                          size: 20,
+                        ),
+                      ),
+                      width: 44,
+                      height: 65,
+                      fit: BoxFit.cover,
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    image,
-                    width: 44,
-                    height: 65,
-                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -81,9 +105,11 @@ class UserCommentCard extends StatelessWidget {
                   Row(
                     spacing: 8,
                     children: [
-                      ShowStarRating(rating: rating),
+                      ShowStarRating(rating: rating?.toInt() ?? 0),
                       Text(
-                        date,
+                        formatNumberToPersianWithoutSeparator(
+                          convertToJalaliDate(date),
+                        ),
                         style: AppTextStyles.small.copyWith(
                           color: AppColors.neutral757575,
                         ),

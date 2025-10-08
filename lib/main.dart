@@ -13,6 +13,7 @@ import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
+import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:bazargan/features/profile_transaction/presentation/bloc/transaction_bloc.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -48,6 +49,7 @@ void main() async {
         BlocProvider(create: (_) => locator<FeedbackBloc>()),
         BlocProvider(create: (_) => locator<AddToCartBloc>()),
         BlocProvider(create: (_) => locator<CartBloc>()),
+        BlocProvider(create: (_) => locator<UserCommentBloc>()),
       ],
       child: const MyApp(),
     ),

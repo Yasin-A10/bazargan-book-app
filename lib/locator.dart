@@ -43,6 +43,9 @@ import 'package:bazargan/features/profile/data/repository/update_name_repository
 import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
 import 'package:bazargan/features/profile/data/source/update_name_api_provider.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
+import 'package:bazargan/features/profile_comments/data/repository/user_comment_repository_impl.dart';
+import 'package:bazargan/features/profile_comments/data/source/user_comment_api_provider.dart';
+import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_favorites/data/repository/add_favorite_repository_impl.dart';
 import 'package:bazargan/features/profile_favorites/data/repository/favorite_category_repository_impl.dart';
 import 'package:bazargan/features/profile_favorites/data/source/add_favorite_api_provider.dart';
@@ -87,6 +90,7 @@ setup() {
   locator.registerSingleton<AddToCartApiProvider>(AddToCartApiProvider());
   locator.registerSingleton<CartApiProvider>(CartApiProvider());
   locator.registerSingleton<DeleteCartApiProvider>(DeleteCartApiProvider());
+  locator.registerSingleton<UserCommentApiProvider>(UserCommentApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -149,6 +153,9 @@ setup() {
   locator.registerSingleton<DeleteCartRepositoryImpl>(
     DeleteCartRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<UserCommentRepositoryImpl>(
+    UserCommentRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -190,5 +197,8 @@ setup() {
   );
   locator.registerSingleton<CartBloc>(
     CartBloc(cartRepository: locator(), deleteCartRepository: locator()),
+  );
+  locator.registerSingleton<UserCommentBloc>(
+    UserCommentBloc(userCommentRepository: locator()),
   );
 }
