@@ -43,8 +43,10 @@ import 'package:bazargan/features/profile/data/repository/update_name_repository
 import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
 import 'package:bazargan/features/profile/data/source/update_name_api_provider.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
+import 'package:bazargan/features/profile_comments/data/repository/delete_comment_repository_impl.dart';
 import 'package:bazargan/features/profile_comments/data/repository/update_comment_repository_impl.dart';
 import 'package:bazargan/features/profile_comments/data/repository/user_comment_repository_impl.dart';
+import 'package:bazargan/features/profile_comments/data/source/delete_comment_api_provider.dart';
 import 'package:bazargan/features/profile_comments/data/source/update_comment_api_provider.dart';
 import 'package:bazargan/features/profile_comments/data/source/user_comment_api_provider.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
@@ -95,6 +97,9 @@ setup() {
   locator.registerSingleton<UserCommentApiProvider>(UserCommentApiProvider());
   locator.registerSingleton<UpdateCommentApiProvider>(
     UpdateCommentApiProvider(),
+  );
+  locator.registerSingleton<DeleteCommentApiProvider>(
+    DeleteCommentApiProvider(),
   );
 
   //! Repository
@@ -164,6 +169,9 @@ setup() {
   locator.registerSingleton<UpdateCommentRepositoryImpl>(
     UpdateCommentRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<DeleteCommentRepositoryImpl>(
+    DeleteCommentRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -210,6 +218,7 @@ setup() {
     UserCommentBloc(
       userCommentRepository: locator(),
       updateCommentRepository: locator(),
+      deleteCommentRepository: locator(),
     ),
   );
 }

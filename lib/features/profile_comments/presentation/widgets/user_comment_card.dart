@@ -10,6 +10,7 @@ import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/show_star_rating.dart';
 import 'package:bazargan/features/profile_comments/data/model/update_comment_model.dart';
+import 'package:bazargan/features/profile_comments/presentation/bloc/delete_comment_status.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/update_comment_status.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -373,7 +374,6 @@ class _UserCommentCardState extends State<UserCommentCard> {
                   Expanded(
                     child: Button(
                       label: 'بازگشت',
-
                       onPressed: () {
                         context.pop();
                       },
@@ -384,14 +384,46 @@ class _UserCommentCardState extends State<UserCommentCard> {
                     ),
                   ),
                   Expanded(
-                    child: Button(
-                      label: 'حذف',
-                      onPressed: () {
-                        context.pop();
+                    child: BlocConsumer<UserCommentBloc, UserCommentState>(
+                      listener: (context, state) {
+                        if (state.deleteCommentStatus is DeleteCommentSuccess) {
+                          context.pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColors.tertiary,
+                              content: Text('نظر شما با موفقیت حذف شد'),
+                            ),
+                          );
+                        }
+
+                        if (state.deleteCommentStatus is DeleteCommentError) {
+                          context.pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColors.primary,
+                              content: Text('نمیتوان نظر را حذف کرد...'),
+                            ),
+                          );
+                        }
                       },
-                      width: double.infinity,
-                      backgroundColor: AppColors.primary,
-                      textColor: AppColors.white,
+                      builder: (context, state) {
+                        return Button(
+                          label: 'حذف',
+                          onPressed:
+                              state.deleteCommentStatus is DeleteCommentLoading
+                              ? null
+                              : () {
+                                  context.read<UserCommentBloc>().add(
+                                    DeleteUserCommentEvent(
+                                      commentId: widget.commentId,
+                                    ),
+                                  );
+                                },
+                          width: double.infinity,
+                          backgroundColor: AppColors.primary,
+                          textColor: AppColors.white,
+                        );
+                      },
                     ),
                   ),
                 ],

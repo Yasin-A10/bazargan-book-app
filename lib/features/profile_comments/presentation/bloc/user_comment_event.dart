@@ -12,3 +12,8 @@ class UpdateUserCommentEvent extends UserCommentEvent {
     required this.updateCommentModel,
   });
 }
+
+class DeleteUserCommentEvent extends UserCommentEvent {
+  final int commentId;
+  DeleteUserCommentEvent({required this.commentId});
+}

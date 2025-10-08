@@ -1,4 +1,5 @@
 import 'package:bazargan/core/constants/colors.dart';
+import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/load_comment_status.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/widgets/user_comment_card.dart';
@@ -33,7 +34,10 @@ class _ProfileCommentsScreenState extends State<ProfileCommentsScreen> {
             color: AppColors.neutral757575,
             size: 16,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            context.pop();
+            BlocProvider.of<UserBloc>(context).add(LoadUserEvent());
+          },
         ),
       ),
       body: BlocBuilder<UserCommentBloc, UserCommentState>(
