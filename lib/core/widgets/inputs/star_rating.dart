@@ -4,16 +4,28 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class StarRating extends StatefulWidget {
   final int maxRating;
+  final int? initialRating;
   final void Function(int rating)? onRatingChanged;
 
-  const StarRating({super.key, this.maxRating = 5, this.onRatingChanged});
+  const StarRating({
+    super.key,
+    this.maxRating = 5,
+    this.onRatingChanged,
+    this.initialRating = 0,
+  });
 
   @override
   State<StarRating> createState() => _StarRatingState();
 }
 
 class _StarRatingState extends State<StarRating> {
-  int _currentRating = 0;
+  late int _currentRating;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentRating = widget.initialRating ?? 0;
+  }
 
   void _setRating(int rating) {
     setState(() {

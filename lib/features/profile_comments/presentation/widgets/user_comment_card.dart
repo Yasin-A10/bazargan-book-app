@@ -4,19 +4,25 @@ import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/convert_to_jalali.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/show_star_rating.dart';
+import 'package:bazargan/features/profile_comments/data/model/update_comment_model.dart';
+import 'package:bazargan/features/profile_comments/presentation/bloc/update_comment_status.dart';
+import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class UserCommentCard extends StatelessWidget {
+class UserCommentCard extends StatefulWidget {
   final int bookId;
   final int commentId;
+  final String bookName;
   final String title;
   final double? rating;
   final String date;
@@ -26,12 +32,35 @@ class UserCommentCard extends StatelessWidget {
     super.key,
     required this.bookId,
     required this.commentId,
+    required this.bookName,
     required this.title,
     required this.rating,
     required this.date,
     required this.comment,
     required this.image,
   });
+
+  @override
+  State<UserCommentCard> createState() => _UserCommentCardState();
+}
+
+class _UserCommentCardState extends State<UserCommentCard> {
+  final GlobalKey<FormState> _updateCommentFormKey = GlobalKey<FormState>();
+  final TextEditingController _commentController = TextEditingController();
+  int? _rating;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController.text = widget.comment;
+    _rating = widget.rating?.toInt();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _commentController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +88,7 @@ class UserCommentCard extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  context.push(RoutePaths.book, extra: bookId);
+                  context.push(RoutePaths.book, extra: widget.bookId);
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -75,7 +104,7 @@ class UserCommentCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
-                      imageUrl: image,
+                      imageUrl: widget.image,
                       fadeInDuration: const Duration(milliseconds: 300),
                       placeholder: (context, url) => Center(
                         child: LoadingAnimationWidget.flickr(
@@ -97,7 +126,7 @@ class UserCommentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    widget.title,
                     style: AppTextStyles.headlineMedium.copyWith(
                       color: AppColors.neutralMidnight,
                     ),
@@ -105,10 +134,10 @@ class UserCommentCard extends StatelessWidget {
                   Row(
                     spacing: 8,
                     children: [
-                      ShowStarRating(rating: rating?.toInt() ?? 0),
+                      ShowStarRating(rating: widget.rating?.toInt() ?? 0),
                       Text(
                         formatNumberToPersianWithoutSeparator(
-                          convertToJalaliDate(date),
+                          convertToJalaliDate(widget.date),
                         ),
                         style: AppTextStyles.small.copyWith(
                           color: AppColors.neutral757575,
@@ -145,7 +174,7 @@ class UserCommentCard extends StatelessWidget {
             ],
           ),
           Text(
-            comment,
+            widget.comment,
             textAlign: TextAlign.justify,
             style: AppTextStyles.body.copyWith(
               fontWeight: FontWeight.w300,
@@ -195,34 +224,100 @@ class UserCommentCard extends StatelessWidget {
                   spacing: 8,
                   children: [
                     Text(
-                      'چگونه یک درون گرای تاثیر گذار باشیم',
+                      widget.bookName,
                       style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     StarRating(
+                      initialRating: _rating,
                       maxRating: 5,
                       onRatingChanged: (rating) {
-                        //? Handle rating change
+                        setState(() {
+                          _rating = rating;
+                        });
                       },
                     ),
                   ],
                 ),
-                InputTextFormField(
-                  label: 'متن نظر',
-                  keyboardType: TextInputType.text,
-                  maxLines: 6,
-                  controller: TextEditingController(),
+                Form(
+                  key: _updateCommentFormKey,
+                  child: InputTextFormField(
+                    label: 'متن نظر',
+                    keyboardType: TextInputType.text,
+                    maxLines: 6,
+                    controller: _commentController,
+                    validator: (value) {
+                      return AppValidator.userName(value, fieldName: 'متن نظر');
+                    },
+                  ),
                 ),
-                Button(
-                  label: 'افزودن نظر',
-                  onPressed: () {
-                    context.pop();
+                BlocConsumer<UserCommentBloc, UserCommentState>(
+                  listener: (context, state) {
+                    if (state.updateCommentStatus is UpdateCommentSuccess) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: AppColors.tertiary,
+                          content: Text('نظر شما با موفقیت ثبت شد'),
+                        ),
+                      );
+                    }
+
+                    if (state.updateCommentStatus is UpdateCommentError) {
+                      Navigator.pop(context);
+                      // final error =
+                      //     (state.updateCommentStatus as UpdateCommentError)
+                      //         .error;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: AppColors.primary,
+                          content: Text('نمیتوان آپدیت کرد...'),
+                        ),
+                      );
+                    }
                   },
-                  width: double.infinity,
-                  backgroundColor: AppColors.secondary,
-                  textColor: AppColors.white,
+                  builder: (context, state) {
+                    return Button(
+                      label: 'افزودن نظر',
+                      onPressed:
+                          state.updateCommentStatus is UpdateCommentLoading
+                          ? null
+                          : () {
+                              if (!_updateCommentFormKey.currentState!
+                                  .validate()) {
+                                return;
+                              }
+                              if (_rating == 0) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.error,
+                                    content: Text('لطفاً نکات را انتخاب کنید'),
+                                  ),
+                                );
+                                return;
+                              }
+                              context.read<UserCommentBloc>().add(
+                                UpdateUserCommentEvent(
+                                  commentId: widget.commentId,
+                                  updateCommentModel: UpdateCommentModel(
+                                    rate: _rating!.toDouble(),
+                                    text: _commentController.text,
+                                    book: UpdateCommentBook(
+                                      name: widget.bookName,
+                                      picture: widget.bookId,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                      width: double.infinity,
+                      backgroundColor: AppColors.secondary,
+                      textColor: AppColors.white,
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 16),
               ],
             ),

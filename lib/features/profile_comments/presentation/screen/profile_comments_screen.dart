@@ -70,6 +70,7 @@ class _ProfileCommentsScreenState extends State<ProfileCommentsScreen> {
                 return UserCommentCard(
                   bookId: comment.book.id,
                   commentId: comment.id,
+                  bookName: comment.book.name,
                   title: comment.book.name,
                   rating: comment.rate,
                   date: comment.createdAt,

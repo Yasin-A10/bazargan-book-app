@@ -43,7 +43,9 @@ import 'package:bazargan/features/profile/data/repository/update_name_repository
 import 'package:bazargan/features/profile/data/source/user_api_provider.dart';
 import 'package:bazargan/features/profile/data/source/update_name_api_provider.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
+import 'package:bazargan/features/profile_comments/data/repository/update_comment_repository_impl.dart';
 import 'package:bazargan/features/profile_comments/data/repository/user_comment_repository_impl.dart';
+import 'package:bazargan/features/profile_comments/data/source/update_comment_api_provider.dart';
 import 'package:bazargan/features/profile_comments/data/source/user_comment_api_provider.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_favorites/data/repository/add_favorite_repository_impl.dart';
@@ -91,6 +93,9 @@ setup() {
   locator.registerSingleton<CartApiProvider>(CartApiProvider());
   locator.registerSingleton<DeleteCartApiProvider>(DeleteCartApiProvider());
   locator.registerSingleton<UserCommentApiProvider>(UserCommentApiProvider());
+  locator.registerSingleton<UpdateCommentApiProvider>(
+    UpdateCommentApiProvider(),
+  );
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -156,6 +161,9 @@ setup() {
   locator.registerSingleton<UserCommentRepositoryImpl>(
     UserCommentRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<UpdateCommentRepositoryImpl>(
+    UpdateCommentRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -199,6 +207,9 @@ setup() {
     CartBloc(cartRepository: locator(), deleteCartRepository: locator()),
   );
   locator.registerSingleton<UserCommentBloc>(
-    UserCommentBloc(userCommentRepository: locator()),
+    UserCommentBloc(
+      userCommentRepository: locator(),
+      updateCommentRepository: locator(),
+    ),
   );
 }
