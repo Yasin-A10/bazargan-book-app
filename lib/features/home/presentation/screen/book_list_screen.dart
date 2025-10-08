@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class BookListScreen extends StatefulWidget {
   final String title;
@@ -78,7 +79,14 @@ class _BookListScreenState extends State<BookListScreen> {
       body: BlocBuilder<AllBooksBloc, AllBooksState>(
         builder: (context, state) {
           if (state is AllBooksLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                thirdRingColor: AppColors.secondary,
+                secondRingColor: AppColors.tertiary,
+                size: 40,
+              ),
+            );
           }
 
           if (state is AllBooksError) {
@@ -87,6 +95,11 @@ class _BookListScreenState extends State<BookListScreen> {
 
           if (state is AllBooksSuccess) {
             final books = state.bookListModel;
+            if (books.results.isEmpty) {
+              return const Center(
+                child: Center(child: Text('کتابی در این دسته بندی وجود ندارد')),
+              );
+            }
             return AnimatedSwitcher(
               switchInCurve: Curves.easeInOutCubic,
               switchOutCurve: Curves.easeInOutCubic,

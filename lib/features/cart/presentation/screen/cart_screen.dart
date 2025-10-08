@@ -12,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/constants/colors.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -44,7 +45,14 @@ class _CartScreenState extends State<CartScreen> {
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state.loadCartStatus is CartLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                thirdRingColor: AppColors.secondary,
+                secondRingColor: AppColors.tertiary,
+                size: 40,
+              ),
+            );
           }
 
           if (state.loadCartStatus is CartError) {

@@ -5,6 +5,7 @@ import 'package:bazargan/core/constants/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfileTransactionScreen extends StatelessWidget {
   const ProfileTransactionScreen({super.key});
@@ -29,7 +30,14 @@ class ProfileTransactionScreen extends StatelessWidget {
       body: BlocBuilder<TransactionBloc, TransactionState>(
         builder: (context, state) {
           if (state is TransactionLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                thirdRingColor: AppColors.secondary,
+                secondRingColor: AppColors.tertiary,
+                size: 40,
+              ),
+            );
           }
 
           if (state is TransactionError) {

@@ -57,7 +57,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                 width: 20,
                                 height: 20,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': category.title,
+                                    'type': 'category',
+                                    'value': category.id.toString(),
+                                  },
+                                );
+                              },
                             ),
                             const SizedBox(height: 8),
                           ],

@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfileFavoritesScreen extends StatefulWidget {
   const ProfileFavoritesScreen({super.key});
@@ -94,7 +95,10 @@ class _ProfileFavoritesScreenState extends State<ProfileFavoritesScreen> {
                       ? SizedBox(
                           height: 32,
                           width: 32,
-                          child: const CircularProgressIndicator(),
+                          child: LoadingAnimationWidget.threeArchedCircle(
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
                         )
                       : SvgPicture.asset(Images.tickButton, height: 32),
                 );
@@ -106,7 +110,14 @@ class _ProfileFavoritesScreenState extends State<ProfileFavoritesScreen> {
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                thirdRingColor: AppColors.secondary,
+                secondRingColor: AppColors.tertiary,
+                size: 40,
+              ),
+            );
           }
 
           if (state is HomeError) {
@@ -166,8 +177,12 @@ class _ProfileFavoritesScreenState extends State<ProfileFavoritesScreen> {
                             BlocBuilder<FavoriteBloc, FavoriteState>(
                               builder: (context, state) {
                                 if (state is FavoriteLoading) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
+                                  return Center(
+                                    child:
+                                        LoadingAnimationWidget.staggeredDotsWave(
+                                          color: AppColors.primary,
+                                          size: 30,
+                                        ),
                                   );
                                 }
 

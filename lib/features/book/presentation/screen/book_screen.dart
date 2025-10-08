@@ -172,9 +172,16 @@ class _BookScreenState extends State<BookScreen> {
       },
       builder: (context, state) {
         if (state is BookLoading) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: AppColors.white,
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                thirdRingColor: AppColors.secondary,
+                secondRingColor: AppColors.tertiary,
+                size: 40,
+              ),
+            ),
           );
         }
 
@@ -676,7 +683,12 @@ class _BookScreenState extends State<BookScreen> {
                   BlocBuilder<BookCommentBloc, BookCommentState>(
                     builder: (context, state) {
                       if (state is BookCommentLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: AppColors.primary,
+                            size: 30,
+                          ),
+                        );
                       }
 
                       if (state is BookCommentError) {
@@ -747,8 +759,11 @@ class _BookScreenState extends State<BookScreen> {
                       bloc: authorBloc,
                       builder: (context, state) {
                         if (state is AllBooksLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: LoadingAnimationWidget.staggeredDotsWave(
+                              color: AppColors.primary,
+                              size: 30,
+                            ),
                           );
                         }
                         if (state is AllBooksError) {

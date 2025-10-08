@@ -1,3 +1,4 @@
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/search_bar.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OriginalSearchScreen extends StatefulWidget {
   const OriginalSearchScreen({super.key});
@@ -73,7 +75,14 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                   }
 
                   if (state is SearchLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: LoadingAnimationWidget.discreteCircle(
+                        color: AppColors.primary,
+                        thirdRingColor: AppColors.secondary,
+                        secondRingColor: AppColors.tertiary,
+                        size: 50,
+                      ),
+                    );
                   }
 
                   if (state is SearchSuccess) {
@@ -86,7 +95,16 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                             (author) => IconSearch(
                               icon: Iconsax.user_edit_copy,
                               title: author.name,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': author.name,
+                                    'type': 'author',
+                                    'value': author.id.toString(),
+                                  },
+                                );
+                              },
                             ),
                           ),
                         if (search.publishers.isNotEmpty)
@@ -94,7 +112,16 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                             (pub) => IconSearch(
                               icon: Iconsax.printer_copy,
                               title: pub.name,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': pub.name,
+                                    'type': 'publisher',
+                                    'value': pub.id.toString(),
+                                  },
+                                );
+                              },
                             ),
                           ),
                         if (search.categories.isNotEmpty)
@@ -102,7 +129,16 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                             (cat) => IconSearch(
                               icon: Iconsax.category_copy,
                               title: cat.title,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': cat.title,
+                                    'type': 'category',
+                                    'value': cat.id.toString(),
+                                  },
+                                );
+                              },
                             ),
                           ),
                         if (search.translators.isNotEmpty)
@@ -110,7 +146,16 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                             (tr) => IconSearch(
                               icon: Iconsax.translate_copy,
                               title: tr.name,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': tr.name,
+                                    'type': 'translator',
+                                    'value': tr.id.toString(),
+                                  },
+                                );
+                              },
                             ),
                           ),
 
@@ -120,7 +165,9 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                               image: book.picture,
                               title: book.name,
                               imgHeight: 22,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.push(RoutePaths.book, extra: book.id);
+                              },
                             ),
                           ),
                         if (search.eBooks.isNotEmpty)
@@ -129,7 +176,9 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                               image: book.picture,
                               title: book.name,
                               imgHeight: 30,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.push(RoutePaths.book, extra: book.id);
+                              },
                             ),
                           ),
                       ],

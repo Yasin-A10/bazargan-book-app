@@ -14,6 +14,7 @@ import 'package:bazargan/core/widgets/home_list_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/network/session_manager.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,7 +36,14 @@ class HomeScreen extends StatelessWidget {
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               if (state is HomeLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: LoadingAnimationWidget.discreteCircle(
+                    color: AppColors.primary,
+                    thirdRingColor: AppColors.secondary,
+                    secondRingColor: AppColors.tertiary,
+                    size: 40,
+                  ),
+                );
               }
 
               if (state is HomeError) {

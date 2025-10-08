@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -53,7 +54,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
               if (state is UserLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: LoadingAnimationWidget.discreteCircle(
+                    color: AppColors.primary,
+                    secondRingColor: AppColors.tertiary,
+                    thirdRingColor: AppColors.secondary,
+                    size: 40,
+                  ),
+                );
               }
 
               if (state is UserError) {
