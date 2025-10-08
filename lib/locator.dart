@@ -12,16 +12,24 @@ import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
 import 'package:bazargan/features/book/data/repository/add_comment_repository_impl.dart';
+import 'package:bazargan/features/book/data/repository/add_to_cart_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_commnet_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/feedback_repository_impl.dart';
 import 'package:bazargan/features/book/data/source/add_comment_api_provider.dart';
+import 'package:bazargan/features/book/data/source/add_to_cart_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_comment_api_provider.dart';
 import 'package:bazargan/features/book/data/source/feedback_api_provider.dart';
+import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
+import 'package:bazargan/features/cart/data/repository/cart_repository_impl.dart';
+import 'package:bazargan/features/cart/data/repository/delete_cart_repository_impl.dart';
+import 'package:bazargan/features/cart/data/source/cart_api_provider.dart';
+import 'package:bazargan/features/cart/data/source/delete_cart_api_provider.dart';
+import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
 import 'package:bazargan/features/home/data/source/home_api_provider.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
@@ -76,6 +84,9 @@ setup() {
   locator.registerSingleton<BookCommentApiProvider>(BookCommentApiProvider());
   locator.registerSingleton<FeedbackApiProvider>(FeedbackApiProvider());
   locator.registerSingleton<AddCommentApiProvider>(AddCommentApiProvider());
+  locator.registerSingleton<AddToCartApiProvider>(AddToCartApiProvider());
+  locator.registerSingleton<CartApiProvider>(CartApiProvider());
+  locator.registerSingleton<DeleteCartApiProvider>(DeleteCartApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -129,6 +140,15 @@ setup() {
   locator.registerSingleton<AddCommentRepositoryImpl>(
     AddCommentRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<AddToCartRepositoryImpl>(
+    AddToCartRepositoryImpl(apiProvider: locator()),
+  );
+  locator.registerSingleton<CartRepositoryImpl>(
+    CartRepositoryImpl(apiProvider: locator()),
+  );
+  locator.registerSingleton<DeleteCartRepositoryImpl>(
+    DeleteCartRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -164,5 +184,11 @@ setup() {
   );
   locator.registerSingleton<FeedbackBloc>(
     FeedbackBloc(feedbackRepository: locator()),
+  );
+  locator.registerSingleton<AddToCartBloc>(
+    AddToCartBloc(addToCartRepository: locator()),
+  );
+  locator.registerSingleton<CartBloc>(
+    CartBloc(cartRepository: locator(), deleteCartRepository: locator()),
   );
 }

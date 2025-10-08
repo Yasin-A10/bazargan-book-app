@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 // import 'package:bazargan/config/router/route_paths.dart';
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
 import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
 import 'package:bazargan/core/api/all_books.dart/data/repository/all_books_repository_impl.dart';
@@ -17,6 +18,7 @@ import 'package:bazargan/core/widgets/list_item_widget.dart';
 import 'package:bazargan/core/widgets/list_widget.dart';
 import 'package:bazargan/features/book/data/model/add_comment_model.dart';
 import 'package:bazargan/features/book/data/model/book_model.dart';
+import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
 import 'package:bazargan/features/book/presentation/widgets/book_comment_card.dart';
@@ -49,6 +51,8 @@ class _BookScreenState extends State<BookScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
   bool? _isMarked = false;
+
+  bool _isInCart = false;
 
   // initial queries
   AllBooksQuery authorBooksQuery = AllBooksQuery();
@@ -206,6 +210,10 @@ class _BookScreenState extends State<BookScreen> {
 
           if (book.name != null) {
             _name = book.name!;
+          }
+
+          if (book.isInCart != null) {
+            _isInCart = book.isInCart ?? false;
           }
 
           return Scaffold(
@@ -568,16 +576,55 @@ class _BookScreenState extends State<BookScreen> {
                           },
                         ),
                         Expanded(
-                          child: Button(
-                            label: 'افزودن به سبد',
-                            onPressed: () {},
-                            backgroundColor: AppColors.primaryTint8,
-                            textColor: AppColors.primary,
-                            icon: Icon(
-                              Iconsax.bag_2_copy,
-                              size: 20,
-                              color: AppColors.primary,
-                            ),
+                          child: BlocConsumer<AddToCartBloc, AddToCartState>(
+                            listener: (context, state) {
+                              if (state is AddToCartSuccess) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.tertiary,
+                                    content: Text(state.response),
+                                  ),
+                                );
+                                setState(() {
+                                  _isInCart = true;
+                                });
+                              }
+                              if (state is AddToCartError) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.primary,
+                                    content: Text('خطا در خرید...'),
+                                  ),
+                                );
+                              }
+                            },
+                            builder: (context, state) {
+                              return Button(
+                                label: _isInCart == true
+                                    ? 'موجود در سبد'
+                                    : 'افزودن به سبد',
+                                onPressed: state is AddToCartLoading
+                                    ? null
+                                    : () {
+                                        _isInCart == true
+                                            ? context.push(RoutePaths.cart)
+                                            : context.read<AddToCartBloc>().add(
+                                                AddToCartRequestEvent(
+                                                  bookId: book.id!,
+                                                ),
+                                              );
+                                      },
+                                backgroundColor: AppColors.primaryTint8,
+                                textColor: AppColors.primary,
+                                icon: Icon(
+                                  _isInCart == true
+                                      ? Iconsax.bag_tick_2_copy
+                                      : Iconsax.bag_2_copy,
+                                  size: 20,
+                                  color: AppColors.primary,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
