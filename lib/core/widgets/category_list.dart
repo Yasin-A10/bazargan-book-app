@@ -3,6 +3,7 @@ import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/features/home/data/model/home_page_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class CategoryList extends StatelessWidget {
@@ -64,13 +65,14 @@ class CategoryList extends StatelessWidget {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final colorSet = colors[index % colors.length];
+              final category = categories[index];
 
               return CategoryItem(
                 backgroundColor: colorSet["bg"]!,
                 contentColor: colorSet["content"]!,
-                label: categories[index].title,
+                label: category.title,
                 icon: SvgPicture.network(
-                  categories[index].icon,
+                  category.icon,
                   colorFilter: ColorFilter.mode(
                     colorSet["content"]!,
                     BlendMode.srcIn,
@@ -78,6 +80,16 @@ class CategoryList extends StatelessWidget {
                   height: 30,
                   width: 30,
                 ),
+                onTap: () {
+                  context.pushNamed(
+                    'books',
+                    queryParameters: {
+                      'title': category.title,
+                      'type': 'category',
+                      'value': category.id.toString(),
+                    },
+                  );
+                },
               );
             },
           ),
@@ -92,6 +104,7 @@ class CategoryItem extends StatelessWidget {
   final Color contentColor;
   final String label;
   final Widget icon;
+  final Function() onTap;
 
   const CategoryItem({
     super.key,
@@ -99,36 +112,40 @@ class CategoryItem extends StatelessWidget {
     required this.contentColor,
     required this.label,
     required this.icon,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 16),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 30,
-            width: 30,
-            child: FittedBox(fit: BoxFit.contain, child: icon),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: contentColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(left: 16),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 30,
+              width: 30,
+              child: FittedBox(fit: BoxFit.contain, child: icon),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: contentColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
