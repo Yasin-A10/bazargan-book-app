@@ -5,6 +5,7 @@ import 'package:bazargan/features/auth/presentation/screen/login_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/otp_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/category_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/book_screen.dart';
+import 'package:bazargan/features/book/presentation/screen/pdf_viewer.dart';
 import 'package:bazargan/features/cart/presentation/screen/cart_screen.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/screen/my_library_bookmarks_screen.dart';
@@ -42,7 +43,6 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
-
     GoRoute(
       path: RoutePaths.category,
       builder: (context, state) => const CategoryScreen(),
@@ -101,6 +101,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.cart,
       builder: (context, state) => const CartScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.pdfViewer,
+      builder: (context, state) =>
+          PdfViewerScreen(fileUrl: state.extra as String),
     ),
   ],
 

@@ -644,7 +644,9 @@ class _BookScreenState extends State<BookScreen> {
                     child: Button(
                       width: double.infinity,
                       label: 'نمونه',
-                      onPressed: () {},
+                      onPressed: () {
+                        _openSample(context, book);
+                      },
                       icon: Icon(
                         book.type == 'صوتی'
                             ? Iconsax.play_copy
@@ -830,6 +832,20 @@ class _BookScreenState extends State<BookScreen> {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  void _openSample(BuildContext context, BookModel book) {
+    if (book.type == 'pdf' && book.demo!.isNotEmpty) {
+      context.push(RoutePaths.pdfViewer, extra: book.demo);
+    }
+
+    if (book.type == 'epub' && book.demo!.isNotEmpty) {
+      // go to epub reader
+    }
+
+    if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
+      // go to audio player
+    }
   }
 
   void _openMenu(BuildContext context, BookModel book) {

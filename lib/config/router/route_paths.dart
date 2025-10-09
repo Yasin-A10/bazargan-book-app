@@ -18,4 +18,5 @@ class RoutePaths {
 
   static const String book = '/book';
   static const String cart = '/cart';
+  static const String pdfViewer = '/pdf-viewer';
 }

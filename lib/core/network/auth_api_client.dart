@@ -25,7 +25,7 @@ class AuthApiClient {
         requestBody: true,
         requestHeader: true,
         responseBody: true,
-        responseHeader: true,
+        responseHeader: false,
         error: true,
         compact: true,
         maxWidth: 90,
