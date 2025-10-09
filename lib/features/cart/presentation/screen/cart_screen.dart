@@ -69,6 +69,10 @@ class _CartScreenState extends State<CartScreen> {
 
             final cartItem = cart.results.first;
 
+            if (cartItem.cartItems.isEmpty) {
+              return const Center(child: Text('سبد خرید شما خالی است'));
+            }
+
             return Stack(
               fit: StackFit.expand,
               children: [

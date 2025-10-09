@@ -1,4 +1,4 @@
-import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/model/all_books_model.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:cached_network_image/cached_network_image.dart';

@@ -1,9 +1,8 @@
-import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
-import 'package:bazargan/core/constants/texts.dart';
-import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
+import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dart';
+import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/home/presentation/widgets/home_slider_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/widgets/home_list_widget.dart';
-import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/network/session_manager.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -118,6 +116,8 @@ class HomeScreen extends StatelessWidget {
                         listHeight: 200,
                         books: popularBooks,
                       ),
+
+                      const SizedBox(height: 50),
                     ],
                   ),
                 );
@@ -125,69 +125,14 @@ class HomeScreen extends StatelessWidget {
               return const SizedBox.shrink();
             },
           ),
-          CartButton(count: 3),
-        ],
-      ),
-    );
-  }
-}
-
-class CartButton extends StatelessWidget {
-  final int count;
-  const CartButton({super.key, required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: 16,
-      right: 0,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            bottomLeft: Radius.circular(16),
+          CartButton(top: 16),
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AudioPlayerBox(),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            IconButton(
-              onPressed: () {
-                GoRouter.of(context).push(RoutePaths.cart);
-              },
-              icon: Icon(
-                Iconsax.bag_2_copy,
-                size: 22,
-                color: AppColors.primary,
-              ),
-            ),
-            Positioned(
-              bottom: 4,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  formatNumberToPersian(count),
-                  style: AppTextStyles.small.copyWith(
-                    color: AppColors.white,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

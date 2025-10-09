@@ -1,6 +1,7 @@
-import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
-import 'package:bazargan/core/api/all_books.dart/data/repository/all_books_repository_impl.dart';
-import 'package:bazargan/core/api/all_books.dart/data/source/all_books_api_provider.dart';
+import 'package:bazargan/core/blocs/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/repository/all_books_repository_impl.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/source/all_books_api_provider.dart';
+import 'package:bazargan/core/blocs/audio/audio_bloc.dart';
 import 'package:bazargan/core/network/auth_api_client.dart';
 import 'package:bazargan/features/auth/data/repository/login_repository_impl.dart';
 import 'package:bazargan/features/auth/data/repository/logout_repository_impl.dart';
@@ -221,4 +222,6 @@ setup() {
       deleteCommentRepository: locator(),
     ),
   );
+
+  locator.registerSingleton<AudioBloc>(AudioBloc());
 }

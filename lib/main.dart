@@ -1,6 +1,7 @@
 import 'package:bazargan/config/router/app_router.dart';
 import 'package:bazargan/config/theme/app_theme.dart';
-import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/blocs/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/blocs/audio/audio_bloc.dart';
 import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
@@ -50,6 +51,7 @@ void main() async {
         BlocProvider(create: (_) => locator<AddToCartBloc>()),
         BlocProvider(create: (_) => locator<CartBloc>()),
         BlocProvider(create: (_) => locator<UserCommentBloc>()),
+        BlocProvider(create: (_) => locator<AudioBloc>()),
       ],
       child: const MyApp(),
     ),

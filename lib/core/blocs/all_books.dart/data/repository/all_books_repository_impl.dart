@@ -1,5 +1,5 @@
-import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
-import 'package:bazargan/core/api/all_books.dart/data/source/all_books_api_provider.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/model/all_books_model.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/source/all_books_api_provider.dart';
 import 'package:dartz/dartz.dart';
 
 class AllBooksRepositoryImpl {

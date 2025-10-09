@@ -1,5 +1,5 @@
-import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
-import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
+import 'package:bazargan/core/blocs/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/model/all_books_model.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/widgets/card/book_card_column.dart';

@@ -2,10 +2,11 @@ import 'dart:ui';
 
 // import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/config/router/route_paths.dart';
-import 'package:bazargan/core/api/all_books.dart/bloc/all_books_bloc.dart';
-import 'package:bazargan/core/api/all_books.dart/data/model/all_books_model.dart';
-import 'package:bazargan/core/api/all_books.dart/data/repository/all_books_repository_impl.dart';
-import 'package:bazargan/core/api/all_books.dart/data/source/all_books_api_provider.dart';
+import 'package:bazargan/core/blocs/all_books.dart/bloc/all_books_bloc.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/model/all_books_model.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/repository/all_books_repository_impl.dart';
+import 'package:bazargan/core/blocs/all_books.dart/data/source/all_books_api_provider.dart';
+import 'package:bazargan/core/blocs/audio/audio_bloc.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
@@ -21,7 +22,10 @@ import 'package:bazargan/features/book/data/model/book_model.dart';
 import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dart';
 import 'package:bazargan/features/book/presentation/widgets/book_comment_card.dart';
+import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
+import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -261,82 +265,28 @@ class _BookScreenState extends State<BookScreen> {
                 ),
               ],
             ),
-            body: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
+            body: Stack(
+              children: [
+                SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 400,
-                        width: double.infinity,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ImageFiltered(
-                              imageFilter: ImageFilter.blur(
-                                sigmaX: 0,
-                                sigmaY: 0,
-                              ),
-                              child: CachedNetworkImage(
-                                imageUrl: book.picture!,
-                                fit: BoxFit.cover,
-                                fadeInDuration: const Duration(
-                                  microseconds: 300,
-                                ),
-                                placeholder: (context, url) => Center(
-                                  child: LoadingAnimationWidget.flickr(
-                                    leftDotColor: AppColors.primary,
-                                    rightDotColor: AppColors.secondary,
-                                    size: 50,
+                      Stack(
+                        children: [
+                          SizedBox(
+                            height: 400,
+                            width: double.infinity,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ImageFiltered(
+                                  imageFilter: ImageFilter.blur(
+                                    sigmaX: 0,
+                                    sigmaY: 0,
                                   ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    AppColors.white.withValues(alpha: 0.7),
-                                    AppColors.white.withValues(alpha: 0.9),
-                                    AppColors.white.withValues(alpha: 1.0),
-                                  ],
-                                  stops: const [0.0, 0.6, 1.0],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 120,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Column(
-                            spacing: 8,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.3,
-                                      ),
-                                      blurRadius: 10.8,
-                                      offset: const Offset(0, 0),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
                                   child: CachedNetworkImage(
                                     imageUrl: book.picture!,
-                                    height: 200,
-                                    width: 136,
                                     fit: BoxFit.cover,
                                     fadeInDuration: const Duration(
                                       microseconds: 300,
@@ -350,482 +300,577 @@ class _BookScreenState extends State<BookScreen> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Row(
-                                spacing: 4,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        AppColors.white.withValues(alpha: 0.7),
+                                        AppColors.white.withValues(alpha: 0.9),
+                                        AppColors.white.withValues(alpha: 1.0),
+                                      ],
+                                      stops: const [0.0, 0.6, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: 120,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Column(
+                                spacing: 8,
                                 children: [
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Iconsax.share_copy,
-                                      color: AppColors.secondary,
-                                      size: 24,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          blurRadius: 10.8,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: CachedNetworkImage(
+                                        imageUrl: book.picture!,
+                                        height: 200,
+                                        width: 136,
+                                        fit: BoxFit.cover,
+                                        fadeInDuration: const Duration(
+                                          microseconds: 300,
+                                        ),
+                                        placeholder: (context, url) => Center(
+                                          child: LoadingAnimationWidget.flickr(
+                                            leftDotColor: AppColors.primary,
+                                            rightDotColor: AppColors.secondary,
+                                            size: 50,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Row(
                                     spacing: 4,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Icon(
-                                        Iconsax.star_1,
-                                        color: AppColors.primary,
-                                        size: 16,
-                                      ),
-                                      Text(
-                                        formatNumberToPersian(
-                                          book.avgRate ?? 0,
-                                        ),
-                                        style: AppTextStyles.small.copyWith(
-                                          fontSize: 14,
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Iconsax.share_copy,
+                                          color: AppColors.secondary,
+                                          size: 24,
                                         ),
                                       ),
-                                      Text(
-                                        '(${formatNumberToPersian(book.rateCount ?? 0)})',
-                                        style: AppTextStyles.small,
+                                      Row(
+                                        spacing: 4,
+                                        children: [
+                                          Icon(
+                                            Iconsax.star_1,
+                                            color: AppColors.primary,
+                                            size: 16,
+                                          ),
+                                          Text(
+                                            formatNumberToPersian(
+                                              book.avgRate ?? 0,
+                                            ),
+                                            style: AppTextStyles.small.copyWith(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Text(
+                                            '(${formatNumberToPersian(book.rateCount ?? 0)})',
+                                            style: AppTextStyles.small,
+                                          ),
+                                        ],
+                                      ),
+                                      BlocConsumer<
+                                        MarkedBooksBloc,
+                                        MarkedBooksState
+                                      >(
+                                        listener: (context, state) {
+                                          if (state is AddBookmarkSuccess) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor:
+                                                    AppColors.tertiary,
+                                                content: Text(
+                                                  _isMarked!
+                                                      ? state
+                                                            .bookmark['message']
+                                                      : state
+                                                            .bookmark['message'],
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          if (state is MarkedBooksError) {
+                                            setState(
+                                              () => _isMarked = !_isMarked!,
+                                            );
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor:
+                                                    AppColors.primary,
+                                                content: Text(
+                                                  state.error,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        builder: (context, state) {
+                                          final isLoading =
+                                              state is MarkedBooksLoading;
+
+                                          return IconButton(
+                                            onPressed: isLoading
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      _isMarked = !_isMarked!;
+                                                    });
+                                                    context
+                                                        .read<MarkedBooksBloc>()
+                                                        .add(
+                                                          AddBookmarkEvent(
+                                                            bookId: book.id!,
+                                                          ),
+                                                        );
+                                                  },
+                                            icon: isLoading
+                                                ? SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: AppColors
+                                                              .secondary,
+                                                        ),
+                                                  )
+                                                : Icon(
+                                                    _isMarked!
+                                                        ? Iconsax.save_2
+                                                        : Iconsax.save_2_copy,
+                                                    color: AppColors.secondary,
+                                                    size: 24,
+                                                  ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
-                                  BlocConsumer<
-                                    MarkedBooksBloc,
-                                    MarkedBooksState
-                                  >(
-                                    listener: (context, state) {
-                                      if (state is AddBookmarkSuccess) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            backgroundColor: AppColors.tertiary,
-                                            content: Text(
-                                              _isMarked!
-                                                  ? state.bookmark['message']
-                                                  : state.bookmark['message'],
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      if (state is MarkedBooksError) {
-                                        setState(() => _isMarked = !_isMarked!);
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            backgroundColor: AppColors.primary,
-                                            content: Text(
-                                              state.error,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    builder: (context, state) {
-                                      final isLoading =
-                                          state is MarkedBooksLoading;
-
-                                      return IconButton(
-                                        onPressed: isLoading
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  _isMarked = !_isMarked!;
-                                                });
-                                                context
-                                                    .read<MarkedBooksBloc>()
-                                                    .add(
-                                                      AddBookmarkEvent(
-                                                        bookId: book.id!,
-                                                      ),
-                                                    );
-                                              },
-                                        icon: isLoading
-                                            ? SizedBox(
-                                                width: 20,
-                                                height: 20,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color:
-                                                          AppColors.secondary,
-                                                    ),
-                                              )
-                                            : Icon(
-                                                _isMarked!
-                                                    ? Iconsax.save_2
-                                                    : Iconsax.save_2_copy,
-                                                color: AppColors.secondary,
-                                                size: 24,
-                                              ),
-                                      );
-                                    },
-                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
+                        ],
+                      ),
+
+                      Text(book.name!, style: AppTextStyles.headlineLarge),
+                      SizedBox(height: 20),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          spacing: 8,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            BookInfoList(
+                              title: "نویسنده:",
+                              infos: book.author
+                                  .map(
+                                    (e) => InfoItem(id: e.id!, name: e.name!),
+                                  )
+                                  .toList(),
+                              hasArrow: true,
+                              filterType: 'author',
+                            ),
+
+                            if (book.translator.isNotEmpty)
+                              BookInfoList(
+                                title: "مترجم:",
+                                infos: book.translator
+                                    .map(
+                                      (e) => InfoItem(id: e.id!, name: e.name!),
+                                    )
+                                    .toList(),
+                                hasArrow: true,
+                                filterType: 'translator',
+                              ),
+
+                            BookInfoList(
+                              title: "انتشارات:",
+                              infos: [
+                                InfoItem(
+                                  id: book.publisher!.id!,
+                                  name: book.publisher!.name!,
+                                ),
+                              ],
+                              hasArrow: true,
+                              filterType: 'publisher',
+                            ),
+                            BookInfoList(
+                              title: "دسته بندی:",
+                              infos: book.categories
+                                  .map(
+                                    (e) => InfoItem(id: e.id!, name: e.title!),
+                                  )
+                                  .toList(),
+                              hasArrow: true,
+                              filterType: 'category',
+                            ),
+                            BookInfoList(
+                              title: "تعداد صفحات:",
+                              infos: [
+                                InfoItem(
+                                  id: null,
+                                  name: formatNumberToPersian(
+                                    book.pageCount ?? 0,
+                                  ),
+                                ),
+                              ],
+                              filterType: '',
+                            ),
+                            BookInfoList(
+                              title: "تاریخ انتشار:",
+                              infos: [
+                                InfoItem(
+                                  id: null,
+                                  name: formatNumberToPersianWithoutSeparator(
+                                    book.editionYear.toString(),
+                                  ),
+                                ),
+                              ],
+                              filterType: '',
+                            ),
+                            BookInfoList(
+                              title: "نوع کتاب:",
+                              infos: [
+                                InfoItem(id: null, name: book.type.toString()),
+                              ],
+                              filterType: '',
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                      SizedBox(height: 20),
 
-                  Text(book.name!, style: AppTextStyles.headlineLarge),
-                  SizedBox(height: 20),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      spacing: 8,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        BookInfoList(
-                          title: "نویسنده:",
-                          infos: book.author
-                              .map((e) => InfoItem(id: e.id!, name: e.name!))
-                              .toList(),
-                          hasArrow: true,
-                          filterType: 'author',
-                        ),
-
-                        if (book.translator.isNotEmpty)
-                          BookInfoList(
-                            title: "مترجم:",
-                            infos: book.translator
-                                .map((e) => InfoItem(id: e.id!, name: e.name!))
-                                .toList(),
-                            hasArrow: true,
-                            filterType: 'translator',
+                      Row(
+                        spacing: 4,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            formatNumberToPersian(book.price!),
+                            style: AppTextStyles.headlineLarge.copyWith(
+                              fontSize: 20,
+                              color: AppColors.secondary,
+                            ),
                           ),
+                          SvgPicture.asset(
+                            Images.tooman,
+                            width: 16,
+                            height: 16,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
 
-                        BookInfoList(
-                          title: "انتشارات:",
-                          infos: [
-                            InfoItem(
-                              id: book.publisher!.id!,
-                              name: book.publisher!.name!,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          spacing: 12,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Button(
+                              label: 'خرید مستقیم',
+                              onPressed: () {
+                                _openPayMent(context, book);
+                              },
                             ),
-                          ],
-                          hasArrow: true,
-                          filterType: 'publisher',
-                        ),
-                        BookInfoList(
-                          title: "دسته بندی:",
-                          infos: book.categories
-                              .map((e) => InfoItem(id: e.id!, name: e.title!))
-                              .toList(),
-                          hasArrow: true,
-                          filterType: 'category',
-                        ),
-                        BookInfoList(
-                          title: "تعداد صفحات:",
-                          infos: [
-                            InfoItem(
-                              id: null,
-                              name: formatNumberToPersian(book.pageCount ?? 0),
-                            ),
-                          ],
-                          filterType: '',
-                        ),
-                        BookInfoList(
-                          title: "تاریخ انتشار:",
-                          infos: [
-                            InfoItem(
-                              id: null,
-                              name: formatNumberToPersianWithoutSeparator(
-                                book.editionYear.toString(),
+                            Expanded(
+                              child: BlocConsumer<AddToCartBloc, AddToCartState>(
+                                listener: (context, state) {
+                                  if (state is AddToCartSuccess) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.tertiary,
+                                        content: Text(state.response),
+                                      ),
+                                    );
+                                    setState(() {
+                                      _isInCart = true;
+                                    });
+                                  }
+                                  if (state is AddToCartError) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.primary,
+                                        content: Text('خطا در خرید...'),
+                                      ),
+                                    );
+                                  }
+                                },
+                                builder: (context, state) {
+                                  return Button(
+                                    label: _isInCart == true
+                                        ? 'موجود در سبد'
+                                        : 'افزودن به سبد',
+                                    onPressed: state is AddToCartLoading
+                                        ? null
+                                        : () {
+                                            _isInCart == true
+                                                ? context.push(RoutePaths.cart)
+                                                : context
+                                                      .read<AddToCartBloc>()
+                                                      .add(
+                                                        AddToCartRequestEvent(
+                                                          bookId: book.id!,
+                                                        ),
+                                                      );
+                                            BlocProvider.of<CartBloc>(
+                                              context,
+                                            ).add(LoadCartEvent());
+                                            _isInCart = true;
+                                          },
+                                    backgroundColor: AppColors.primaryTint8,
+                                    textColor: AppColors.primary,
+                                    icon: Icon(
+                                      _isInCart == true
+                                          ? Iconsax.bag_tick_2_copy
+                                          : Iconsax.bag_2_copy,
+                                      size: 20,
+                                      color: AppColors.primary,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
-                          filterType: '',
-                        ),
-                        BookInfoList(
-                          title: "نوع کتاب:",
-                          infos: [
-                            InfoItem(id: null, name: book.type.toString()),
-                          ],
-                          filterType: '',
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-                  Row(
-                    spacing: 4,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        formatNumberToPersian(book.price!),
-                        style: AppTextStyles.headlineLarge.copyWith(
-                          fontSize: 20,
-                          color: AppColors.secondary,
                         ),
                       ),
-                      SvgPicture.asset(Images.tooman, width: 16, height: 16),
-                    ],
-                  ),
-                  SizedBox(height: 12),
+                      SizedBox(height: 8),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      spacing: 12,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Button(
-                          label: 'خرید مستقیم',
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Button(
+                          width: double.infinity,
+                          label: 'نمونه',
                           onPressed: () {
-                            _openPayMent(context, book);
+                            _openSample(context, book);
                           },
+                          icon: Icon(
+                            book.type == 'صوتی'
+                                ? Iconsax.play_copy
+                                : Iconsax.book_1_copy,
+                            size: 20,
+                            color: AppColors.secondary,
+                          ),
+                          backgroundColor: AppColors.white,
+                          textColor: AppColors.secondary,
+                          borderColor: AppColors.secondary,
                         ),
-                        Expanded(
-                          child: BlocConsumer<AddToCartBloc, AddToCartState>(
-                            listener: (context, state) {
-                              if (state is AddToCartSuccess) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.tertiary,
-                                    content: Text(state.response),
-                                  ),
-                                );
-                                setState(() {
-                                  _isInCart = true;
-                                });
-                              }
-                              if (state is AddToCartError) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.primary,
-                                    content: Text('خطا در خرید...'),
-                                  ),
-                                );
-                              }
-                            },
-                            builder: (context, state) {
-                              return Button(
-                                label: _isInCart == true
-                                    ? 'موجود در سبد'
-                                    : 'افزودن به سبد',
-                                onPressed: state is AddToCartLoading
-                                    ? null
-                                    : () {
-                                        _isInCart == true
-                                            ? context.push(RoutePaths.cart)
-                                            : context.read<AddToCartBloc>().add(
-                                                AddToCartRequestEvent(
-                                                  bookId: book.id!,
-                                                ),
-                                              );
-                                      },
-                                backgroundColor: AppColors.primaryTint8,
-                                textColor: AppColors.primary,
-                                icon: Icon(
-                                  _isInCart == true
-                                      ? Iconsax.bag_tick_2_copy
-                                      : Iconsax.bag_2_copy,
-                                  size: 20,
+                      ),
+                      SizedBox(height: 16),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
+                          children: [
+                            Text(
+                              "معرفی کتاب",
+                              style: AppTextStyles.headlineLarge,
+                            ),
+                            Text(
+                              book.description ?? 'توضیحاتی موجود نیست',
+                              textAlign: TextAlign.justify,
+                              style: AppTextStyles.body.copyWith(
+                                fontWeight: FontWeight.w300,
+                                height: 1.8,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+
+                      //! Comments list
+                      BlocBuilder<BookCommentBloc, BookCommentState>(
+                        builder: (context, state) {
+                          if (state is BookCommentLoading) {
+                            return Center(
+                              child: LoadingAnimationWidget.staggeredDotsWave(
+                                color: AppColors.primary,
+                                size: 30,
+                              ),
+                            );
+                          }
+
+                          if (state is BookCommentError) {
+                            return Center(child: Text(state.error));
+                          }
+
+                          if (state is BookCommentSuccess) {
+                            final bookComments = state.bookComment;
+
+                            if (bookComments.count == 0) {
+                              return SizedBox.shrink();
+                            }
+
+                            return SizedBox(
+                              height: 200,
+                              width: double.infinity,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                itemCount: bookComments.results.length,
+                                itemBuilder: (context, index) {
+                                  final comment = bookComments.results[index];
+
+                                  return BookCommentCard(
+                                    bookId: widget.bookId,
+                                    commentId: comment.id,
+                                    title: comment.user.displayName,
+                                    rating: comment.rate,
+                                    date: comment.createdAt,
+                                    comment: comment.text,
+                                    isLiked: comment.feedback.hasLiked,
+                                    isDisLiked: comment.feedback.hasDisliked,
+                                    likeCount: comment.feedback.likeCount,
+                                    dislikeCount: comment.feedback.dislikeCount,
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(width: 16),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      SizedBox(height: 16),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Button(
+                          label: 'افزودن نظر',
+                          onPressed: () {
+                            _openReviewMenu(context);
+                          },
+                          width: double.infinity,
+                          backgroundColor: AppColors.white,
+                          textColor: AppColors.primary,
+                          borderColor: AppColors.primary,
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      //! BlocBuilder for author books
+                      if (authorBloc != null)
+                        BlocBuilder<AllBooksBloc, AllBooksState>(
+                          bloc: authorBloc,
+                          builder: (context, state) {
+                            if (state is AllBooksLoading) {
+                              return Center(
+                                child: LoadingAnimationWidget.staggeredDotsWave(
                                   color: AppColors.primary,
+                                  size: 30,
                                 ),
                               );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Button(
-                      width: double.infinity,
-                      label: 'نمونه',
-                      onPressed: () {
-                        _openSample(context, book);
-                      },
-                      icon: Icon(
-                        book.type == 'صوتی'
-                            ? Iconsax.play_copy
-                            : Iconsax.book_1_copy,
-                        size: 20,
-                        color: AppColors.secondary,
-                      ),
-                      backgroundColor: AppColors.white,
-                      textColor: AppColors.secondary,
-                      borderColor: AppColors.secondary,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 8,
-                      children: [
-                        Text("معرفی کتاب", style: AppTextStyles.headlineLarge),
-                        Text(
-                          book.description ?? 'توضیحاتی موجود نیست',
-                          textAlign: TextAlign.justify,
-                          style: AppTextStyles.body.copyWith(
-                            fontWeight: FontWeight.w300,
-                            height: 1.8,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16),
-
-                  //! Comments list
-                  BlocBuilder<BookCommentBloc, BookCommentState>(
-                    builder: (context, state) {
-                      if (state is BookCommentLoading) {
-                        return Center(
-                          child: LoadingAnimationWidget.staggeredDotsWave(
-                            color: AppColors.primary,
-                            size: 30,
-                          ),
-                        );
-                      }
-
-                      if (state is BookCommentError) {
-                        return Center(child: Text(state.error));
-                      }
-
-                      if (state is BookCommentSuccess) {
-                        final bookComments = state.bookComment;
-
-                        if (bookComments.count == 0) {
-                          return SizedBox.shrink();
-                        }
-
-                        return SizedBox(
-                          height: 200,
-                          width: double.infinity,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
-                            itemCount: bookComments.results.length,
-                            itemBuilder: (context, index) {
-                              final comment = bookComments.results[index];
-
-                              return BookCommentCard(
-                                bookId: widget.bookId,
-                                commentId: comment.id,
-                                title: comment.user.displayName,
-                                rating: comment.rate,
-                                date: comment.createdAt,
-                                comment: comment.text,
-                                isLiked: comment.feedback.hasLiked,
-                                isDisLiked: comment.feedback.hasDisliked,
-                                likeCount: comment.feedback.likeCount,
-                                dislikeCount: comment.feedback.dislikeCount,
+                            }
+                            if (state is AllBooksError) {
+                              return Center(child: Text(state.error));
+                            }
+                            if (state is AllBooksSuccess) {
+                              final authorBooks = state.bookListModel.results;
+                              return ListWidget(
+                                title: 'سایر کتاب‌های این نویسنده',
+                                listHeight: 200,
+                                books: authorBooks,
+                                onTap: () => context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': 'سایر کتاب های این نویسنده',
+                                    'type': 'author',
+                                    'value': authorBooks.first.author.first.id
+                                        .toString(),
+                                  },
+                                ),
                               );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(width: 16),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+
+                      //! BlocBuilder for publisher books
+                      if (publisherBloc != null)
+                        BlocBuilder<AllBooksBloc, AllBooksState>(
+                          bloc: publisherBloc,
+                          builder: (context, state) {
+                            if (state is AllBooksLoading) {
+                              return const SizedBox.shrink();
+                            }
+                            if (state is AllBooksError) {
+                              return Center(child: Text(state.error));
+                            }
+                            if (state is AllBooksSuccess) {
+                              final publisherBooks =
+                                  state.bookListModel.results;
+                              return ListWidget(
+                                title: 'سایر کتاب‌های این ناشر',
+                                listHeight: 200,
+                                books: publisherBooks,
+                                onTap: () => context.pushNamed(
+                                  'books',
+                                  queryParameters: {
+                                    'title': 'سایر کتاب های این ناشر',
+                                    'type': 'publisher',
+                                    'value': publisherBooks.first.publisher.id
+                                        .toString(),
+                                  },
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      SizedBox(height: 88),
+                    ],
                   ),
-                  SizedBox(height: 16),
+                ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Button(
-                      label: 'افزودن نظر',
-                      onPressed: () {
-                        _openReviewMenu(context);
-                      },
-                      width: double.infinity,
-                      backgroundColor: AppColors.white,
-                      textColor: AppColors.primary,
-                      borderColor: AppColors.primary,
-                    ),
-                  ),
-                  SizedBox(height: 24),
-
-                  //! BlocBuilder for author books
-                  if (authorBloc != null)
-                    BlocBuilder<AllBooksBloc, AllBooksState>(
-                      bloc: authorBloc,
-                      builder: (context, state) {
-                        if (state is AllBooksLoading) {
-                          return Center(
-                            child: LoadingAnimationWidget.staggeredDotsWave(
-                              color: AppColors.primary,
-                              size: 30,
-                            ),
-                          );
-                        }
-                        if (state is AllBooksError) {
-                          return Center(child: Text(state.error));
-                        }
-                        if (state is AllBooksSuccess) {
-                          final authorBooks = state.bookListModel.results;
-                          return ListWidget(
-                            title: 'سایر کتاب‌های این نویسنده',
-                            listHeight: 200,
-                            books: authorBooks,
-                            onTap: () => context.pushNamed(
-                              'books',
-                              queryParameters: {
-                                'title': 'سایر کتاب های این نویسنده',
-                                'type': 'author',
-                                'value': authorBooks.first.author.first.id
-                                    .toString(),
-                              },
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-
-                  //! BlocBuilder for publisher books
-                  if (publisherBloc != null)
-                    BlocBuilder<AllBooksBloc, AllBooksState>(
-                      bloc: publisherBloc,
-                      builder: (context, state) {
-                        if (state is AllBooksLoading) {
-                          return const SizedBox.shrink();
-                        }
-                        if (state is AllBooksError) {
-                          return Center(child: Text(state.error));
-                        }
-                        if (state is AllBooksSuccess) {
-                          final publisherBooks = state.bookListModel.results;
-                          return ListWidget(
-                            title: 'سایر کتاب‌های این ناشر',
-                            listHeight: 200,
-                            books: publisherBooks,
-                            onTap: () => context.pushNamed(
-                              'books',
-                              queryParameters: {
-                                'title': 'سایر کتاب های این ناشر',
-                                'type': 'publisher',
-                                'value': publisherBooks.first.publisher.id
-                                    .toString(),
-                              },
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  SizedBox(height: 24),
-                ],
-              ),
+                CartButton(top: 130),
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: AudioPlayerBox(),
+                ),
+              ],
             ),
           );
         }
@@ -844,7 +889,9 @@ class _BookScreenState extends State<BookScreen> {
     }
 
     if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
-      // go to audio player
+      context.read<AudioBloc>().add(
+        PlayAudio(url: book.demo!, title: book.name!, image: book.picture!),
+      );
     }
   }
 
