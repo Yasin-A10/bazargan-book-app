@@ -78,6 +78,7 @@ class _MyLibraryBookmarksScreenState extends State<MyLibraryBookmarksScreen> {
               itemBuilder: (context, index) {
                 final book = books[index];
                 return BookCardRow(
+                  key: ValueKey(book.id),
                   bookId: book.id,
                   title: book.name,
                   author: book.author.first.name,
