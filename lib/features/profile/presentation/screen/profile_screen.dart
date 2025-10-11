@@ -11,6 +11,7 @@ import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile/presentation/widgets/profile_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<FormState> _editNameFormKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _walletController = TextEditingController();
+
+  // for copy
+  final String number = '09915838234';
+  final String email = 'example@example.com';
+  final String web = 'https://example.com';
 
   final List<int> suggestedAmounts = [50000, 100000, 200000, 500000];
 
@@ -48,29 +54,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('حساب کاربری')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: SingleChildScrollView(
-          child: BlocBuilder<UserBloc, UserState>(
-            builder: (context, state) {
-              if (state is UserLoading) {
-                return Center(
-                  child: LoadingAnimationWidget.discreteCircle(
-                    color: AppColors.primary,
-                    secondRingColor: AppColors.tertiary,
-                    thirdRingColor: AppColors.secondary,
-                    size: 40,
-                  ),
-                );
-              }
+      body: SingleChildScrollView(
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is UserLoading) {
+              return Center(
+                child: LoadingAnimationWidget.discreteCircle(
+                  color: AppColors.primary,
+                  secondRingColor: AppColors.tertiary,
+                  thirdRingColor: AppColors.secondary,
+                  size: 40,
+                ),
+              );
+            }
 
-              if (state is UserError) {
-                return Center(child: Text(state.error));
-              }
+            if (state is UserError) {
+              return Center(child: Text(state.error));
+            }
 
-              if (state is UserSuccess) {
-                final user = state.user;
-                return Column(
+            if (state is UserSuccess) {
+              final user = state.user;
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 20.0,
+                ),
+                child: Column(
                   spacing: 16,
                   children: [
                     ProfileCard(
@@ -236,11 +245,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ],
-                );
-              }
-              return const SizedBox();
-            },
-          ),
+                ),
+              );
+            }
+            return const SizedBox();
+          },
         ),
       ),
     );
@@ -491,8 +500,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Button(
                 iconOnRight: true,
-                label: '۰۹۱۲۳۴۵۶۷۸۹',
-                onPressed: () {},
+                label: formatNumberToPersianWithoutSeparator(number),
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: number));
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('کپی شد'),
+                      backgroundColor: AppColors.tertiary,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+
+                  context.pop();
+                },
                 width: double.infinity,
                 backgroundColor: AppColors.secondaryTint8,
                 textColor: AppColors.secondary,
@@ -504,8 +525,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Button(
                 iconOnRight: true,
-                label: '@bazargan_support',
-                onPressed: () {},
+                label: email,
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: email));
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('کپی شد'),
+                      backgroundColor: AppColors.tertiary,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+
+                  context.pop();
+                },
                 width: double.infinity,
                 backgroundColor: AppColors.secondaryTint8,
                 textColor: AppColors.secondary,
@@ -517,8 +550,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Button(
                 iconOnRight: true,
-                label: 'info@bazargan.app',
-                onPressed: () {},
+                label: web,
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: web));
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('کپی شد'),
+                      backgroundColor: AppColors.tertiary,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+
+                  context.pop();
+                },
                 width: double.infinity,
                 backgroundColor: AppColors.secondaryTint8,
                 textColor: AppColors.secondary,

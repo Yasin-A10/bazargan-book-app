@@ -39,7 +39,7 @@ class AudioPlayerBox extends StatelessWidget {
               Container(
                 height: 60,
                 padding: const EdgeInsets.only(
-                  right: 64,
+                  right: 66,
                   left: 8,
                   bottom: 12,
                   top: 8,
