@@ -54,27 +54,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('حساب کاربری')),
-      body: SingleChildScrollView(
-        child: BlocBuilder<UserBloc, UserState>(
-          builder: (context, state) {
-            if (state is UserLoading) {
-              return Center(
-                child: LoadingAnimationWidget.discreteCircle(
-                  color: AppColors.primary,
-                  secondRingColor: AppColors.tertiary,
-                  thirdRingColor: AppColors.secondary,
-                  size: 40,
-                ),
-              );
-            }
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          if (state is UserLoading) {
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                color: AppColors.primary,
+                secondRingColor: AppColors.tertiary,
+                thirdRingColor: AppColors.secondary,
+                size: 40,
+              ),
+            );
+          }
 
-            if (state is UserError) {
-              return Center(child: Text(state.error));
-            }
+          if (state is UserError) {
+            return Center(child: Text(state.error));
+          }
 
-            if (state is UserSuccess) {
-              final user = state.user;
-              return Padding(
+          if (state is UserSuccess) {
+            final user = state.user;
+            return SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 20.0,
@@ -246,11 +246,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-              );
-            }
-            return const SizedBox();
-          },
-        ),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
