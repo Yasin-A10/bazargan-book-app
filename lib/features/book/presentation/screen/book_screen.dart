@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-// import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/blocs/all_books.dart/bloc/all_books_bloc.dart';
 import 'package:bazargan/core/blocs/all_books.dart/data/model/all_books_model.dart';
@@ -26,6 +25,8 @@ import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dar
 import 'package:bazargan/features/book/presentation/widgets/book_comment_card.dart';
 import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/add_marked_book_status.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/load_marked_book_status.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -398,7 +399,12 @@ class _BookScreenState extends State<BookScreen> {
                                         MarkedBooksState
                                       >(
                                         listener: (context, state) {
-                                          if (state is AddBookmarkSuccess) {
+                                          if (state.addMarkedBookStatus
+                                              is AddMarkedBookSuccess) {
+                                            final bookmark =
+                                                (state.addMarkedBookStatus
+                                                        as AddMarkedBookSuccess)
+                                                    .bookmark;
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
@@ -406,17 +412,19 @@ class _BookScreenState extends State<BookScreen> {
                                                 backgroundColor:
                                                     AppColors.tertiary,
                                                 content: Text(
-                                                  _isMarked!
-                                                      ? state
-                                                            .bookmark['message']
-                                                      : state
-                                                            .bookmark['message'],
+                                                  bookmark['message'],
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
                                             );
                                           }
-                                          if (state is MarkedBooksError) {
+                                          if (state.addMarkedBookStatus
+                                              is AddMarkedBookError) {
+                                            final bookmark =
+                                                (state.addMarkedBookStatus
+                                                        as AddMarkedBookError)
+                                                    .error;
+
                                             setState(
                                               () => _isMarked = !_isMarked!,
                                             );
@@ -427,7 +435,7 @@ class _BookScreenState extends State<BookScreen> {
                                                 backgroundColor:
                                                     AppColors.primary,
                                                 content: Text(
-                                                  state.error,
+                                                  bookmark,
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -436,7 +444,8 @@ class _BookScreenState extends State<BookScreen> {
                                         },
                                         builder: (context, state) {
                                           final isLoading =
-                                              state is MarkedBooksLoading;
+                                              state.loadMarkedBooksStatus
+                                                  is MarkedBooksLoading;
 
                                           return IconButton(
                                             onPressed: isLoading

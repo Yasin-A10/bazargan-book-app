@@ -1,5 +1,6 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/card/book_card_row.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/load_marked_book_status.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +9,23 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class MyLibraryBookmarksScreen extends StatelessWidget {
+class MyLibraryBookmarksScreen extends StatefulWidget {
   const MyLibraryBookmarksScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    BlocProvider.of<MarkedBooksBloc>(context).add(LoadMarkedBooksEvent());
+  State<MyLibraryBookmarksScreen> createState() =>
+      _MyLibraryBookmarksScreenState();
+}
 
+class _MyLibraryBookmarksScreenState extends State<MyLibraryBookmarksScreen> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<MarkedBooksBloc>(context).add(LoadMarkedBooksEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('نشان شده ها'),
@@ -30,14 +41,9 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
           },
         ),
       ),
-      body: BlocConsumer<MarkedBooksBloc, MarkedBooksState>(
-        listener: (context, state) {
-          if (state is AddBookmarkSuccess) {
-            context.read<MarkedBooksBloc>().add(LoadMarkedBooksEvent());
-          }
-        },
+      body: BlocBuilder<MarkedBooksBloc, MarkedBooksState>(
         builder: (context, state) {
-          if (state is MarkedBooksLoading) {
+          if (state.loadMarkedBooksStatus is MarkedBooksLoading) {
             return Center(
               child: LoadingAnimationWidget.discreteCircle(
                 color: AppColors.primary,
@@ -48,12 +54,23 @@ class MyLibraryBookmarksScreen extends StatelessWidget {
             );
           }
 
-          if (state is MarkedBooksError) {
-            return Center(child: Text(state.error));
+          if (state.loadMarkedBooksStatus is MarkedBooksError) {
+            final error =
+                (state.loadMarkedBooksStatus as MarkedBooksError).error;
+            return Center(child: Text(error));
           }
 
-          if (state is MarkedBooksSuccess) {
-            final books = state.markedBooksModel.results;
+          if (state.loadMarkedBooksStatus is MarkedBooksSuccess) {
+            final books = (state.loadMarkedBooksStatus as MarkedBooksSuccess)
+                .markedBooksModel
+                .results;
+
+            if (books.isEmpty) {
+              return const Center(
+                child: Text('کتابی در این دسته بندی وجود ندارد'),
+              );
+            }
+
             return ListView.separated(
               itemCount: books.length,
               scrollDirection: Axis.vertical,

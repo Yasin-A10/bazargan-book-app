@@ -125,6 +125,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           price: book.price,
                           rate: book.avgRate,
                           image: book.picture,
+                          isSave: book.isMarked,
                         );
                       },
                       separatorBuilder: (context, index) {
@@ -152,6 +153,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           price: book.price,
                           rate: book.avgRate,
                           image: book.picture,
+                          isSave: book.isMarked,
                         );
                       },
                     ),
