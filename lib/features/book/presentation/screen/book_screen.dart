@@ -603,103 +603,147 @@ class _BookScreenState extends State<BookScreen> {
                       ),
                       SizedBox(height: 12),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          spacing: 12,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                      if (book.isPurchased! == true)
+                        Column(
                           children: [
-                            Button(
-                              label: 'خرید مستقیم',
-                              onPressed: () {
-                                _openPayMent(context, book);
-                              },
-                            ),
-                            Expanded(
-                              child: BlocConsumer<AddToCartBloc, AddToCartState>(
-                                listener: (context, state) {
-                                  if (state is AddToCartSuccess) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: AppColors.tertiary,
-                                        content: Text(state.response),
-                                      ),
-                                    );
-                                    setState(() {
-                                      _isInCart = true;
-                                    });
-                                  }
-                                  if (state is AddToCartError) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: AppColors.primary,
-                                        content: Text('خطا در خرید...'),
-                                      ),
-                                    );
-                                  }
-                                },
-                                builder: (context, state) {
-                                  return Button(
-                                    label: _isInCart == true
-                                        ? 'موجود در سبد'
-                                        : 'افزودن به سبد',
-                                    onPressed: state is AddToCartLoading
-                                        ? null
-                                        : () {
-                                            _isInCart == true
-                                                ? context.push(RoutePaths.cart)
-                                                : context
-                                                      .read<AddToCartBloc>()
-                                                      .add(
-                                                        AddToCartRequestEvent(
-                                                          bookId: book.id!,
-                                                        ),
-                                                      );
-                                            BlocProvider.of<CartBloc>(
-                                              context,
-                                            ).add(LoadCartEvent());
-                                            _isInCart = true;
-                                          },
-                                    backgroundColor: AppColors.primaryTint8,
-                                    textColor: AppColors.primary,
-                                    icon: Icon(
-                                      _isInCart == true
-                                          ? Iconsax.bag_tick_2_copy
-                                          : Iconsax.bag_2_copy,
-                                      size: 20,
-                                      color: AppColors.primary,
-                                    ),
-                                  );
-                                },
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Button(
+                                label: 'مطالعه',
+                                width: double.infinity,
+                                onPressed: () {},
                               ),
                             ),
+                            const SizedBox(height: 16),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 8),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Button(
-                          width: double.infinity,
-                          label: 'نمونه',
-                          onPressed: () {
-                            _openSample(context, book);
-                          },
-                          icon: Icon(
-                            book.type == 'صوتی'
-                                ? Iconsax.play_copy
-                                : Iconsax.book_1_copy,
-                            size: 20,
-                            color: AppColors.secondary,
-                          ),
-                          backgroundColor: AppColors.white,
-                          textColor: AppColors.secondary,
-                          borderColor: AppColors.secondary,
+                      if (book.isPurchased! == false)
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Row(
+                                spacing: 12,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Button(
+                                    label: 'خرید مستقیم',
+                                    onPressed: () {
+                                      _openPayMent(context, book);
+                                    },
+                                  ),
+                                  Expanded(
+                                    child:
+                                        BlocConsumer<
+                                          AddToCartBloc,
+                                          AddToCartState
+                                        >(
+                                          listener: (context, state) {
+                                            if (state is AddToCartSuccess) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  backgroundColor:
+                                                      AppColors.tertiary,
+                                                  content: Text(state.response),
+                                                ),
+                                              );
+                                              setState(() {
+                                                _isInCart = true;
+                                              });
+                                            }
+                                            if (state is AddToCartError) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  backgroundColor:
+                                                      AppColors.primary,
+                                                  content: Text(
+                                                    'خطا در خرید...',
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          builder: (context, state) {
+                                            return Button(
+                                              label: _isInCart == true
+                                                  ? 'موجود در سبد'
+                                                  : 'افزودن به سبد',
+                                              onPressed:
+                                                  state is AddToCartLoading
+                                                  ? null
+                                                  : () {
+                                                      _isInCart == true
+                                                          ? context.push(
+                                                              RoutePaths.cart,
+                                                            )
+                                                          : context
+                                                                .read<
+                                                                  AddToCartBloc
+                                                                >()
+                                                                .add(
+                                                                  AddToCartRequestEvent(
+                                                                    bookId: book
+                                                                        .id!,
+                                                                  ),
+                                                                );
+                                                      BlocProvider.of<CartBloc>(
+                                                        context,
+                                                      ).add(LoadCartEvent());
+                                                      _isInCart = true;
+                                                    },
+                                              backgroundColor:
+                                                  AppColors.primaryTint8,
+                                              textColor: AppColors.primary,
+                                              icon: Icon(
+                                                _isInCart == true
+                                                    ? Iconsax.bag_tick_2_copy
+                                                    : Iconsax.bag_2_copy,
+                                                size: 20,
+                                                color: AppColors.primary,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Button(
+                                width: double.infinity,
+                                label: 'نمونه',
+                                onPressed: () {
+                                  _openSample(context, book);
+                                },
+                                icon: Icon(
+                                  book.type == 'صوتی'
+                                      ? Iconsax.play_copy
+                                      : Iconsax.book_1_copy,
+                                  size: 20,
+                                  color: AppColors.secondary,
+                                ),
+                                backgroundColor: AppColors.white,
+                                textColor: AppColors.secondary,
+                                borderColor: AppColors.secondary,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                          ],
                         ),
-                      ),
-                      SizedBox(height: 16),
 
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -873,12 +917,12 @@ class _BookScreenState extends State<BookScreen> {
                 ),
 
                 CartButton(top: 130),
-                const Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: AudioPlayerBox(),
-                ),
+                // const Positioned(
+                //   left: 0,
+                //   right: 0,
+                //   bottom: 0,
+                //   child: AudioPlayerBox(),
+                // ),
               ],
             ),
           );

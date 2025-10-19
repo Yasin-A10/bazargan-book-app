@@ -1,41 +1,60 @@
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
+import 'package:bazargan/features/my_library/data/models/my_library_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class MyLibraryCard extends StatelessWidget {
-  final String image;
+  final MyBook book;
 
-  const MyLibraryCard({super.key, required this.image});
+  const MyLibraryCard({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 0),
+        GestureDetector(
+          onTap: () {
+            book.type == 'صوتی'
+                ? context.push(RoutePaths.audioBook, extra: book.childBookId)
+                : context.push(RoutePaths.book, extra: book.id);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                imageUrl: book.picture!,
+                width: 136,
+                height: 205,
+                fit: BoxFit.cover,
+                fadeInDuration: const Duration(milliseconds: 300),
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.flickr(
+                    leftDotColor: AppColors.primary,
+                    rightDotColor: AppColors.secondary,
+                    size: 35,
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              image,
-              width: 136,
-              height: 205,
-              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -45,7 +64,7 @@ class MyLibraryCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               onPressed: () {
-                _openMenu(context);
+                _openMenu(context, book);
               },
               icon: Icon(Iconsax.more_copy, size: 24, color: AppColors.primary),
             ),
@@ -55,7 +74,7 @@ class MyLibraryCard extends StatelessWidget {
     );
   }
 
-  void _openMenu(BuildContext context) {
+  void _openMenu(BuildContext context, MyBook book) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -117,6 +136,9 @@ class MyLibraryCard extends StatelessWidget {
                           color: AppColors.neutralMidnight,
                         ),
                         leftIcon: Iconsax.arrow_left_2_copy,
+                        onPressed: () {
+                          context.push(RoutePaths.book, extra: book.id);
+                        },
                       ),
                       const SizedBox(height: 8),
                       Divider(color: AppColors.neutralE3E3E3, thickness: 1),
@@ -134,7 +156,7 @@ class MyLibraryCard extends StatelessWidget {
                         ),
                         leftIcon: Iconsax.arrow_left_2_copy,
                         onPressed: () {
-                          _openCategoryMenu(context);
+                          // _openCategoryMenu(context, book);
                         },
                       ),
                       const SizedBox(height: 8),
@@ -153,26 +175,12 @@ class MyLibraryCard extends StatelessWidget {
                         ),
                         leftIcon: Iconsax.arrow_left_2_copy,
                         onPressed: () {
-                          _openReviewMenu(context);
+                          _openReviewMenu(context, book.name!);
                         },
                       ),
                       const SizedBox(height: 8),
                       Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                      const SizedBox(height: 8),
-                      ListItemWidget(
-                        title: 'اشتراک گذاری',
-                        titleStyle: AppTextStyles.body.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        rightIcon: Icon(
-                          Iconsax.share_copy,
-                          size: 20,
-                          color: AppColors.neutralMidnight,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+
                       const SizedBox(height: 8),
                       ListItemWidget(
                         title: 'حذف از کتابخانه من',
@@ -204,113 +212,65 @@ class MyLibraryCard extends StatelessWidget {
     );
   }
 
-  void _openCategoryMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.only(
-            top: 8,
-            bottom: 16,
-            left: 16,
-            right: 16,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Divider(
-                color: AppColors.neutral757575,
-                thickness: 3,
-                endIndent: 140,
-                indent: 140,
-              ),
-              const SizedBox(height: 16),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-              ListItemWidget(
-                title: 'عنوان',
-                titleStyle: AppTextStyles.body.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  //   void _openCategoryMenu(BuildContext context, List<Index> indexes) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) {
+  //       return Container(
+  //         padding: const EdgeInsets.only(
+  //           top: 8,
+  //           bottom: 16,
+  //           left: 16,
+  //           right: 16,
+  //         ),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(20),
+  //             topRight: Radius.circular(20),
+  //           ),
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Divider(
+  //               color: AppColors.neutral757575,
+  //               thickness: 3,
+  //               endIndent: 140,
+  //               indent: 140,
+  //             ),
+  //             const SizedBox(height: 16),
+  //             Expanded(
+  //               child: ListView.builder(
+  //                 itemCount: indexes.length,
+  //                 itemBuilder: (context, index) {
+  //                   return Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       const SizedBox(height: 8),
+  //                       Text(
+  //                         indexes[index].title!,
+  //                         style: AppTextStyles.body.copyWith(
+  //                           fontSize: 14,
+  //                           fontWeight: FontWeight.w300,
+  //                         ),
+  //                         textAlign: TextAlign.right,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                       const SizedBox(height: 8),
+  //                       Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+  //                     ],
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  void _openReviewMenu(BuildContext context) {
+  void _openReviewMenu(BuildContext context, String bookName) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -348,7 +308,7 @@ class MyLibraryCard extends StatelessWidget {
                   spacing: 8,
                   children: [
                     Text(
-                      'چگونه یک درون گرای تاثیر گذار باشیم',
+                      bookName,
                       style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w500,
                       ),

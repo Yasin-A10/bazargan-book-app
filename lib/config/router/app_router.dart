@@ -4,6 +4,7 @@ import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/screen/login_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/otp_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/category_screen.dart';
+import 'package:bazargan/features/book/presentation/screen/audio_book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/pdf_viewer.dart';
 import 'package:bazargan/features/cart/presentation/screen/cart_screen.dart';
@@ -97,6 +98,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.book,
       builder: (context, state) => BookScreen(bookId: state.extra as int),
+    ),
+    GoRoute(
+      path: RoutePaths.audioBook,
+      builder: (context, state) =>
+          AudioBookScreen(childBookId: state.extra as int),
     ),
     GoRoute(
       path: RoutePaths.cart,
