@@ -17,6 +17,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     on<PauseAudioEvent>(_onPauseAudio);
     on<SeekAudioEvent>(_onSeekAudio);
     on<UpdateAudioStatusEvent>(_onUpdateAudioStatus);
+    on<StopAudioEvent>(_onStopAudio);
 
     // Listen to player streams
     _positionSub = _player.positionStream.listen((pos) {
@@ -37,11 +38,24 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     // if url is not the same as the current url, set it
     if (event.url != state.currentUrl) {
       await _player.setUrl(event.url);
-      emit(state.copyWith(currentUrl: event.url));
+      emit(
+        state.copyWith(
+          currentUrl: event.url,
+          currentTitle: event.title,
+          currentImageUrl: event.imageUrl,
+        ),
+      );
     }
-
     await _player.play();
     emit(state.copyWith(isPlaying: true));
+  }
+
+  Future<void> _onStopAudio(
+    StopAudioEvent event,
+    Emitter<AudioState> emit,
+  ) async {
+    await _player.stop();
+    emit(const AudioState()); // reset to initial state
   }
 
   Future<void> _onPauseAudio(

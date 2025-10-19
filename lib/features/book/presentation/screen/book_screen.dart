@@ -917,12 +917,12 @@ class _BookScreenState extends State<BookScreen> {
                 ),
 
                 CartButton(top: 130),
-                // const Positioned(
-                //   left: 0,
-                //   right: 0,
-                //   bottom: 0,
-                //   child: AudioPlayerBox(),
-                // ),
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: MiniPlayer(),
+                ),
               ],
             ),
           );
@@ -941,11 +941,15 @@ class _BookScreenState extends State<BookScreen> {
       // go to epub reader
     }
 
-    // if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
-    //   context.read<AudioBloc>().add(
-    //     PlayAudio(url: book.demo!, title: book.name!, image: book.picture!),
-    //   );
-    // }
+    if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
+      context.read<AudioBloc>().add(
+        PlayAudioEvent(
+          url: book.demo!,
+          title: book.name!,
+          imageUrl: book.picture!,
+        ),
+      );
+    }
   }
 
   void _openMenu(BuildContext context, BookModel book) {

@@ -6,6 +6,8 @@ class AudioState extends Equatable {
   final Duration duration;
   final String? currentUrl;
   final double playbackSpeed;
+  final String? currentTitle; // اضافه شده
+  final String? currentImageUrl; // اضافه شده
 
   const AudioState({
     this.isPlaying = false,
@@ -13,6 +15,8 @@ class AudioState extends Equatable {
     this.duration = Duration.zero,
     this.currentUrl,
     this.playbackSpeed = 1.0,
+    this.currentTitle,
+    this.currentImageUrl,
   });
 
   AudioState copyWith({
@@ -21,6 +25,8 @@ class AudioState extends Equatable {
     Duration? duration,
     String? currentUrl,
     double? playbackSpeed,
+    String? currentTitle, // اضافه شده
+    String? currentImageUrl, // اضافه شده
   }) {
     return AudioState(
       isPlaying: isPlaying ?? this.isPlaying,
@@ -28,6 +34,8 @@ class AudioState extends Equatable {
       duration: duration ?? this.duration,
       currentUrl: currentUrl ?? this.currentUrl,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+      currentTitle: currentTitle ?? this.currentTitle, // اضافه شده
+      currentImageUrl: currentImageUrl ?? this.currentImageUrl, // اضافه شده
     );
   }
 
@@ -38,6 +46,8 @@ class AudioState extends Equatable {
     duration,
     currentUrl,
     playbackSpeed,
+    currentTitle, // اضافه شده
+    currentImageUrl, // اضافه شده
   ];
 }
 

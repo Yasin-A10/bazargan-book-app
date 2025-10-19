@@ -126,12 +126,7 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           CartButton(top: 16),
-          // const Positioned(
-          //   left: 0,
-          //   right: 0,
-          //   bottom: 0,
-          //   child: AudioPlayerBox(),
-          // ),
+          const Positioned(left: 0, right: 0, bottom: 0, child: MiniPlayer()),
         ],
       ),
     );

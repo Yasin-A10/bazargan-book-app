@@ -8,7 +8,9 @@ abstract class AudioEvent extends Equatable {
 
 class PlayAudioEvent extends AudioEvent {
   final String url;
-  const PlayAudioEvent(this.url);
+  final String? title;
+  final String? imageUrl;
+  const PlayAudioEvent({required this.url, this.title, this.imageUrl});
 }
 
 class PauseAudioEvent extends AudioEvent {}
@@ -30,3 +32,5 @@ class UpdateAudioStatusEvent extends AudioEvent {
     this.playbackSpeed,
   });
 }
+
+class StopAudioEvent extends AudioEvent {}
