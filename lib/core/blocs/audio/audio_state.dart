@@ -1,41 +1,44 @@
 part of 'audio_bloc.dart';
 
-@immutable
-abstract class AudioState {}
+class AudioState extends Equatable {
+  final bool isPlaying;
+  final Duration position;
+  final Duration duration;
+  final String? currentUrl;
+  final double playbackSpeed;
+
+  const AudioState({
+    this.isPlaying = false,
+    this.position = Duration.zero,
+    this.duration = Duration.zero,
+    this.currentUrl,
+    this.playbackSpeed = 1.0,
+  });
+
+  AudioState copyWith({
+    bool? isPlaying,
+    Duration? position,
+    Duration? duration,
+    String? currentUrl,
+    double? playbackSpeed,
+  }) {
+    return AudioState(
+      isPlaying: isPlaying ?? this.isPlaying,
+      position: position ?? this.position,
+      duration: duration ?? this.duration,
+      currentUrl: currentUrl ?? this.currentUrl,
+      playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isPlaying,
+    position,
+    duration,
+    currentUrl,
+    playbackSpeed,
+  ];
+}
 
 class AudioInitial extends AudioState {}
-
-class AudioPlaying extends AudioState {
-  final String title;
-  final String image;
-  final Duration position;
-  final Duration duration;
-
-  AudioPlaying({
-    required this.title,
-    required this.image,
-    required this.position,
-    required this.duration,
-  });
-}
-
-class AudioPaused extends AudioState {
-  final String title;
-  final String image;
-  final Duration position;
-  final Duration duration;
-
-  AudioPaused({
-    required this.title,
-    required this.image,
-    required this.position,
-    required this.duration,
-  });
-}
-
-class AudioStopped extends AudioState {}
-
-class AudioError extends AudioState {
-  final String message;
-  AudioError({required this.message});
-}

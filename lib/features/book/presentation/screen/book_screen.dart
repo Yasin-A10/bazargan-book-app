@@ -941,11 +941,11 @@ class _BookScreenState extends State<BookScreen> {
       // go to epub reader
     }
 
-    if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
-      context.read<AudioBloc>().add(
-        PlayAudio(url: book.demo!, title: book.name!, image: book.picture!),
-      );
-    }
+    // if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
+    //   context.read<AudioBloc>().add(
+    //     PlayAudio(url: book.demo!, title: book.name!, image: book.picture!),
+    //   );
+    // }
   }
 
   void _openMenu(BuildContext context, BookModel book) {
