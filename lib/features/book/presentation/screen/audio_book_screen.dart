@@ -106,7 +106,6 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                   children: _speeds.map((speed) {
                     return ElevatedButton(
                       onPressed: () {
-                        // locator<AudioBloc>().setPlaybackSpeed(speed);
                         context.read<AudioBloc>().setPlaybackSpeed(speed);
                         context.pop();
                       },
