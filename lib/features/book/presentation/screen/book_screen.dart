@@ -854,7 +854,7 @@ class _BookScreenState extends State<BookScreen> {
                         child: Button(
                           label: 'افزودن نظر',
                           onPressed: () {
-                            _openReviewMenu(context);
+                            _openReviewMenu(context, book);
                           },
                           width: double.infinity,
                           backgroundColor: AppColors.white,
@@ -1056,7 +1056,7 @@ class _BookScreenState extends State<BookScreen> {
                         ),
                         leftIcon: Iconsax.arrow_left_2_copy,
                         onPressed: () {
-                          _openReviewMenu(context);
+                          _openReviewMenu(context, book);
                         },
                       ),
                       const SizedBox(height: 8),
@@ -1150,7 +1150,7 @@ class _BookScreenState extends State<BookScreen> {
     );
   }
 
-  void _openReviewMenu(BuildContext context) {
+  void _openReviewMenu(BuildContext context, BookModel book) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1188,7 +1188,7 @@ class _BookScreenState extends State<BookScreen> {
                   spacing: 8,
                   children: [
                     Text(
-                      'چگونه یک درون گرای تاثیر گذار باشیم',
+                      book.name!,
                       style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
