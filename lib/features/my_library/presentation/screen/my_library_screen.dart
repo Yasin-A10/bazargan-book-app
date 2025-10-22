@@ -2,7 +2,8 @@ import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/card/my_library_card.dart';
-import 'package:bazargan/core/widgets/search_bar.dart';
+import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dart';
+import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
 import 'package:bazargan/features/my_library/presentation/bloc/load_my_books_status.dart';
 import 'package:bazargan/features/my_library/presentation/bloc/my_library_bloc.dart';
 import 'package:flutter/material.dart';
@@ -50,48 +51,52 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
           if (state.loadMyBooksStatus is MyLibrarySuccess) {
             final myLibraryModel =
                 (state.loadMyBooksStatus as MyLibrarySuccess).myLibraryModel;
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: CustomSearchBar(
-                      onSearch: (value) {},
-                      hintText: 'جستجو کنید...',
-                    ),
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 16),
+                      Button(
+                        onPressed: () {
+                          context.push(RoutePaths.myLibraryBookmarks);
+                        },
+                        label: 'نشانه‌دار ها',
+                        backgroundColor: AppColors.secondaryTint8,
+                        textColor: AppColors.secondary,
+                        icon: Icon(Iconsax.bookmark_2, size: 20),
+                      ),
+                      GridView.builder(
+                        itemCount: myLibraryModel.results.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.70,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                            ),
+                        itemBuilder: (context, index) {
+                          final book = myLibraryModel.results[index];
+                          return MyLibraryCard(book: book);
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Button(
-                    onPressed: () {
-                      context.push(RoutePaths.myLibraryBookmarks);
-                    },
-                    label: 'نشانه‌دار ها',
-                    backgroundColor: AppColors.secondaryTint8,
-                    textColor: AppColors.secondary,
-                    icon: Icon(Iconsax.bookmark_2, size: 20),
-                  ),
-                  GridView.builder(
-                    itemCount: myLibraryModel.results.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.70,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                        ),
-                    itemBuilder: (context, index) {
-                      final book = myLibraryModel.results[index];
-                      return MyLibraryCard(book: book);
-                    },
-                  ),
-                ],
-              ),
+                ),
+                CartButton(top: 16),
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: MiniPlayer(),
+                ),
+              ],
             );
           }
 

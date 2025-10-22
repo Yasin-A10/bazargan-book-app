@@ -8,10 +8,13 @@ import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
+import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dart';
+import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile/presentation/widgets/profile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -73,179 +76,272 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           if (state is UserSuccess) {
             final user = state.user;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 20.0,
-                ),
-                child: Column(
-                  spacing: 16,
-                  children: [
-                    ProfileCard(
-                      title: user.displayName ?? 'نام کاربری',
-                      subtitle: formatNumberToPersianWithoutSeparator(
-                        user.username,
+            return LayoutBuilder(
+              builder: (context, constraints) => Stack(
+                children: [
+                  SizedBox(
+                    height: constraints.maxHeight,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 20.0,
+                        ),
+                        child: Column(
+                          spacing: 16,
+                          children: [
+                            ProfileCard(
+                                  title: user.displayName ?? 'نام کاربری',
+                                  subtitle:
+                                      formatNumberToPersianWithoutSeparator(
+                                        user.username,
+                                      ),
+                                  mainIcon: Iconsax.user_copy,
+                                  subIcon: Iconsax.edit,
+                                  background: AppColors.primary,
+                                  onTap: () {
+                                    _openEditName(context);
+                                  },
+                                )
+                                .animate(delay: 100.ms)
+                                .fade(duration: 300.ms)
+                                .slideX(
+                                  begin: 0.2,
+                                  duration: 300.ms,
+                                  curve: Curves.easeOut,
+                                ),
+                            ProfileCard(
+                                  title:
+                                      '${formatNumberToPersian(user.walletBalance)} تومان',
+                                  subtitle: 'موجودی کیف پول شما',
+                                  mainIcon: Iconsax.wallet_copy,
+                                  subIcon: Iconsax.add_square,
+                                  background: AppColors.tertiary,
+                                  onTap: () {
+                                    _openChargeWallet(context);
+                                  },
+                                )
+                                .animate(delay: 200.ms)
+                                .fade(duration: 300.ms)
+                                .slideX(
+                                  begin: 0.2,
+                                  duration: 300.ms,
+                                  curve: Curves.easeOut,
+                                ),
+                            ProfileCard(
+                                  title: '۷۶ روز باقی مانده',
+                                  subtitle: 'از بسته ۳ ماهه اشتراک ویژه',
+                                  mainIcon: Iconsax.polygon_matic_copy,
+                                  subIcon: Iconsax.add_square,
+                                  background: AppColors.secondary,
+                                  onTap: () {},
+                                )
+                                .animate(delay: 300.ms)
+                                .fade(duration: 300.ms)
+                                .slideX(
+                                  begin: 0.2,
+                                  duration: 300.ms,
+                                  curve: Curves.easeOut,
+                                ),
+                            Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    spacing: 8,
+                                    children: [
+                                      ListItemWidget(
+                                        title: 'نظرات من',
+                                        rightIcon: Icon(
+                                          Iconsax.messages_3_copy,
+                                          size: 20,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        leftNumber: user.commentCount,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        onPressed: () {
+                                          context.push(
+                                            RoutePaths.profileComments,
+                                          );
+                                        },
+                                      ),
+                                      Divider(
+                                        color: AppColors.neutralE3E3E3,
+                                        thickness: 1,
+                                      ),
+                                      ListItemWidget(
+                                        title: 'نشان شده ها',
+                                        rightIcon: Icon(
+                                          Iconsax.bookmark_2_copy,
+                                          size: 20,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        leftNumber: user.markedBooksCount,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        onPressed: () {
+                                          context.push(
+                                            RoutePaths.myLibraryBookmarks,
+                                          );
+                                        },
+                                      ),
+                                      Divider(
+                                        color: AppColors.neutralE3E3E3,
+                                        thickness: 1,
+                                      ),
+                                      ListItemWidget(
+                                        title: 'تاریخچه تراکنش‌ها',
+                                        rightIcon: Icon(
+                                          Iconsax.clock_copy,
+                                          size: 20,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        leftNumber: user.transactionsCount,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        onPressed: () {
+                                          context.push(
+                                            RoutePaths.profileTransaction,
+                                          );
+                                        },
+                                      ),
+                                      Divider(
+                                        color: AppColors.neutralE3E3E3,
+                                        thickness: 1,
+                                      ),
+                                      ListItemWidget(
+                                        title: 'دسته بندی‌های مورد علاقه',
+                                        rightIcon: Icon(
+                                          Iconsax.heart_copy,
+                                          size: 20,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        leftNumber:
+                                            user.favouriteCategoriesCount,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        onPressed: () {
+                                          context.push(
+                                            RoutePaths.profileFavorites,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .animate(delay: 400.ms)
+                                .fade(duration: 300.ms)
+                                .slideX(
+                                  begin: 0.2,
+                                  duration: 300.ms,
+                                  curve: Curves.easeOut,
+                                ),
+                            Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    spacing: 8,
+                                    children: [
+                                      ListItemWidget(
+                                        title: 'پشتیبانی',
+                                        rightIcon: Icon(
+                                          Iconsax.call_copy,
+                                          size: 20,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        onPressed: () {
+                                          _openSupport(context);
+                                        },
+                                      ),
+                                      Divider(
+                                        color: AppColors.neutralE3E3E3,
+                                        thickness: 1,
+                                      ),
+                                      ListItemWidget(
+                                        title: 'خروج از حساب',
+                                        rightIcon: Icon(
+                                          Iconsax.logout_copy,
+                                          size: 20,
+                                          color: AppColors.error,
+                                        ),
+                                        leftIcon: Iconsax.arrow_left_2_copy,
+                                        titleStyle: AppTextStyles.body.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: AppColors.error,
+                                        ),
+                                        onPressed: () {
+                                          _openLogout(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .animate(delay: 500.ms)
+                                .fade(duration: 300.ms)
+                                .slideX(
+                                  begin: 0.2,
+                                  duration: 300.ms,
+                                  curve: Curves.easeOut,
+                                ),
+                            SizedBox(height: 50),
+                          ],
+                        ),
                       ),
-                      mainIcon: Iconsax.user_copy,
-                      subIcon: Iconsax.edit,
-                      background: AppColors.primary,
-                      onTap: () {
-                        _openEditName(context);
-                      },
                     ),
-                    ProfileCard(
-                      title:
-                          '${formatNumberToPersian(user.walletBalance)} تومان',
-                      subtitle: 'موجودی کیف پول شما',
-                      mainIcon: Iconsax.wallet_copy,
-                      subIcon: Iconsax.add_square,
-                      background: AppColors.tertiary,
-                      onTap: () {
-                        _openChargeWallet(context);
-                      },
-                    ),
-                    ProfileCard(
-                      title: '۷۶ روز باقی مانده',
-                      subtitle: 'از بسته ۳ ماهه اشتراک ویژه',
-                      mainIcon: Iconsax.polygon_matic_copy,
-                      subIcon: Iconsax.add_square,
-                      background: AppColors.secondary,
-                      onTap: () {},
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          ListItemWidget(
-                            title: 'نظرات من',
-                            rightIcon: Icon(Iconsax.messages_3_copy, size: 20),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            leftNumber: user.commentCount,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            onPressed: () {
-                              context.push(RoutePaths.profileComments);
-                            },
-                          ),
-                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                          ListItemWidget(
-                            title: 'نشان شده ها',
-                            rightIcon: Icon(Iconsax.bookmark_2_copy, size: 20),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            leftNumber: user.markedBooksCount,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            onPressed: () {
-                              context.push(RoutePaths.myLibraryBookmarks);
-                            },
-                          ),
-                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                          ListItemWidget(
-                            title: 'تاریخچه تراکنش‌ها',
-                            rightIcon: Icon(Iconsax.clock_copy, size: 20),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            leftNumber: user.transactionsCount,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            onPressed: () {
-                              context.push(RoutePaths.profileTransaction);
-                            },
-                          ),
-                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                          ListItemWidget(
-                            title: 'دسته بندی‌های مورد علاقه',
-                            rightIcon: Icon(Iconsax.heart_copy, size: 20),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            leftNumber: user.favouriteCategoriesCount,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            onPressed: () {
-                              context.push(RoutePaths.profileFavorites);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        spacing: 8,
-                        children: [
-                          ListItemWidget(
-                            title: 'پشتیبانی',
-                            rightIcon: Icon(Iconsax.call_copy, size: 20),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            onPressed: () {
-                              _openSupport(context);
-                            },
-                          ),
-                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-                          ListItemWidget(
-                            title: 'خروج از حساب',
-                            rightIcon: Icon(
-                              Iconsax.logout_copy,
-                              size: 20,
-                              color: AppColors.error,
-                            ),
-                            leftIcon: Iconsax.arrow_left_2_copy,
-                            titleStyle: AppTextStyles.body.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                              color: AppColors.error,
-                            ),
-                            onPressed: () {
-                              _openLogout(context);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  CartButton(top: 16),
+                  const Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: MiniPlayer(),
+                  ),
+                ],
               ),
             );
           }

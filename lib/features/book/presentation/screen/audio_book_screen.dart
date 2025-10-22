@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:bazargan/core/blocs/audio/audio_bloc.dart';
 import 'package:bazargan/core/constants/colors.dart';
@@ -65,19 +64,122 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return ListView.builder(
-          itemCount: _audioBooks.length,
-          itemBuilder: (context, index) {
-            final chapter = _audioBooks[index];
-            return ListTile(
-              title: Text(chapter.name!),
-              selected: index == _currentIndex,
-              onTap: () {
-                _playChapter(index);
-                Navigator.pop(context);
-              },
-            );
-          },
+        return Container(
+          padding: const EdgeInsets.only(
+            top: 8,
+            bottom: 16,
+            left: 16,
+            right: 16,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Divider(
+                color: AppColors.neutral757575,
+                thickness: 3,
+                endIndent: 140,
+                indent: 140,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'فهرست فصل‌ها',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _audioBooks.length,
+                  itemBuilder: (context, index) {
+                    final chapter = _audioBooks[index];
+                    return InkWell(
+                      onTap: () {
+                        _playChapter(index);
+                        Navigator.pop(context);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  if (index == _currentIndex)
+                                    const Icon(
+                                      Iconsax.play,
+                                      color: AppColors.primary,
+                                    )
+                                  else
+                                    Text(
+                                      style: AppTextStyles.body.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: AppColors.neutralMidnight,
+                                      ),
+                                      formatNumberToPersianWithoutSeparator(
+                                        (index + 1).toString(),
+                                      ),
+                                    ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    chapter.name!,
+                                    style: AppTextStyles.body.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: AppColors.neutral353535,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Iconsax.clock_copy,
+                                    size: 16,
+                                    color: AppColors.neutral757575,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    formatNumberToPersianWithoutSeparator(
+                                      _formatDuration(
+                                        Duration(
+                                          seconds:
+                                              chapter.extraData?.duration ?? 0,
+                                        ),
+                                      ),
+                                    ),
+                                    style: AppTextStyles.body.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -91,8 +193,9 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
           textDirection: TextDirection.ltr,
           child: Container(
             padding: const EdgeInsets.all(16),
-            height: 200,
+            width: double.infinity,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
@@ -100,31 +203,37 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  children: _speeds.map((speed) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        context.read<AudioBloc>().setPlaybackSpeed(speed);
-                        context.pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondaryTint8,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 12,
+                    children: _speeds.map((speed) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          context.read<AudioBloc>().setPlaybackSpeed(speed);
+                          context.pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondaryTint8,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        formatNumberToPersianWithoutSeparator(speed.toString()),
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.secondary,
+                        child: Text(
+                          formatNumberToPersianWithoutSeparator(
+                            speed.toString(),
+                          ),
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.secondary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ],
             ),

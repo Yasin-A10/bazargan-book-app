@@ -6,6 +6,7 @@ import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/home/presentation/widgets/home_slider_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
@@ -77,45 +78,61 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 0),
 
-                      HomeSliderWidget(slider: slider),
+                      HomeSliderWidget(slider: slider)
+                          .animate(delay: 100.ms)
+                          .fade(duration: 300.ms)
+                          .slideY(begin: 0.2, duration: 300.ms),
 
                       SizedBox(height: 0),
 
                       HomeListWidget(
-                        title: bestSellerBooksTitle,
-                        listHeight: 200,
-                        books: bestSellerBooks,
-                      ),
+                            title: bestSellerBooksTitle,
+                            listHeight: 200,
+                            books: bestSellerBooks,
+                          )
+                          .animate(delay: 200.ms)
+                          .fade(duration: 300.ms)
+                          .slideY(begin: 0.2, duration: 300.ms),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Divider(color: AppColors.neutralE3E3E3),
                       ),
 
                       CategoryList(
-                        title: 'دسته‌بندی',
-                        listHeight: 80,
-                        categories: categories,
-                      ),
+                            title: 'دسته‌بندی',
+                            listHeight: 80,
+                            categories: categories,
+                          )
+                          .animate(delay: 300.ms)
+                          .fade(duration: 300.ms)
+                          .slideY(begin: 0.2, duration: 300.ms),
+
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Divider(color: AppColors.neutralE3E3E3),
                       ),
 
                       HomeListWidget(
-                        title: popularBooksTitle,
-                        listHeight: 200,
-                        books: popularBooks,
-                      ),
+                            title: popularBooksTitle,
+                            listHeight: 200,
+                            books: popularBooks,
+                          )
+                          .animate(delay: 400.ms)
+                          .fade(duration: 300.ms)
+                          .slideY(begin: 0.2, duration: 300.ms),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Divider(color: AppColors.neutralE3E3E3),
                       ),
 
                       HomeListWidget(
-                        title: forYouTitle,
-                        listHeight: 200,
-                        books: popularBooks,
-                      ),
+                            title: forYouTitle,
+                            listHeight: 200,
+                            books: popularBooks,
+                          )
+                          .animate(delay: 500.ms)
+                          .fade(duration: 300.ms)
+                          .slideY(begin: 0.2, duration: 300.ms),
 
                       const SizedBox(height: 50),
                     ],

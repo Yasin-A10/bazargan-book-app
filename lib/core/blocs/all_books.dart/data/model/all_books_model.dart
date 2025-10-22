@@ -39,7 +39,8 @@ class BooksModel {
   final int discountPercent;
   final String thumbnail;
   final List<AuthorModel> author;
-  final String? narrator;
+  // final String? narrator;
+  final NarratorModel? narrator;
   final int? childBookId;
   final dynamic indexes;
   final List<TranslatorModel> translator;
@@ -109,7 +110,8 @@ class BooksModel {
       author: (json['author'] as List)
           .map((e) => AuthorModel.fromJson(e))
           .toList(),
-      narrator: json['narrator'],
+      // narrator: json['narrator'],
+      narrator: NarratorModel.fromJson(json['narrator']),
       childBookId: json['child_book_id'],
       indexes: json['indexes'],
       translator: (json['translator'] as List)
@@ -132,6 +134,27 @@ class BooksModel {
       isInInfinity: json['is_in_infinity'],
       demo: json['demo'],
     );
+  }
+}
+
+class NarratorModel {
+  final int? id;
+  final String? name;
+
+  NarratorModel({this.id, this.name});
+
+  factory NarratorModel.fromJson(dynamic json) {
+    if (json == null) {
+      return NarratorModel(); // یا null برگردانید اگر narrator اختیاری است
+    }
+    if (json is Map<String, dynamic>) {
+      return NarratorModel(id: json['id'], name: json['name']);
+    }
+    // اگر گاهی String باشد (برای ایمنی، هرچند در داده‌ها نیست):
+    if (json is String) {
+      return NarratorModel(name: json);
+    }
+    throw Exception('Invalid narrator format');
   }
 }
 

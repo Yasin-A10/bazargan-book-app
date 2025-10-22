@@ -1,6 +1,6 @@
 part of 'audio_bloc.dart';
 
-class AudioState extends Equatable {
+class AudioState {
   final bool isPlaying;
   final Duration position;
   final Duration duration;
@@ -38,17 +38,6 @@ class AudioState extends Equatable {
       currentImageUrl: currentImageUrl ?? this.currentImageUrl,
     );
   }
-
-  @override
-  List<Object?> get props => [
-    isPlaying,
-    position,
-    duration,
-    currentUrl,
-    playbackSpeed,
-    currentTitle,
-    currentImageUrl,
-  ];
 }
 
 class AudioInitial extends AudioState {}

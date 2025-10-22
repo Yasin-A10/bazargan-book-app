@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 
 part 'audio_event.dart';
@@ -90,7 +89,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
   Future<void> setPlaybackSpeed(double speed) async {
     await _player.setSpeed(speed);
-    emit(state.copyWith(playbackSpeed: speed));
+    // emit(state.copyWith(playbackSpeed: speed));
   }
 
   @override
