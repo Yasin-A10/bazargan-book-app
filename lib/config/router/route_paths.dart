@@ -17,7 +17,8 @@ class RoutePaths {
   static const String search = '/search';
 
   static const String book = '/book';
-  static const String audioBook = '/audio-book';
   static const String cart = '/cart';
+  static const String audioBook = '/audio-book';
   static const String pdfViewer = '/pdf-viewer';
+  static const String epubViewer = '/epub-viewer';
 }

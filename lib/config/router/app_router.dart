@@ -6,6 +6,7 @@ import 'package:bazargan/features/auth/presentation/screen/otp_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/category_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/audio_book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/book_screen.dart';
+import 'package:bazargan/features/book/presentation/screen/epub_viewer.dart';
 import 'package:bazargan/features/book/presentation/screen/pdf_viewer.dart';
 import 'package:bazargan/features/cart/presentation/screen/cart_screen.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
@@ -103,6 +104,11 @@ final GoRouter appRouter = GoRouter(
       path: RoutePaths.audioBook,
       builder: (context, state) =>
           AudioBookScreen(childBookId: state.extra as int),
+    ),
+    GoRoute(
+      path: RoutePaths.epubViewer,
+      builder: (context, state) =>
+          EpubViewerScreen(epubUrl: state.extra as String),
     ),
     GoRoute(
       path: RoutePaths.cart,

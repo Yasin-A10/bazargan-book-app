@@ -744,6 +744,28 @@ class _BookScreenState extends State<BookScreen> {
                             SizedBox(height: 16),
                           ],
                         ),
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Button(
+                          width: double.infinity,
+                          label: 'نمونه',
+                          onPressed: () {
+                            _openSample(context, book);
+                          },
+                          icon: Icon(
+                            book.type == 'صوتی'
+                                ? Iconsax.play_copy
+                                : Iconsax.book_1_copy,
+                            size: 20,
+                            color: AppColors.secondary,
+                          ),
+                          backgroundColor: AppColors.white,
+                          textColor: AppColors.secondary,
+                          borderColor: AppColors.secondary,
+                        ),
+                      ),
+                      SizedBox(height: 16),
 
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -938,7 +960,7 @@ class _BookScreenState extends State<BookScreen> {
     }
 
     if (book.type == 'epub' && book.demo!.isNotEmpty) {
-      // go to epub reader
+      context.push(RoutePaths.epubViewer, extra: book.demo);
     }
 
     if (book.type == 'صوتی' && book.demo!.isNotEmpty) {
@@ -1529,7 +1551,6 @@ class InfoItem {
 
 class BookInfoList extends StatelessWidget {
   final String title;
-  // final List<dynamic> infos;
   final List<InfoItem> infos;
   final bool hasArrow;
   final String filterType;
@@ -1544,70 +1565,81 @@ class BookInfoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: AppTextStyles.headlineMedium.copyWith(fontSize: 10)),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // عنوان
+          Text(
+            title,
+            style: AppTextStyles.headlineMedium.copyWith(fontSize: 10),
+          ),
 
-        const SizedBox(width: 8),
-        const Expanded(
-          child: Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-        ),
-        const SizedBox(width: 8),
+          const SizedBox(width: 8),
 
-        ...infos.map((info) {
-          final displayText = info.name.length > 14
-              ? '${info.name.substring(0, 14)}.'
-              : info.name;
+          // Divider
+          Container(width: 50, height: 1, color: AppColors.neutralE3E3E3),
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: InkWell(
-              onTap: hasArrow
-                  ? () {
-                      context.pushNamed(
-                        'books',
-                        queryParameters: {
-                          'title': info.name,
-                          'type': filterType,
-                          'value': info.id.toString(),
-                        },
-                      );
-                    }
-                  : null,
-              child: Row(
-                children: [
-                  Text(
-                    displayText,
-                    style: AppTextStyles.headlineMedium,
-                    overflow: TextOverflow.ellipsis, // برای اطمینان
-                    maxLines: 1,
-                  ),
-                  if (hasArrow)
-                    const Icon(
-                      Iconsax.arrow_left_2_copy,
-                      size: 16,
-                      color: AppColors.neutral757575,
+          const SizedBox(width: 8),
+
+          // آیتم‌ها
+          ...infos.map((info) {
+            final displayText = info.name.length > 14
+                ? '${info.name.substring(0, 14)}.'
+                : info.name;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: InkWell(
+                onTap: hasArrow
+                    ? () {
+                        context.pushNamed(
+                          'books',
+                          queryParameters: {
+                            'title': info.name,
+                            'type': filterType,
+                            'value': info.id.toString(),
+                          },
+                        );
+                      }
+                    : null,
+                child: Row(
+                  children: [
+                    Text(
+                      displayText,
+                      style: AppTextStyles.headlineMedium,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                ],
+                    if (hasArrow)
+                      const Icon(
+                        Iconsax.arrow_left_2_copy,
+                        size: 16,
+                        color: AppColors.neutral757575,
+                      ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
-      ],
+            );
+          }),
+        ],
+      ),
     );
   }
 }
 
 // class BookInfoList extends StatelessWidget {
 //   final String title;
-//   final List<dynamic> infos;
+//   final List<InfoItem> infos;
 //   final bool hasArrow;
+//   final String filterType;
 
 //   const BookInfoList({
 //     super.key,
 //     required this.title,
 //     required this.infos,
+//     required this.filterType,
 //     this.hasArrow = false,
 //   });
 
@@ -1617,39 +1649,133 @@ class BookInfoList extends StatelessWidget {
 //       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
 //         Text(title, style: AppTextStyles.headlineMedium.copyWith(fontSize: 10)),
+
 //         const SizedBox(width: 8),
 
-//         // Divider کوتاه‌تر
-//         SizedBox(
-//           width: MediaQuery.of(context).size.width * 0.5,
+//         const Expanded(
+//           child: Divider(color: AppColors.neutralE3E3E3, thickness: 1),
+//         ),
+
+//         const SizedBox(width: 8),
+
+//         Expanded(
+//           flex: 2,
+//           child: SingleChildScrollView(
+//             scrollDirection: Axis.horizontal,
+//             child: Row(
+//               children: infos.map((info) {
+//                 final displayText = info.name.length > 14
+//                     ? '${info.name.substring(0, 14)}.'
+//                     : info.name;
+
+//                 return Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 4),
+//                   child: InkWell(
+//                     onTap: hasArrow
+//                         ? () {
+//                             context.pushNamed(
+//                               'books',
+//                               queryParameters: {
+//                                 'title': info.name,
+//                                 'type': filterType,
+//                                 'value': info.id.toString(),
+//                               },
+//                             );
+//                           }
+//                         : null,
+//                     child: Row(
+//                       children: [
+//                         Text(
+//                           displayText,
+//                           style: AppTextStyles.headlineMedium,
+//                           overflow: TextOverflow.ellipsis,
+//                           maxLines: 1,
+//                         ),
+//                         if (hasArrow)
+//                           const Icon(
+//                             Iconsax.arrow_left_2_copy,
+//                             size: 16,
+//                             color: AppColors.neutral757575,
+//                           ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class BookInfoList extends StatelessWidget {
+//   final String title;
+//   final List<InfoItem> infos;
+//   final bool hasArrow;
+//   final String filterType;
+
+//   const BookInfoList({
+//     super.key,
+//     required this.title,
+//     required this.infos,
+//     required this.filterType,
+//     this.hasArrow = false,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(title, style: AppTextStyles.headlineMedium.copyWith(fontSize: 10)),
+
+//         const SizedBox(width: 8),
+//         const Expanded(
 //           child: Divider(color: AppColors.neutralE3E3E3, thickness: 1),
 //         ),
 //         const SizedBox(width: 8),
 
-//         // Wrap کل فضا رو بگیره
-//         Expanded(
-//           child: Wrap(
-//             spacing: 4,
-//             runSpacing: 2,
-//             children: infos.map((info) {
-//               return InkWell(
-//                 onTap: hasArrow ? () {} : null,
-//                 child: Row(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     Text(info, style: AppTextStyles.headlineMedium),
-//                     if (hasArrow)
-//                       const Icon(
-//                         Iconsax.arrow_left_2_copy,
-//                         size: 16,
-//                         color: AppColors.neutral757575,
-//                       ),
-//                   ],
-//                 ),
-//               );
-//             }).toList(),
-//           ),
-//         ),
+//         ...infos.map((info) {
+//           final displayText = info.name.length > 14
+//               ? '${info.name.substring(0, 14)}.'
+//               : info.name;
+
+//           return Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 4),
+//             child: InkWell(
+//               onTap: hasArrow
+//                   ? () {
+//                       context.pushNamed(
+//                         'books',
+//                         queryParameters: {
+//                           'title': info.name,
+//                           'type': filterType,
+//                           'value': info.id.toString(),
+//                         },
+//                       );
+//                     }
+//                   : null,
+//               child: Row(
+//                 children: [
+//                   Text(
+//                     displayText,
+//                     style: AppTextStyles.headlineMedium,
+//                     overflow: TextOverflow.ellipsis, // برای اطمینان
+//                     maxLines: 1,
+//                   ),
+//                   if (hasArrow)
+//                     const Icon(
+//                       Iconsax.arrow_left_2_copy,
+//                       size: 16,
+//                       color: AppColors.neutral757575,
+//                     ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         }),
 //       ],
 //     );
 //   }
