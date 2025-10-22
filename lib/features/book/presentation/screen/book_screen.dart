@@ -251,7 +251,7 @@ class _BookScreenState extends State<BookScreen> {
                   color: AppColors.neutral353535,
                   size: 16,
                 ),
-                onPressed: () => context.go('/'),
+                onPressed: () => context.pop(),
               ),
               actions: [
                 IconButton(
@@ -613,7 +613,9 @@ class _BookScreenState extends State<BookScreen> {
                               child: Button(
                                 label: 'مطالعه',
                                 width: double.infinity,
-                                onPressed: () {},
+                                onPressed: () {
+                                  _openBook(context, book);
+                                },
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -744,28 +746,8 @@ class _BookScreenState extends State<BookScreen> {
                             SizedBox(height: 16),
                           ],
                         ),
+
                       SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Button(
-                          width: double.infinity,
-                          label: 'نمونه',
-                          onPressed: () {
-                            _openSample(context, book);
-                          },
-                          icon: Icon(
-                            book.type == 'صوتی'
-                                ? Iconsax.play_copy
-                                : Iconsax.book_1_copy,
-                            size: 20,
-                            color: AppColors.secondary,
-                          ),
-                          backgroundColor: AppColors.white,
-                          textColor: AppColors.secondary,
-                          borderColor: AppColors.secondary,
-                        ),
-                      ),
-                      SizedBox(height: 16),
 
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -901,6 +883,8 @@ class _BookScreenState extends State<BookScreen> {
                           },
                         ),
 
+                      SizedBox(height: 16),
+
                       //! BlocBuilder for publisher books
                       if (publisherBloc != null)
                         BlocBuilder<AllBooksBloc, AllBooksState>(
@@ -952,6 +936,20 @@ class _BookScreenState extends State<BookScreen> {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  void _openBook(BuildContext context, BookModel book) {
+    if (book.type == 'pdf' && book.demo!.isNotEmpty) {
+      context.push(RoutePaths.pdfViewer, extra: book.demo);
+    }
+
+    if (book.type == 'epub' && book.demo!.isNotEmpty) {
+      context.push(RoutePaths.epubViewer, extra: book.demo);
+    }
+
+    if (book.type == 'صوتی' && book.childBookId != null) {
+      context.push(RoutePaths.audioBook, extra: book.childBookId);
+    }
   }
 
   void _openSample(BuildContext context, BookModel book) {

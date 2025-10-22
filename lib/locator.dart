@@ -209,25 +209,6 @@ setup() {
   locator.registerSingleton<TransactionBloc>(
     TransactionBloc(repository: locator()),
   );
-  locator.registerSingleton<MarkedBooksBloc>(
-    MarkedBooksBloc(
-      markedBooksRepository: locator(),
-      addBookmarkRepository: locator(),
-    ),
-  );
-  locator.registerSingleton<BookBloc>(BookBloc(bookRepository: locator()));
-  locator.registerSingleton<BookCommentBloc>(
-    BookCommentBloc(
-      bookCommentsRepository: locator(),
-      addCommentRepository: locator(),
-    ),
-  );
-  locator.registerSingleton<FeedbackBloc>(
-    FeedbackBloc(feedbackRepository: locator()),
-  );
-  locator.registerSingleton<AddToCartBloc>(
-    AddToCartBloc(addToCartRepository: locator()),
-  );
   locator.registerSingleton<CartBloc>(
     CartBloc(cartRepository: locator(), deleteCartRepository: locator()),
   );
@@ -244,6 +225,26 @@ setup() {
   locator.registerSingleton<MyLibraryBloc>(
     MyLibraryBloc(myLibraryRepository: locator()),
   );
-
   locator.registerSingleton<AudioBloc>(AudioBloc());
+
+  //! local bloc
+  locator.registerFactory<MarkedBooksBloc>(
+    () => MarkedBooksBloc(
+      markedBooksRepository: locator(),
+      addBookmarkRepository: locator(),
+    ),
+  );
+  locator.registerFactory<BookBloc>(() => BookBloc(bookRepository: locator()));
+  locator.registerFactory<BookCommentBloc>(
+    () => BookCommentBloc(
+      bookCommentsRepository: locator(),
+      addCommentRepository: locator(),
+    ),
+  );
+  locator.registerFactory<FeedbackBloc>(
+    () => FeedbackBloc(feedbackRepository: locator()),
+  );
+  locator.registerFactory<AddToCartBloc>(
+    () => AddToCartBloc(addToCartRepository: locator()),
+  );
 }
