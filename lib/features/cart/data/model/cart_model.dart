@@ -106,7 +106,7 @@ class Book {
   final Publisher publisher;
   final int editionYear;
   final int pageCount;
-  final num ISBN;
+  final num? ISBN;
   final int price;
   final int priceWithDiscount;
   final bool isPurchased;
@@ -129,7 +129,7 @@ class Book {
     required this.publisher,
     required this.editionYear,
     required this.pageCount,
-    required this.ISBN,
+    this.ISBN,
     required this.price,
     required this.priceWithDiscount,
     required this.isPurchased,

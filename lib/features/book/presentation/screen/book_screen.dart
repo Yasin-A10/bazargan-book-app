@@ -119,12 +119,14 @@ class _BookScreenState extends State<BookScreen> {
       }
     });
 
-    BlocProvider.of<BookBloc>(
-      context,
-    ).add(LoadBookEvent(bookId: widget.bookId));
-    BlocProvider.of<BookCommentBloc>(
-      context,
-    ).add(LoadBookCommentEvent(bookId: widget.bookId));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<BookBloc>(
+        context,
+      ).add(LoadBookEvent(bookId: widget.bookId));
+      BlocProvider.of<BookCommentBloc>(
+        context,
+      ).add(LoadBookCommentEvent(bookId: widget.bookId));
+    });
   }
 
   @override

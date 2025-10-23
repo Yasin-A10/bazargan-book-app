@@ -4,18 +4,24 @@ import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/screen/login_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/otp_screen.dart';
 import 'package:bazargan/features/auth/presentation/screen/category_screen.dart';
+import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/book/presentation/screen/audio_book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/epub_viewer.dart';
 import 'package:bazargan/features/book/presentation/screen/pdf_viewer.dart';
 import 'package:bazargan/features/cart/presentation/screen/cart_screen.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/screen/my_library_bookmarks_screen.dart';
 import 'package:bazargan/features/profile_comments/presentation/screen/profile_comments_screen.dart';
 import 'package:bazargan/features/profile_favorites/presentation/screen/profile_favorites_screen.dart';
 import 'package:bazargan/features/profile_transaction/presentation/screen/profile_transaction_screen.dart';
 import 'package:bazargan/features/search/presentation/screen/original_search_screen.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -96,10 +102,28 @@ final GoRouter appRouter = GoRouter(
     ),
 
     //! Book
+    // GoRoute(
+    //   path: RoutePaths.book,
+    //   builder: (context, state) => BookScreen(bookId: state.extra as int),
+    // ),
     GoRoute(
       path: RoutePaths.book,
-      builder: (context, state) => BookScreen(bookId: state.extra as int),
+      builder: (context, state) {
+        final bookId = int.parse(state.pathParameters['bookId']!);
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => locator<BookBloc>()),
+            BlocProvider(create: (_) => locator<BookCommentBloc>()),
+            BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
+            BlocProvider(create: (_) => locator<AddToCartBloc>()),
+            BlocProvider(create: (_) => locator<FeedbackBloc>()),
+          ],
+          child: BookScreen(bookId: bookId),
+        );
+      },
     ),
+
     GoRoute(
       path: RoutePaths.audioBook,
       builder: (context, state) =>

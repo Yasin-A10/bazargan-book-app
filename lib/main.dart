@@ -6,15 +6,10 @@ import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
-import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/audio_book_bloc/audio_book_bloc.dart';
-import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
-import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
-import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/my_library/presentation/bloc/my_library_bloc.dart';
-import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
@@ -24,6 +19,11 @@ import 'package:bazargan/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
+// import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
+// import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
+// import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+// import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,11 +53,11 @@ void main() async {
         BlocProvider(create: (_) => locator<AudioBloc>()),
 
         // local bloc
-        BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
-        BlocProvider(create: (_) => locator<BookBloc>()),
-        BlocProvider(create: (_) => locator<BookCommentBloc>()),
-        BlocProvider(create: (_) => locator<FeedbackBloc>()),
-        BlocProvider(create: (_) => locator<AddToCartBloc>()),
+        // BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
+        // BlocProvider(create: (_) => locator<BookBloc>()),
+        // BlocProvider(create: (_) => locator<BookCommentBloc>()),
+        // BlocProvider(create: (_) => locator<FeedbackBloc>()),
+        // BlocProvider(create: (_) => locator<AddToCartBloc>()),
       ],
       child: const MyApp(),
     ),

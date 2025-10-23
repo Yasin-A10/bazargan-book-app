@@ -77,7 +77,7 @@ class ListWidget extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      context.push('/book', extra: book.id);
+                      context.push('/book/${book.id}');
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),

@@ -11,7 +11,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:bazargan/config/router/route_paths.dart';
 
 class BookCardRow extends StatefulWidget {
   final int bookId;
@@ -56,7 +55,7 @@ class _BookCardRowState extends State<BookCardRow> {
     return Row(
       children: [
         GestureDetector(
-          onTap: () => context.push(RoutePaths.book, extra: widget.bookId),
+          onTap: () => context.push('/book/${widget.bookId}'),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),

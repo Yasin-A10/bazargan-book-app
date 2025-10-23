@@ -1,3 +1,4 @@
+import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/category_list.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/widgets/home_list_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/network/session_manager.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -68,7 +70,9 @@ class HomeScreen extends StatelessWidget {
                           textColor: AppColors.secondary,
                           backgroundColor: AppColors.secondaryTint8,
                           width: double.infinity,
-                          onPressed: () {},
+                          onPressed: () {
+                            context.push(RoutePaths.cart);
+                          },
                           icon: Icon(
                             Iconsax.element_3,
                             size: 20,

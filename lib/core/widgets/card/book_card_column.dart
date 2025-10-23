@@ -1,4 +1,3 @@
-import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
@@ -41,7 +40,7 @@ class BookCardColumn extends StatelessWidget {
       spacing: 8,
       children: [
         GestureDetector(
-          onTap: () => context.push(RoutePaths.book, extra: bookId),
+          onTap: () => context.push('/book/$bookId'),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),

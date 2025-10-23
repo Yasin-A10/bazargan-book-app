@@ -26,7 +26,7 @@ class MyLibraryCard extends StatelessWidget {
           onTap: () {
             book.type == 'صوتی'
                 ? context.push(RoutePaths.audioBook, extra: book.childBookId)
-                : context.push(RoutePaths.book, extra: book.id);
+                : context.push('/book/${book.id}');
           },
           child: Container(
             decoration: BoxDecoration(
