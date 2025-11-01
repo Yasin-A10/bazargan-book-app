@@ -20,5 +20,7 @@ class RoutePaths {
   static const String cart = '/cart';
   static const String audioBook = '/audio-book';
   static const String pdfViewer = '/pdf-viewer';
+  static const String pdfDecryptViewer = '/pdf-decrypt-viewer';
   static const String epubViewer = '/epub-viewer';
+  static const String epubDecryptViewer = '/epub-decrypt-viewer';
 }

@@ -23,9 +23,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('access token: ${SessionManager.instance.access}');
-    final String bestSellerBooksTitle = 'پرفروشترین ها';
-    final String popularBooksTitle = 'محبوب ترین ها';
-    final String forYouTitle = 'بهترین ها برای تو';
+    final String bestSellerBooksTitle = 'پرفروشترین‌ها';
+    final String popularBooksTitle = 'محبوب ترین‌ها';
+    final String forYouTitle = 'بهترین‌ها برای تو';
 
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     homeBloc.add(LoadHomeEvent());

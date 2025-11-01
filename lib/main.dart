@@ -6,10 +6,16 @@ import 'package:bazargan/core/network/session_manager.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/audio_book_bloc/audio_book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_file/book_file_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/home/presentation/bloc/home_bloc.dart';
 import 'package:bazargan/features/my_library/presentation/bloc/my_library_bloc.dart';
+import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_favorites/presentation/bloc/favorite_bloc.dart';
@@ -51,13 +57,14 @@ void main() async {
         BlocProvider(create: (_) => locator<AudioBookBloc>()),
         BlocProvider(create: (_) => locator<MyLibraryBloc>()),
         BlocProvider(create: (_) => locator<AudioBloc>()),
+        BlocProvider(create: (_) => locator<BookFileBloc>()),
 
         // local bloc
-        // BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
-        // BlocProvider(create: (_) => locator<BookBloc>()),
-        // BlocProvider(create: (_) => locator<BookCommentBloc>()),
-        // BlocProvider(create: (_) => locator<FeedbackBloc>()),
-        // BlocProvider(create: (_) => locator<AddToCartBloc>()),
+        BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
+        BlocProvider(create: (_) => locator<BookBloc>()),
+        BlocProvider(create: (_) => locator<BookCommentBloc>()),
+        BlocProvider(create: (_) => locator<FeedbackBloc>()),
+        BlocProvider(create: (_) => locator<AddToCartBloc>()),
       ],
       child: const MyApp(),
     ),

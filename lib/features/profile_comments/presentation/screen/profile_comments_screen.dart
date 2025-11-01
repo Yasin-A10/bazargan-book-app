@@ -1,10 +1,12 @@
 import 'package:bazargan/core/constants/colors.dart';
+import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/features/profile/presentation/bloc/user_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/load_comment_status.dart';
 import 'package:bazargan/features/profile_comments/presentation/bloc/user_comment_bloc.dart';
 import 'package:bazargan/features/profile_comments/presentation/widgets/user_comment_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -64,6 +66,26 @@ class _ProfileCommentsScreenState extends State<ProfileCommentsScreen> {
           if (state.loadCommentStatus is CommentSuccess) {
             final comments =
                 (state.loadCommentStatus as CommentSuccess).userCommentModel;
+
+            if (comments.results.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(Images.notFound, width: 140, height: 140),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'شما تاکنون نظری ارسال نکرده اید',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.neutralADADAD,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
             return ListView.separated(
               itemCount: comments.results.length,

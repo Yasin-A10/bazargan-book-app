@@ -137,7 +137,7 @@ class MyLibraryCard extends StatelessWidget {
                         ),
                         leftIcon: Iconsax.arrow_left_2_copy,
                         onPressed: () {
-                          context.push(RoutePaths.book, extra: book.id);
+                          context.push('/book/${book.id}');
                         },
                       ),
                       const SizedBox(height: 8),

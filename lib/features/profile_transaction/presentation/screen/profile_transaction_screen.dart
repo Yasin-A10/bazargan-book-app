@@ -1,7 +1,9 @@
+import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/features/profile_transaction/presentation/bloc/transaction_bloc.dart';
 import 'package:bazargan/features/profile_transaction/presentation/widgets/user_transaction_card.dart';
 import 'package:flutter/material.dart';
 import 'package:bazargan/core/constants/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,6 +48,25 @@ class ProfileTransactionScreen extends StatelessWidget {
 
           if (state is TransactionSuccess) {
             final transaction = state.userTransactionModel;
+            if (transaction.results.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(Images.notFound, width: 140, height: 140),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'شما تاکنون تراکنشی انجام نکرده اید',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.neutralADADAD,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
             return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               itemCount: transaction.results.length,

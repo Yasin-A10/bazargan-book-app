@@ -20,4 +20,6 @@ class Images {
   static const String dislike = 'assets/icons/dislike.svg';
   static const String likeBold = 'assets/icons/like-bold.svg';
   static const String dislikeBold = 'assets/icons/dislike-bold.svg';
+
+  static const String notFound = 'assets/images/not-found.svg';
 }

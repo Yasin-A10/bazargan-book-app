@@ -1,4 +1,3 @@
-import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/widgets/search_bar.dart';
 import 'package:bazargan/features/search/presentation/bloc/search_bloc.dart';
@@ -166,7 +165,7 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                               title: book.name,
                               imgHeight: 22,
                               onPressed: () {
-                                context.push(RoutePaths.book, extra: book.id);
+                                context.push('/book/${book.id}');
                               },
                             ),
                           ),
@@ -177,7 +176,7 @@ class _OriginalSearchScreenState extends State<OriginalSearchScreen> {
                               title: book.name,
                               imgHeight: 30,
                               onPressed: () {
-                                context.push(RoutePaths.book, extra: book.id);
+                                context.push('/book/${book.id}');
                               },
                             ),
                           ),

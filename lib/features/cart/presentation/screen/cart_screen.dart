@@ -70,7 +70,23 @@ class _CartScreenState extends State<CartScreen> {
             final cartItem = cart.results.first;
 
             if (cartItem.cartItems.isEmpty) {
-              return const Center(child: Text('سبد خرید شما خالی است'));
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(Images.notFound, width: 140, height: 140),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'سبد خرید شما خالی است',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.neutralADADAD,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }
 
             return Stack(

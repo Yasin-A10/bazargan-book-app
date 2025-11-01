@@ -10,7 +10,9 @@ import 'package:bazargan/features/book/presentation/bloc/book_commet/book_commen
 import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/book/presentation/screen/audio_book_screen.dart';
 import 'package:bazargan/features/book/presentation/screen/book_screen.dart';
+import 'package:bazargan/features/book/presentation/screen/epub_decrypt_viewer.dart';
 import 'package:bazargan/features/book/presentation/screen/epub_viewer.dart';
+import 'package:bazargan/features/book/presentation/screen/pdf_decrypt_viewer.dart';
 import 'package:bazargan/features/book/presentation/screen/pdf_viewer.dart';
 import 'package:bazargan/features/cart/presentation/screen/cart_screen.dart';
 import 'package:bazargan/features/home/presentation/screen/book_list_screen.dart';
@@ -98,6 +100,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RoutePaths.profileFavorites,
+
+      // builder: (context, state) {
+      //   return MultiBlocProvider(
+      //     providers: [BlocProvider(create: (_) => locator<MarkedBooksBloc>())],
+      //     child: const ProfileFavoritesScreen(),
+      //   );
+      // },
       builder: (context, state) => const ProfileFavoritesScreen(),
     ),
 
@@ -135,6 +144,11 @@ final GoRouter appRouter = GoRouter(
           EpubViewerScreen(epubUrl: state.extra as String),
     ),
     GoRoute(
+      path: RoutePaths.epubDecryptViewer,
+      builder: (context, state) =>
+          EpubDecryptViewerScreen(filePath: state.extra as String),
+    ),
+    GoRoute(
       path: RoutePaths.cart,
       builder: (context, state) => const CartScreen(),
     ),
@@ -142,6 +156,11 @@ final GoRouter appRouter = GoRouter(
       path: RoutePaths.pdfViewer,
       builder: (context, state) =>
           PdfViewerScreen(fileUrl: state.extra as String),
+    ),
+    GoRoute(
+      path: RoutePaths.pdfDecryptViewer,
+      builder: (context, state) =>
+          PdfDecryptViewerScreen(filePath: state.extra as String),
     ),
   ],
 

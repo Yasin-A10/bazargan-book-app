@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:bazargan/config/router/route_paths.dart';
@@ -9,6 +11,7 @@ import 'package:bazargan/core/blocs/audio/audio_bloc.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/core/utils/dycrypt.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
@@ -21,6 +24,7 @@ import 'package:bazargan/features/book/data/model/book_model.dart';
 import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_file/book_file_bloc.dart';
 import 'package:bazargan/features/book/presentation/widgets/audio_player_box.dart';
 import 'package:bazargan/features/book/presentation/widgets/book_comment_card.dart';
 import 'package:bazargan/features/book/presentation/widgets/cart_button.dart';
@@ -29,12 +33,14 @@ import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/add_mar
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/load_marked_book_status.dart';
 import 'package:bazargan/features/my_library_bookmarks/presentation/bloc/marked_books_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dartz/dartz.dart' as book;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BookScreen extends StatefulWidget {
   final int bookId;
@@ -515,18 +521,17 @@ class _BookScreenState extends State<BookScreen> {
                               filterType: 'author',
                             ),
 
-                            if (book.translator.isNotEmpty)
-                              BookInfoList(
-                                title: "مترجم:",
-                                infos: book.translator
-                                    .map(
-                                      (e) => InfoItem(id: e.id!, name: e.name!),
-                                    )
-                                    .toList(),
-                                hasArrow: true,
-                                filterType: 'translator',
-                              ),
-
+                            // if (book.translator.isNotEmpty)
+                            //   BookInfoList(
+                            //     title: "مترجم:",
+                            //     infos: book.translator
+                            //         .map(
+                            //           (e) => InfoItem(id: e.id!, name: e.name!),
+                            //         )
+                            //         .toList(),
+                            //     hasArrow: true,
+                            //     filterType: 'translator',
+                            //   ),
                             BookInfoList(
                               title: "انتشارات:",
                               infos: [
@@ -612,11 +617,89 @@ class _BookScreenState extends State<BookScreen> {
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: Button(
-                                label: 'مطالعه',
-                                width: double.infinity,
-                                onPressed: () {
-                                  _openBook(context, book);
+                              child: BlocConsumer<BookFileBloc, BookFileState>(
+                                listener: (context, state) async {
+                                  if (state is BookFileLoaded) {
+                                    String path;
+                                    if (book.type == 'epub') {
+                                      path = await _decryptAndSaveFileEpub(
+                                        state.file,
+                                      );
+                                    } else {
+                                      path = await _decryptAndSaveFile(
+                                        state.file,
+                                      );
+                                    }
+                                    if (!context.mounted) return;
+
+                                    if (book.type == 'epub') {
+                                      context.push(
+                                        RoutePaths.epubDecryptViewer,
+                                        extra: path,
+                                      );
+                                    } else {
+                                      context.push(
+                                        RoutePaths.pdfDecryptViewer,
+                                        extra: path,
+                                      );
+                                    }
+                                  }
+                                  if (state is BookFileError) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.primary,
+                                        content: Text('خطا در بارگزاری کتاب'),
+                                      ),
+                                    );
+                                  }
+                                },
+                                builder: (context, state) {
+                                  double? progress;
+                                  if (state is BookFileProgress) {
+                                    progress = state.progress;
+                                  } else if (state is BookFileLoading) {
+                                    progress = null;
+                                  }
+                                  final loading =
+                                      state is BookFileLoading ||
+                                      state is BookFileProgress;
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 8,
+                                    children: [
+                                      Button(
+                                        label: loading
+                                            ? 'در حال بارگزاری'
+                                            : 'مطالعه',
+                                        width: double.infinity,
+                                        isLoading: loading,
+                                        onPressed: loading
+                                            ? null
+                                            : () {
+                                                if (book.type == 'pdf' ||
+                                                    book.type == 'epub') {
+                                                  context
+                                                      .read<BookFileBloc>()
+                                                      .add(
+                                                        LoadBookFileEvent(
+                                                          bookId: book.id!,
+                                                        ),
+                                                      );
+                                                } else {
+                                                  context.push(
+                                                    RoutePaths.audioBook,
+                                                    extra: book.childBookId,
+                                                  );
+                                                }
+                                              },
+                                      ),
+                                      if (progress != null)
+                                        LinearProgressIndicator(
+                                          value: progress,
+                                          minHeight: 4,
+                                        ),
+                                    ],
+                                  );
                                 },
                               ),
                             ),
@@ -938,20 +1021,6 @@ class _BookScreenState extends State<BookScreen> {
         return const SizedBox.shrink();
       },
     );
-  }
-
-  void _openBook(BuildContext context, BookModel book) {
-    if (book.type == 'pdf' && book.demo!.isNotEmpty) {
-      context.push(RoutePaths.pdfViewer, extra: book.demo);
-    }
-
-    if (book.type == 'epub' && book.demo!.isNotEmpty) {
-      context.push(RoutePaths.epubViewer, extra: book.demo);
-    }
-
-    if (book.type == 'صوتی' && book.childBookId != null) {
-      context.push(RoutePaths.audioBook, extra: book.childBookId);
-    }
   }
 
   void _openSample(BuildContext context, BookModel book) {
@@ -1382,6 +1451,24 @@ class _BookScreenState extends State<BookScreen> {
         );
       },
     );
+  }
+
+  Future<String> _decryptAndSaveFile(Uint8List fileBytes) async {
+    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/book_${book.id}_decrypted.pdf';
+    await File(path).writeAsBytes(decryptedResult, flush: true);
+    return path;
+  }
+
+  Future<String> _decryptAndSaveFileEpub(Uint8List fileBytes) async {
+    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = await getTemporaryDirectory();
+    final path =
+        '${dir.path}/book_${book.id}_decrypted.epub'; // تفاوت در این بخش
+    final file = File(path);
+    await file.writeAsBytes(decryptedResult, flush: true);
+    return path;
   }
 }
 

@@ -108,8 +108,18 @@ class AuthApiClient {
   }
 
   //! for http methods
-  Future<Response> get(String path, {Map<String, dynamic>? queryParams}) async {
-    return await _dio.get(path, queryParameters: queryParams);
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParams,
+    Options? options,
+    Function(int received, int total)? onReceiveProgress,
+  }) async {
+    return await _dio.get(
+      path,
+      queryParameters: queryParams,
+      options: options,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 
   Future<Response> post(String path, {dynamic data}) async {

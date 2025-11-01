@@ -16,6 +16,7 @@ import 'package:bazargan/features/book/data/repository/add_comment_repository_im
 import 'package:bazargan/features/book/data/repository/add_to_cart_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/audio_book_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_commnet_repository_impl.dart';
+import 'package:bazargan/features/book/data/repository/book_file_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/book_repository_impl.dart';
 import 'package:bazargan/features/book/data/repository/feedback_repository_impl.dart';
 import 'package:bazargan/features/book/data/source/add_comment_api_provider.dart';
@@ -23,11 +24,13 @@ import 'package:bazargan/features/book/data/source/add_to_cart_api_provider.dart
 import 'package:bazargan/features/book/data/source/audio_book_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_api_provider.dart';
 import 'package:bazargan/features/book/data/source/book_comment_api_provider.dart';
+import 'package:bazargan/features/book/data/source/book_file_api_provider.dart';
 import 'package:bazargan/features/book/data/source/feedback_api_provider.dart';
 import 'package:bazargan/features/book/presentation/bloc/add_to_cart/add_to_cart_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/audio_book_bloc/audio_book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book/book_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/book_commet/book_comment_bloc.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_file/book_file_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/cart/data/repository/cart_repository_impl.dart';
 import 'package:bazargan/features/cart/data/repository/delete_cart_repository_impl.dart';
@@ -108,10 +111,9 @@ setup() {
   locator.registerSingleton<DeleteCommentApiProvider>(
     DeleteCommentApiProvider(),
   );
-
   locator.registerSingleton<AudioBookApiProvider>(AudioBookApiProvider());
-
   locator.registerSingleton<MyLibraryApiProvider>(MyLibraryApiProvider());
+  locator.registerSingleton<BookFileApiProvider>(BookFileApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -189,6 +191,9 @@ setup() {
   locator.registerSingleton<MyLibraryRepositoryImpl>(
     MyLibraryRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<BookFileRepositoryImpl>(
+    BookFileRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -226,6 +231,9 @@ setup() {
     MyLibraryBloc(myLibraryRepository: locator()),
   );
   locator.registerSingleton<AudioBloc>(AudioBloc());
+  locator.registerSingleton<BookFileBloc>(
+    BookFileBloc(bookFileRepository: locator()),
+  );
 
   //! local bloc
   locator.registerFactory<MarkedBooksBloc>(
