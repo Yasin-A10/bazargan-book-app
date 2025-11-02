@@ -350,7 +350,7 @@ class _BookScreenState extends State<BookScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                       child: CachedNetworkImage(
                                         imageUrl: book.picture!,
-                                        height: 200,
+                                        height: book.type == 'صوتی' ? 136 : 200,
                                         width: 136,
                                         fit: BoxFit.cover,
                                         fadeInDuration: const Duration(

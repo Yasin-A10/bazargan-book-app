@@ -1,8 +1,10 @@
 import 'package:bazargan/core/constants/images.dart';
 import 'package:bazargan/core/constants/texts.dart';
 import 'package:bazargan/core/utils/number_formater.dart';
+import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
+import 'package:bazargan/features/cart/presentation/bloc/add_coupon_status.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/cart/presentation/bloc/load_cart_status.dart';
 import 'package:bazargan/features/cart/presentation/widgets/cart_card.dart';
@@ -22,10 +24,22 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final GlobalKey<FormState> _couponFormKey = GlobalKey<FormState>();
+  final TextEditingController _couponController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    context.read<CartBloc>().add(LoadCartEvent());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartBloc>().add(LoadCartEvent());
+    });
+  }
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
   }
 
   @override
@@ -89,6 +103,23 @@ class _CartScreenState extends State<CartScreen> {
               );
             }
 
+            int totalSellPrice;
+            int yourProfitAmount;
+            int totalFinalPrice;
+
+            if (state.couponResult != null && cartItem.cartItems.isNotEmpty) {
+              totalSellPrice = state.couponResult!.totalSellPrice;
+              yourProfitAmount = state.couponResult!.yourProfitAmount;
+              totalFinalPrice = state.couponResult!.totalFinalPrice;
+            } else {
+              totalSellPrice = cartItem.totalSellPrice;
+              yourProfitAmount = cartItem.yourProfitAmount;
+              totalFinalPrice = cartItem.totalFinalPrice;
+            }
+
+            debugPrint('UI Rebuilt - couponResult: ${state.couponResult}');
+            debugPrint('cartItems count: ${cartItem.cartItems.length}');
+
             return Stack(
               fit: StackFit.expand,
               children: [
@@ -134,18 +165,70 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ],
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: InputTextFormField(label: 'کد تخفیف'),
-                            ),
-                            const SizedBox(width: 16),
-                            Button(
-                              label: 'اعمال',
-                              onPressed: () {},
-                              backgroundColor: AppColors.secondary,
-                            ),
-                          ],
+                        child: Form(
+                          key: _couponFormKey,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InputTextFormField(
+                                  label: 'کد تخفیف',
+                                  controller: _couponController,
+                                  validator: (value) {
+                                    return AppValidator.userName(
+                                      value,
+                                      fieldName: 'کد تخفیف',
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              BlocListener<CartBloc, CartState>(
+                                listenWhen: (previous, current) =>
+                                    previous.addCouponStatus.runtimeType !=
+                                    current.addCouponStatus.runtimeType,
+                                listener: (context, state) {
+                                  if (state.addCouponStatus
+                                      is AddCouponSuccess) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.tertiary,
+                                        content: Text('کد تخفیف اعمال شد'),
+                                      ),
+                                    );
+                                  }
+
+                                  if (state.addCouponStatus is AddCouponError) {
+                                    final error =
+                                        (state.addCouponStatus
+                                                as AddCouponError)
+                                            .error;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: AppColors.error,
+                                        content: Text(error),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Button(
+                                  label: 'اعمال',
+                                  onPressed: () {
+                                    if (!_couponFormKey.currentState!
+                                        .validate()) {
+                                      return;
+                                    }
+                                    context.read<CartBloc>().add(
+                                      AddCouponEvent(
+                                        cartId: cartItem.uuid,
+                                        couponCode: _couponController.text,
+                                      ),
+                                    );
+                                  },
+                                  backgroundColor: AppColors.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Container(
@@ -176,7 +259,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${formatNumberToPersian(cartItem.totalSellPrice)} تومان',
+                                  '${formatNumberToPersian(totalSellPrice)} تومان',
                                   style: AppTextStyles.small.copyWith(
                                     fontSize: 12,
                                   ),
@@ -195,7 +278,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${formatNumberToPersian(cartItem.yourProfitAmount)} تومان',
+                                  '${formatNumberToPersian(yourProfitAmount)} تومان',
                                   style: AppTextStyles.small.copyWith(
                                     fontSize: 12,
                                   ),
@@ -217,7 +300,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${formatNumberToPersian(cartItem.yourProfitAmount)} تومان',
+                                  '${formatNumberToPersian(yourProfitAmount)} تومان',
                                   style: AppTextStyles.small.copyWith(
                                     fontSize: 12,
                                   ),
@@ -239,7 +322,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${formatNumberToPersian(cartItem.totalFinalPrice)} تومان',
+                                  '${formatNumberToPersian(totalFinalPrice)} تومان',
                                   style: AppTextStyles.headlineLarge.copyWith(
                                     color: AppColors.secondary,
                                   ),
@@ -249,6 +332,7 @@ class _CartScreenState extends State<CartScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 64),
                     ],
                   ),
                 ),
@@ -287,7 +371,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             Text(
-                              formatNumberToPersian(cartItem.totalFinalPrice),
+                              formatNumberToPersian(totalFinalPrice),
                               style: AppTextStyles.headlineLarge.copyWith(
                                 color: AppColors.secondary,
                               ),

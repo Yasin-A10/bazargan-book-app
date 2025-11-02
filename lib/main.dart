@@ -43,6 +43,7 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
+        // Global Bloc
         BlocProvider(create: (_) => locator<SmsBloc>()),
         BlocProvider(create: (_) => locator<LoginBloc>()),
         BlocProvider(create: (_) => locator<LogoutBloc>()),
@@ -52,19 +53,19 @@ void main() async {
         BlocProvider(create: (_) => locator<UserBloc>()),
         BlocProvider(create: (_) => locator<FavoriteBloc>()),
         BlocProvider(create: (_) => locator<TransactionBloc>()),
-        BlocProvider(create: (_) => locator<CartBloc>()),
         BlocProvider(create: (_) => locator<UserCommentBloc>()),
         BlocProvider(create: (_) => locator<AudioBookBloc>()),
         BlocProvider(create: (_) => locator<MyLibraryBloc>()),
         BlocProvider(create: (_) => locator<AudioBloc>()),
         BlocProvider(create: (_) => locator<BookFileBloc>()),
 
-        // local bloc
+        // Local Bloc
         BlocProvider(create: (_) => locator<MarkedBooksBloc>()),
         BlocProvider(create: (_) => locator<BookBloc>()),
         BlocProvider(create: (_) => locator<BookCommentBloc>()),
         BlocProvider(create: (_) => locator<FeedbackBloc>()),
         BlocProvider(create: (_) => locator<AddToCartBloc>()),
+        BlocProvider(create: (_) => locator<CartBloc>()),
       ],
       child: const MyApp(),
     ),

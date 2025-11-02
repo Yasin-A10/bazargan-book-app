@@ -33,8 +33,10 @@ import 'package:bazargan/features/book/presentation/bloc/book_commet/book_commen
 import 'package:bazargan/features/book/presentation/bloc/book_file/book_file_bloc.dart';
 import 'package:bazargan/features/book/presentation/bloc/feedback/feedback_bloc.dart';
 import 'package:bazargan/features/cart/data/repository/cart_repository_impl.dart';
+import 'package:bazargan/features/cart/data/repository/coupon_repository_impl.dart';
 import 'package:bazargan/features/cart/data/repository/delete_cart_repository_impl.dart';
 import 'package:bazargan/features/cart/data/source/cart_api_provider.dart';
+import 'package:bazargan/features/cart/data/source/coupon_api_provider.dart';
 import 'package:bazargan/features/cart/data/source/delete_cart_api_provider.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/home/data/repository/home_repository_impl.dart';
@@ -114,6 +116,7 @@ setup() {
   locator.registerSingleton<AudioBookApiProvider>(AudioBookApiProvider());
   locator.registerSingleton<MyLibraryApiProvider>(MyLibraryApiProvider());
   locator.registerSingleton<BookFileApiProvider>(BookFileApiProvider());
+  locator.registerSingleton<CouponApiProvider>(CouponApiProvider());
 
   //! Repository
   locator.registerSingleton<SmsSenderRepositoryImpl>(
@@ -194,6 +197,9 @@ setup() {
   locator.registerSingleton<BookFileRepositoryImpl>(
     BookFileRepositoryImpl(apiProvider: locator()),
   );
+  locator.registerSingleton<CouponRepositoryImpl>(
+    CouponRepositoryImpl(apiProvider: locator()),
+  );
 
   //! Bloc
   locator.registerSingleton<SmsBloc>(SmsBloc(repository: locator()));
@@ -213,9 +219,6 @@ setup() {
   );
   locator.registerSingleton<TransactionBloc>(
     TransactionBloc(repository: locator()),
-  );
-  locator.registerSingleton<CartBloc>(
-    CartBloc(cartRepository: locator(), deleteCartRepository: locator()),
   );
   locator.registerSingleton<UserCommentBloc>(
     UserCommentBloc(
@@ -254,5 +257,12 @@ setup() {
   );
   locator.registerFactory<AddToCartBloc>(
     () => AddToCartBloc(addToCartRepository: locator()),
+  );
+  locator.registerFactory<CartBloc>(
+    () => CartBloc(
+      cartRepository: locator(),
+      deleteCartRepository: locator(),
+      couponRepository: locator(),
+    ),
   );
 }

@@ -44,7 +44,7 @@ class MyLibraryCard extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: book.picture!,
                 width: 136,
-                height: 205,
+                height: book.type == 'صوتی' ? 136 : 205,
                 fit: BoxFit.cover,
                 fadeInDuration: const Duration(milliseconds: 300),
                 placeholder: (context, url) => Center(
