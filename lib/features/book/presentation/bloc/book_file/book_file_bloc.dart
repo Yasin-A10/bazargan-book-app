@@ -11,7 +11,7 @@ class BookFileBloc extends Bloc<BookFileEvent, BookFileState> {
 
   BookFileBloc({required this.bookFileRepository}) : super(BookFileInitial()) {
     on<LoadBookFileEvent>((event, emit) async {
-      emit(BookFileLoading());
+      emit(BookFileLoading(bookId: event.bookId));
 
       try {
         final Either<String, dynamic> result = await bookFileRepository
@@ -22,7 +22,7 @@ class BookFileBloc extends Bloc<BookFileEvent, BookFileState> {
 
         result.fold(
           (error) => emit(BookFileError(error: error)),
-          (file) => emit(BookFileLoaded(file: file)),
+          (file) => emit(BookFileLoaded(bookId: event.bookId, file: file)),
         );
       } catch (e) {
         emit(BookFileError(error: 'ارور بخش بلاک ${e.toString()}'));

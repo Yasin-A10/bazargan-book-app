@@ -1,16 +1,23 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:bazargan/config/router/route_paths.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/texts.dart';
+import 'package:bazargan/core/utils/dycrypt.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/star_rating.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
 import 'package:bazargan/core/widgets/list_item_widget.dart';
+import 'package:bazargan/features/book/presentation/bloc/book_file/book_file_bloc.dart';
 import 'package:bazargan/features/my_library/data/models/my_library_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MyLibraryCard extends StatelessWidget {
   final MyBook book;
@@ -22,41 +29,99 @@ class MyLibraryCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GestureDetector(
-          onTap: () {
-            book.type == 'صوتی'
-                ? context.push(RoutePaths.audioBook, extra: book.childBookId)
-                : context.push('/book/${book.id}');
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 0),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: book.picture!,
-                width: 136,
-                height: book.type == 'صوتی' ? 136 : 205,
-                fit: BoxFit.cover,
-                fadeInDuration: const Duration(milliseconds: 300),
-                placeholder: (context, url) => Center(
-                  child: LoadingAnimationWidget.flickr(
-                    leftDotColor: AppColors.primary,
-                    rightDotColor: AppColors.secondary,
-                    size: 35,
+        BlocConsumer<BookFileBloc, BookFileState>(
+          listener: (context, state) async {
+            if (state is BookFileLoaded) {
+              String path;
+              if (book.type == 'epub') {
+                path = await _decryptAndSaveFileEpub(state.file);
+              } else {
+                path = await _decryptAndSaveFile(state.file);
+              }
+
+              if (!context.mounted) return;
+
+              if (book.type == 'epub') {
+                context.push(RoutePaths.epubDecryptViewer, extra: path);
+              } else {
+                context.push(RoutePaths.pdfDecryptViewer, extra: path);
+              }
+            }
+
+            if (state is BookFileError) {
+              ScaffoldMessenger.of(context)
+                ..clearSnackBars()
+                ..showSnackBar(
+                  SnackBar(
+                    backgroundColor: AppColors.primary,
+                    content: const Text('خطا در بارگذاری کتاب'),
                   ),
-                ),
+                );
+            }
+          },
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () {
+                if (book.type == 'صوتی') {
+                  context.push(RoutePaths.audioBook, extra: book.childBookId);
+                } else if (book.type == 'pdf' || book.type == 'epub') {
+                  context.read<BookFileBloc>().add(
+                    LoadBookFileEvent(bookId: book.id!),
+                  );
+                } else {
+                  context.push('/book/${book.id}');
+                }
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: book.picture!,
+                        width: 136,
+                        height: book.type == 'صوتی' ? 136 : 205,
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                        placeholder: (context, url) => Center(
+                          child: LoadingAnimationWidget.flickr(
+                            leftDotColor: AppColors.primary,
+                            rightDotColor: AppColors.secondary,
+                            size: 35,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (state is BookFileLoading && state.bookId == book.id)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: LoadingAnimationWidget.hexagonDots(
+                            color: Colors.white,
+                            size: 45,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ),
+            );
+          },
         ),
         Align(
           alignment: Alignment.bottomLeft,
@@ -210,6 +275,24 @@ class MyLibraryCard extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<String> _decryptAndSaveFile(Uint8List fileBytes) async {
+    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/book_${book.id}_decrypted.pdf';
+    await File(path).writeAsBytes(decryptedResult, flush: true);
+    return path;
+  }
+
+  Future<String> _decryptAndSaveFileEpub(Uint8List fileBytes) async {
+    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = await getTemporaryDirectory();
+    final path =
+        '${dir.path}/book_${book.id}_decrypted.epub'; // تفاوت در این بخش
+    final file = File(path);
+    await file.writeAsBytes(decryptedResult, flush: true);
+    return path;
   }
 
   //   void _openCategoryMenu(BuildContext context, List<Index> indexes) {

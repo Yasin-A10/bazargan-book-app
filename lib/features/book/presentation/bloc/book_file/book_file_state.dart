@@ -5,7 +5,11 @@ abstract class BookFileState {}
 
 class BookFileInitial extends BookFileState {}
 
-class BookFileLoading extends BookFileState {}
+class BookFileLoading extends BookFileState {
+  final int bookId;
+
+  BookFileLoading({required this.bookId});
+}
 
 class BookFileProgress extends BookFileState {
   final double progress;
@@ -14,9 +18,10 @@ class BookFileProgress extends BookFileState {
 }
 
 class BookFileLoaded extends BookFileState {
+  final int bookId;
   final dynamic file;
 
-  BookFileLoaded({required this.file});
+  BookFileLoaded({required this.bookId, required this.file});
 }
 
 class BookFileError extends BookFileState {
