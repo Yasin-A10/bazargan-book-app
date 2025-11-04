@@ -530,7 +530,112 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _audioBooks.length,
+                              itemBuilder: (context, index) {
+                                final chapter = _audioBooks[index];
+                                return InkWell(
+                                  onTap: () {
+                                    _playChapter(index);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              if (index == _currentIndex)
+                                                const Icon(
+                                                  Iconsax.play,
+                                                  color: AppColors.primary,
+                                                )
+                                              else
+                                                Text(
+                                                  style: AppTextStyles.body
+                                                      .copyWith(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        color: AppColors
+                                                            .neutralMidnight,
+                                                      ),
+                                                  formatNumberToPersianWithoutSeparator(
+                                                    (index + 1).toString(),
+                                                  ),
+                                                ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                chapter.name!,
+                                                style: AppTextStyles.body
+                                                    .copyWith(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: AppColors
+                                                          .neutral353535,
+                                                    ),
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Iconsax.clock_copy,
+                                                size: 16,
+                                                color: AppColors.neutral757575,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                formatNumberToPersianWithoutSeparator(
+                                                  _formatDuration(
+                                                    Duration(
+                                                      seconds:
+                                                          chapter
+                                                              .extraData
+                                                              ?.duration ??
+                                                          0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                style: AppTextStyles.body
+                                                    .copyWith(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Divider(
+                                        color: AppColors.neutralE3E3E3,
+                                        thickness: 1,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );
