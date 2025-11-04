@@ -327,8 +327,8 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                       colors: [
-                                        AppColors.white.withOpacity(0.7),
-                                        AppColors.white.withOpacity(0.9),
+                                        AppColors.white.withValues(alpha: 0.7),
+                                        AppColors.white.withValues(alpha: 0.9),
                                         AppColors.white,
                                       ],
                                     ),
