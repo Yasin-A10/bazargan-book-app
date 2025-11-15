@@ -640,7 +640,10 @@ class _BookScreenState extends State<BookScreen> {
                                     } else {
                                       context.push(
                                         RoutePaths.pdfDecryptViewer,
-                                        extra: path,
+                                        extra: {
+                                          'filePath': path,
+                                          'bookName': book.name,
+                                        },
                                       );
                                     }
                                   }
@@ -1025,7 +1028,10 @@ class _BookScreenState extends State<BookScreen> {
 
   void _openSample(BuildContext context, BookModel book) {
     if (book.type == 'pdf' && book.demo!.isNotEmpty) {
-      context.push(RoutePaths.pdfViewer, extra: book.demo);
+      context.push(
+        RoutePaths.pdfViewer,
+        extra: {'fileUrl': book.demo, 'title': book.name},
+      );
     }
 
     if (book.type == 'epub' && book.demo!.isNotEmpty) {

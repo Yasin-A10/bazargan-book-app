@@ -93,7 +93,6 @@ class _CartScreenState extends State<CartScreen> {
               paymentModel: PaymentModel(
                 paymentMethod: "ON",
                 paymentSource: "app",
-                coupon: '',
               ),
             ),
     );

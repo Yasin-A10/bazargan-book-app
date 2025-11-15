@@ -154,13 +154,25 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RoutePaths.pdfViewer,
-      builder: (context, state) =>
-          PdfViewerScreen(fileUrl: state.extra as String),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return PdfViewerScreen(
+          fileUrl: extra['fileUrl'] as String?,
+          title: extra['title'] as String?,
+        );
+      },
     ),
+
     GoRoute(
       path: RoutePaths.pdfDecryptViewer,
-      builder: (context, state) =>
-          PdfDecryptViewerScreen(filePath: state.extra as String),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+
+        final filePath = extra['filePath'] as String;
+        final bookName = extra['bookName'] as String;
+
+        return PdfDecryptViewerScreen(filePath: filePath, bookName: bookName);
+      },
     ),
   ],
 

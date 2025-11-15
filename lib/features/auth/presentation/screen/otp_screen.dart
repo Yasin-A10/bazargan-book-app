@@ -147,10 +147,6 @@ class _OtpScreenState extends State<OtpScreen> {
                           } else {
                             context.go('/');
                           }
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('ورود موفقیت آمیز')),
-                          );
                         }
                         if (state is LoginStateError) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -189,7 +185,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
+                                horizontal: 0,
                               ),
                               child: ResendCodeButton(
                                 duration: 120,

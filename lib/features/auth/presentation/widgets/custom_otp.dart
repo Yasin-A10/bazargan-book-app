@@ -30,10 +30,10 @@ class _CustomOtpFieldState extends State<CustomOtpField> {
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
-      width: 44,
-      height: 44,
+      width: 48,
+      height: 48,
       textStyle: const TextStyle(
-        fontSize: 20,
+        fontSize: 22,
         color: AppColors.neutralMidnight,
       ),
       decoration: BoxDecoration(
@@ -51,6 +51,8 @@ class _CustomOtpFieldState extends State<CustomOtpField> {
         focusNode: _focusNode,
         defaultPinTheme: defaultPinTheme,
         onCompleted: widget.onCompleted,
+
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
         focusedPinTheme: defaultPinTheme.copyWith(
           decoration: defaultPinTheme.decoration!.copyWith(

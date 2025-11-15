@@ -65,7 +65,7 @@ class _ResendCodeButtonState extends State<ResendCodeButton> {
     final isEnabled = _remainingTime == 0;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -88,6 +88,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
   Future<void> setPlaybackSpeed(double speed) async {
     await _player.setSpeed(speed);
+    emit(state.copyWith(playbackSpeed: speed));
   }
 
   @override

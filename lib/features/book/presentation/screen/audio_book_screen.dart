@@ -191,6 +191,105 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
     );
   }
 
+  // void _showSpeedModal() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) {
+  //       return Directionality(
+  //         textDirection: TextDirection.ltr,
+  //         child: Container(
+  //           padding: const EdgeInsets.all(16),
+  //           width: double.infinity,
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               const Text(
+  //                 'سرعت پخش',
+  //                 style: TextStyle(fontWeight: FontWeight.bold),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Text(
+  //                 formatNumberToPersianWithoutSeparator(
+  //                   context
+  //                       .watch<AudioBloc>()
+  //                       .state
+  //                       .playbackSpeed
+  //                       .toStringAsFixed(2),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Transform(
+  //                 alignment: Alignment.center,
+  //                 transform: Matrix4.rotationY(math.pi),
+  //                 child: SliderTheme(
+  //                   data: SliderTheme.of(context).copyWith(
+  //                     trackHeight: 2,
+  //                     thumbShape: const RoundSliderThumbShape(
+  //                       enabledThumbRadius: 8,
+  //                     ),
+  //                     overlayShape: const RoundSliderOverlayShape(
+  //                       overlayRadius: 14,
+  //                     ),
+  //                     activeTrackColor: AppColors.secondary,
+  //                     inactiveTrackColor: AppColors.neutralE3E3E3,
+  //                     thumbColor: AppColors.secondary,
+  //                   ),
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 8),
+  //                     child: Slider(
+  //                       min: 0.5,
+  //                       max: 2.0,
+  //                       divisions: 15,
+  //                       value: context.watch<AudioBloc>().state.playbackSpeed,
+  //                       onChanged: (value) {
+  //                         context.read<AudioBloc>().setPlaybackSpeed(value);
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Padding(
+  //                 padding: const EdgeInsets.symmetric(vertical: 8),
+  //                 child: Wrap(
+  //                   alignment: WrapAlignment.center,
+  //                   spacing: 12,
+  //                   children: _speeds.map((speed) {
+  //                     return ElevatedButton(
+  //                       onPressed: () {
+  //                         context.read<AudioBloc>().setPlaybackSpeed(speed);
+  //                         context.pop();
+  //                       },
+  //                       style: ElevatedButton.styleFrom(
+  //                         backgroundColor: AppColors.secondaryTint8,
+  //                         elevation: 0,
+  //                         padding: const EdgeInsets.symmetric(
+  //                           horizontal: 10,
+  //                           vertical: 6,
+  //                         ),
+  //                       ),
+  //                       child: Text(
+  //                         formatNumberToPersianWithoutSeparator(
+  //                           speed.toString(),
+  //                         ),
+  //                         style: AppTextStyles.body.copyWith(
+  //                           color: AppColors.secondary,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                     );
+  //                   }).toList(),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
   void _showSpeedModal() {
     showModalBottomSheet(
       context: context,
@@ -209,6 +308,49 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
+
+                Text(
+                  formatNumberToPersianWithoutSeparator(
+                    context
+                        .watch<AudioBloc>()
+                        .state
+                        .playbackSpeed
+                        .toStringAsFixed(2),
+                  ),
+                ),
+
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 2,
+
+                    activeTickMarkColor: AppColors.secondary,
+                    inactiveTickMarkColor: AppColors.neutralE3E3E3,
+
+                    tickMarkShape: const RoundSliderTickMarkShape(
+                      tickMarkRadius: 3,
+                    ),
+
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 8,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 14,
+                    ),
+                    activeTrackColor: AppColors.secondary,
+                    inactiveTrackColor: AppColors.neutralE3E3E3,
+                    thumbColor: AppColors.secondary,
+                  ),
+                  child: Slider(
+                    min: 0.5,
+                    max: 2.0,
+                    divisions: 15,
+                    value: context.watch<AudioBloc>().state.playbackSpeed,
+                    onChanged: (value) {
+                      context.read<AudioBloc>().setPlaybackSpeed(value);
+                    },
+                  ),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Wrap(
@@ -223,10 +365,8 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.secondaryTint8,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          padding: EdgeInsets.zero,
                         ),
                         child: Text(
                           formatNumberToPersianWithoutSeparator(
@@ -417,7 +557,7 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // 🎚️ Seek bar
+                      //* Seek bar
                       Column(
                         children: [
                           Transform(
@@ -485,7 +625,7 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
 
                       const SizedBox(height: 12),
 
-                      // 🎧 کنترل‌ها
+                      //* control buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -549,8 +689,10 @@ class _AudioBookScreenState extends State<AudioBookScreen> {
                           ),
                         ],
                       ),
+
+                      //* list of chapters
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,

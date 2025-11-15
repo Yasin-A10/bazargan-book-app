@@ -8,8 +8,9 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 class PdfViewerScreen extends StatelessWidget {
   final String? filePath;
   final String? fileUrl;
+  final String? title;
 
-  const PdfViewerScreen({super.key, this.filePath, this.fileUrl})
+  const PdfViewerScreen({super.key, this.filePath, this.fileUrl, this.title})
     : assert(
         filePath != null || fileUrl != null,
         'Either filePath or fileUrl must be provided',
@@ -21,8 +22,8 @@ class PdfViewerScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text(
-          'نمایش PDF',
+        title: Text(
+          title ?? 'نمایش PDF',
           style: TextStyle(color: AppColors.white),
         ),
         centerTitle: true,
