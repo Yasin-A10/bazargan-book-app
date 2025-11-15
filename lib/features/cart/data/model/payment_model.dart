@@ -8,7 +8,7 @@ class PaymentModel {
   Map<String, dynamic> toJson() {
     return {
       if (paymentMethod != null) 'payment_method': paymentMethod,
-      'coupon': coupon,
+      if (coupon != null) 'coupon': coupon,
       'payment_source': paymentSource,
     };
   }
