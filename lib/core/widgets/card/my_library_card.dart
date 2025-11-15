@@ -31,47 +31,103 @@ class MyLibraryCard extends StatelessWidget {
       children: [
         BlocConsumer<BookFileBloc, BookFileState>(
           listener: (context, state) async {
-            if (state is BookFileLoaded) {
-              String path;
-              if (book.type == 'epub') {
-                path = await _decryptAndSaveFileEpub(state.file);
-              } else {
-                path = await _decryptAndSaveFile(state.file);
-              }
+            if (state is BookFileLoaded && state.bookId == book.id) {
+              final path = book.type == 'epub'
+                  ? await _decryptAndSaveFileEpub(state.file)
+                  : await _decryptAndSaveFile(state.file);
 
               if (!context.mounted) return;
 
-              if (book.type == 'epub') {
-                context.push(RoutePaths.epubDecryptViewer, extra: path);
-              } else {
-                context.push(RoutePaths.pdfDecryptViewer, extra: path);
-              }
+              context.push(
+                book.type == 'epub'
+                    ? RoutePaths.epubDecryptViewer
+                    : RoutePaths.pdfDecryptViewer,
+                extra: path,
+              );
             }
-
             if (state is BookFileError) {
-              ScaffoldMessenger.of(context)
-                ..clearSnackBars()
-                ..showSnackBar(
-                  SnackBar(
-                    backgroundColor: AppColors.primary,
-                    content: const Text('خطا در بارگذاری کتاب'),
-                  ),
-                );
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('خطا در بارگذاری کتاب')),
+              );
             }
           },
+          // listener: (context, state) async {
+          //   if (state is BookFileLoaded) {
+          //     String path;
+          //     if (widget.book.type == 'epub') {
+          //       path = await _decryptAndSaveFileEpub(state.file);
+          //     } else {
+          //       path = await _decryptAndSaveFile(state.file);
+          //     }
+
+          //     if (!context.mounted) return;
+
+          //     if (widget.book.type == 'epub') {
+          //       if (!context.mounted) return;
+
+          //       context.push(RoutePaths.epubDecryptViewer, extra: path);
+          //     } else {
+          //       if (!context.mounted) return;
+
+          //       context.push(RoutePaths.pdfDecryptViewer, extra: path);
+          //     }
+          //   }
+
+          //   if (state is BookFileError) {
+          //     ScaffoldMessenger.of(context)
+          //       ..clearSnackBars()
+          //       ..showSnackBar(
+          //         SnackBar(
+          //           backgroundColor: AppColors.primary,
+          //           content: const Text('خطا در بارگذاری کتاب'),
+          //         ),
+          //       );
+          //   }
+          // },
           builder: (context, state) {
             return GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (book.type == 'صوتی') {
                   context.push(RoutePaths.audioBook, extra: book.childBookId);
-                } else if (book.type == 'pdf' || book.type == 'epub') {
+                  return;
+                }
+
+                if (book.type case 'pdf' || 'epub') {
+                  final existing = await _getExistingDecryptedFile();
+                  if (existing != null && context.mounted) {
+                    context.push(
+                      book.type == 'epub'
+                          ? RoutePaths.epubDecryptViewer
+                          : RoutePaths.pdfDecryptViewer,
+                      extra: existing,
+                    );
+                    return;
+                  }
+
                   context.read<BookFileBloc>().add(
                     LoadBookFileEvent(bookId: book.id!),
                   );
-                } else {
-                  context.push('/book/${book.id}');
+                  return;
                 }
+
+                context.push('/book/${book.id}');
               },
+              // onTap: () {
+              //   if (widget.book.type == 'صوتی') {
+              //     context.push(
+              //       RoutePaths.audioBook,
+              //       extra: widget.book.childBookId,
+              //     );
+              //   } else if (widget.book.type == 'pdf' ||
+              //       widget.book.type == 'epub') {
+              //     context.read<BookFileBloc>().add(
+              //       LoadBookFileEvent(bookId: widget.book.id!),
+              //     );
+              //   } else {
+              //     context.push('/book/${widget.book.id}');
+              //   }
+              // },
               child: Stack(
                 children: [
                   Container(
@@ -112,7 +168,7 @@ class MyLibraryCard extends StatelessWidget {
                         ),
                         child: Center(
                           child: LoadingAnimationWidget.hexagonDots(
-                            color: Colors.white,
+                            color: AppColors.primary,
                             size: 45,
                           ),
                         ),
@@ -139,6 +195,38 @@ class MyLibraryCard extends StatelessWidget {
     );
   }
 
+  Future<String?> _getExistingDecryptedFile() async {
+    final dir = Directory(
+      '${(await getApplicationDocumentsDirectory()).path}/books',
+    );
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final path = '${dir.path}/book_${book.id}_decrypted.${book.type}';
+    return await File(path).exists() ? path : null;
+  }
+
+  Future<String> _decryptAndSaveFile(Uint8List fileBytes) async {
+    final decrypted = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = Directory(
+      '${(await getApplicationDocumentsDirectory()).path}/books',
+    );
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final path = '${dir.path}/book_${book.id}_decrypted.pdf';
+    await File(path).writeAsBytes(decrypted, flush: true);
+    return path;
+  }
+
+  Future<String> _decryptAndSaveFileEpub(Uint8List fileBytes) async {
+    final decrypted = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
+    final dir = Directory(
+      '${(await getApplicationDocumentsDirectory()).path}/books',
+    );
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final path = '${dir.path}/book_${book.id}_decrypted.epub';
+    await File(path).writeAsBytes(decrypted, flush: true);
+    return path;
+  }
+
+  // Future<String> _decryptAndSaveFile(Uint8List fileBytes) async {
   void _openMenu(BuildContext context, MyBook book) {
     showModalBottomSheet(
       context: context,
@@ -277,82 +365,7 @@ class MyLibraryCard extends StatelessWidget {
     );
   }
 
-  Future<String> _decryptAndSaveFile(Uint8List fileBytes) async {
-    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
-    final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/book_${book.id}_decrypted.pdf';
-    await File(path).writeAsBytes(decryptedResult, flush: true);
-    return path;
-  }
-
-  Future<String> _decryptAndSaveFileEpub(Uint8List fileBytes) async {
-    final decryptedResult = await decryptFile(fileBytes, 'k*KXM09l%RhPF99d');
-    final dir = await getTemporaryDirectory();
-    final path =
-        '${dir.path}/book_${book.id}_decrypted.epub'; // تفاوت در این بخش
-    final file = File(path);
-    await file.writeAsBytes(decryptedResult, flush: true);
-    return path;
-  }
-
   //   void _openCategoryMenu(BuildContext context, List<Index> indexes) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (context) {
-  //       return Container(
-  //         padding: const EdgeInsets.only(
-  //           top: 8,
-  //           bottom: 16,
-  //           left: 16,
-  //           right: 16,
-  //         ),
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.only(
-  //             topLeft: Radius.circular(20),
-  //             topRight: Radius.circular(20),
-  //           ),
-  //         ),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Divider(
-  //               color: AppColors.neutral757575,
-  //               thickness: 3,
-  //               endIndent: 140,
-  //               indent: 140,
-  //             ),
-  //             const SizedBox(height: 16),
-  //             Expanded(
-  //               child: ListView.builder(
-  //                 itemCount: indexes.length,
-  //                 itemBuilder: (context, index) {
-  //                   return Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       const SizedBox(height: 8),
-  //                       Text(
-  //                         indexes[index].title!,
-  //                         style: AppTextStyles.body.copyWith(
-  //                           fontSize: 14,
-  //                           fontWeight: FontWeight.w300,
-  //                         ),
-  //                         textAlign: TextAlign.right,
-  //                         overflow: TextOverflow.ellipsis,
-  //                       ),
-  //                       const SizedBox(height: 8),
-  //                       Divider(color: AppColors.neutralE3E3E3, thickness: 1),
-  //                     ],
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   void _openReviewMenu(BuildContext context, String bookName) {
     showModalBottomSheet(
       context: context,

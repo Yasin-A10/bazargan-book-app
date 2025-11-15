@@ -71,7 +71,6 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
   ) async {
     await _player.seek(event.position);
     emit(state.copyWith(position: event.position));
-    // if you want to emit UpdateAudioStatusEvent
   }
 
   void _onUpdateAudioStatus(
@@ -89,7 +88,6 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
   Future<void> setPlaybackSpeed(double speed) async {
     await _player.setSpeed(speed);
-    // emit(state.copyWith(playbackSpeed: speed));
   }
 
   @override

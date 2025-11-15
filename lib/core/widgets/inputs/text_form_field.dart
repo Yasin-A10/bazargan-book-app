@@ -4,6 +4,7 @@ import 'package:bazargan/core/constants/colors.dart';
 class InputTextFormField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
+  final bool readOnly;
   final String label;
   final TextEditingController? controller;
   final int? minLines;
@@ -14,6 +15,7 @@ class InputTextFormField extends StatelessWidget {
     super.key,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+    this.readOnly = false,
     required this.label,
     this.controller,
     this.minLines,
@@ -33,6 +35,7 @@ class InputTextFormField extends StatelessWidget {
         keyboardType: keyboardType,
         minLines: minLines,
         maxLines: maxLines ?? 1,
+        readOnly: readOnly,
         validator: validator,
         style: const TextStyle(fontFamily: 'IRANYekanX'),
         decoration: InputDecoration(

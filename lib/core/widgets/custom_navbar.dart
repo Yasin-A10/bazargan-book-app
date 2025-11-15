@@ -33,7 +33,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
       // },
       {
         "icon": Iconsax.chart_1_copy,
-        "activeIcon": Iconsax.chart_1,
+        "activeIcon": Iconsax.chart_3,
         "label": "کتابخانه من",
       },
       {

@@ -1,5 +1,6 @@
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:bazargan/core/constants/images.dart';
+import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:bazargan/features/auth/presentation/bloc/sms/sms_bloc.dart';
@@ -110,7 +111,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       spacing: 8,
                       children: [
                         Text(
-                          'کد ۵ رقمی ارسال شده به شماره ${widget.phoneNumber} را وارد نمایید',
+                          'کد ۵ رقمی ارسال شده به شماره ${formatNumberToPersianWithoutSeparator(widget.phoneNumber)} را وارد نمایید',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -152,9 +153,9 @@ class _OtpScreenState extends State<OtpScreen> {
                           );
                         }
                         if (state is LoginStateError) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(state.error)));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('خطا در ورود')),
+                          );
                         }
                       },
                       builder: (context, state) {

@@ -14,3 +14,11 @@ class AddCouponEvent extends CartEvent {
   final String couponCode;
   AddCouponEvent({required this.cartId, required this.couponCode});
 }
+
+class RemoveCouponEvent extends CartEvent {}
+
+class AddPaymentEvent extends CartEvent {
+  final String cartId;
+  final PaymentModel paymentModel;
+  AddPaymentEvent({required this.cartId, required this.paymentModel});
+}

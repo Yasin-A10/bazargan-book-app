@@ -4,9 +4,11 @@ import 'package:bazargan/core/utils/number_formater.dart';
 import 'package:bazargan/core/utils/validators.dart';
 import 'package:bazargan/core/widgets/button/button.dart';
 import 'package:bazargan/core/widgets/inputs/text_form_field.dart';
+import 'package:bazargan/features/cart/data/model/payment_model.dart';
 import 'package:bazargan/features/cart/presentation/bloc/add_coupon_status.dart';
 import 'package:bazargan/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:bazargan/features/cart/presentation/bloc/load_cart_status.dart';
+import 'package:bazargan/features/cart/presentation/bloc/payment_status.dart';
 import 'package:bazargan/features/cart/presentation/widgets/cart_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:bazargan/core/constants/colors.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -27,6 +30,8 @@ class _CartScreenState extends State<CartScreen> {
   final GlobalKey<FormState> _couponFormKey = GlobalKey<FormState>();
   final TextEditingController _couponController = TextEditingController();
 
+  bool _isCouponApplied = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +39,64 @@ class _CartScreenState extends State<CartScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CartBloc>().add(LoadCartEvent());
     });
+  }
+
+  void _applyCoupon() {
+    if (!_couponFormKey.currentState!.validate()) return;
+
+    final cartUuid =
+        (context.read<CartBloc>().state.loadCartStatus as CartSuccess)
+            .cartModel
+            .results
+            .first
+            .uuid;
+
+    context.read<CartBloc>().add(
+      AddCouponEvent(cartId: cartUuid, couponCode: _couponController.text),
+    );
+  }
+
+  void _removeCoupon() {
+    context.read<CartBloc>().add(RemoveCouponEvent());
+    setState(() {
+      _isCouponApplied = false;
+      _couponController.clear();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColors.tertiary,
+        content: Text('کد تخفیف حذف شد'),
+      ),
+    );
+  }
+
+  void _addPayment(BuildContext context) {
+    final cartUuid =
+        (context.read<CartBloc>().state.loadCartStatus as CartSuccess)
+            .cartModel
+            .results
+            .first
+            .uuid;
+
+    context.read<CartBloc>().add(
+      _couponController.text.isNotEmpty
+          ? AddPaymentEvent(
+              cartId: cartUuid,
+              paymentModel: PaymentModel(
+                paymentMethod: "ON",
+                paymentSource: "app",
+                coupon: _couponController.text,
+              ),
+            )
+          : AddPaymentEvent(
+              cartId: cartUuid,
+              paymentModel: PaymentModel(
+                paymentMethod: "ON",
+                paymentSource: "app",
+                coupon: '',
+              ),
+            ),
+    );
   }
 
   @override
@@ -117,9 +180,6 @@ class _CartScreenState extends State<CartScreen> {
               totalFinalPrice = cartItem.totalFinalPrice;
             }
 
-            debugPrint('UI Rebuilt - couponResult: ${state.couponResult}');
-            debugPrint('cartItems count: ${cartItem.cartItems.length}');
-
             return Stack(
               fit: StackFit.expand,
               children: [
@@ -173,6 +233,7 @@ class _CartScreenState extends State<CartScreen> {
                                 child: InputTextFormField(
                                   label: 'کد تخفیف',
                                   controller: _couponController,
+                                  readOnly: _isCouponApplied,
                                   validator: (value) {
                                     return AppValidator.userName(
                                       value,
@@ -189,6 +250,9 @@ class _CartScreenState extends State<CartScreen> {
                                 listener: (context, state) {
                                   if (state.addCouponStatus
                                       is AddCouponSuccess) {
+                                    setState(() {
+                                      _isCouponApplied = true;
+                                    });
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: AppColors.tertiary,
@@ -198,33 +262,24 @@ class _CartScreenState extends State<CartScreen> {
                                   }
 
                                   if (state.addCouponStatus is AddCouponError) {
-                                    final error =
-                                        (state.addCouponStatus
-                                                as AddCouponError)
-                                            .error;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: AppColors.error,
-                                        content: Text(error),
+                                        content: Text('کد تخفیف اعمال نشد'),
                                       ),
                                     );
                                   }
                                 },
                                 child: Button(
-                                  label: 'اعمال',
+                                  label: _isCouponApplied ? 'حذف' : 'اعمال',
                                   onPressed: () {
-                                    if (!_couponFormKey.currentState!
-                                        .validate()) {
-                                      return;
-                                    }
-                                    context.read<CartBloc>().add(
-                                      AddCouponEvent(
-                                        cartId: cartItem.uuid,
-                                        couponCode: _couponController.text,
-                                      ),
-                                    );
+                                    _isCouponApplied
+                                        ? _removeCoupon()
+                                        : _applyCoupon();
                                   },
-                                  backgroundColor: AppColors.secondary,
+                                  backgroundColor: _isCouponApplied
+                                      ? AppColors.primary
+                                      : AppColors.secondary,
                                 ),
                               ),
                             ],
@@ -383,7 +438,43 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ],
                         ),
-                        Button(label: 'پرداخت', onPressed: () {}),
+                        // Button(label: 'پرداخت', onPressed: () {}),
+                        BlocConsumer<CartBloc, CartState>(
+                          listener: (context, state) {
+                            final paymentStatus = state.paymentStatus;
+
+                            if (paymentStatus is PaymentSuccess) {
+                              final paymentUrl = paymentStatus.result['url'];
+                              if (paymentUrl != null) {
+                                launchUrl(
+                                  Uri.parse(paymentUrl),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            }
+
+                            if (paymentStatus is PaymentError) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: AppColors.primary,
+                                  content: Text('خطایی رخ داده است'),
+                                ),
+                              );
+                            }
+                          },
+                          builder: (context, state) {
+                            final isLoading =
+                                state.paymentStatus is PaymentLoading;
+
+                            return Button(
+                              label: isLoading ? 'در حال پرداخت...' : 'پرداخت',
+                              isLoading: isLoading,
+                              onPressed: isLoading
+                                  ? null
+                                  : () => _addPayment(context),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
